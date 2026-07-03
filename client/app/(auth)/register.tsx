@@ -84,10 +84,15 @@ export default function RegisterScreen() {
 
             {/* Input de Nombre (Subrayado minimalista) */}
             <View style={styles.inputWrapper}>
-              <Ionicons name="person" size={20} color="#ffffff" style={styles.inputIcon} />
+              <Ionicons
+                name={role === 'empresa' ? 'business' : 'person'}
+                size={20}
+                color="#ffffff"
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={styles.input}
-                placeholder="Nombre Completo"
+                placeholder={role === 'empresa' ? 'Nombre de la empresa' : 'Nombre Completo'}
                 placeholderTextColor="rgba(255, 255, 255, 0.6)"
                 value={name}
                 onChangeText={setName}
