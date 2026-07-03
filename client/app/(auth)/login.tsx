@@ -75,7 +75,7 @@ export default function LoginScreen() {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Tarjeta con efecto Glassmorphism */}
           <BlurView intensity={Platform.OS === 'ios' ? 30 : 40} tint="dark" style={styles.glassCard}>
-            
+
             {/* Aura roja brillante de fondo */}
             <View style={styles.glowAura} />
 
@@ -160,14 +160,14 @@ export default function LoginScreen() {
                 {isSubmitting ? (
                   <ActivityIndicator color="#ffffff" />
                 ) : (
-                  <ThemedText style={styles.loginButtonText}>LOGIN</ThemedText>
+                  <ThemedText style={styles.loginButtonText}>ENTRAR</ThemedText>
                 )}
               </LinearGradient>
             </TouchableOpacity>
 
             <View style={styles.dividerContainer}>
               <View style={styles.dividerLine} />
-              <ThemedText style={styles.dividerText}>or continue with</ThemedText>
+              <ThemedText style={styles.dividerText}>continúa con</ThemedText>
               <View style={styles.dividerLine} />
             </View>
 

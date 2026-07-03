@@ -1,36 +1,52 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, TextInput, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, ScrollView, TouchableOpacity, TextInput, Platform, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '../../components/themed-text';
 import { ThemedView } from '../../components/themed-view';
+import { apiRequest } from '../../services/api';
 
 interface Job {
   id: number;
   title: string;
-  company: string;
+  company_name: string;
+  description: string;
   location: string;
-  salary: string;
+  salary: string | null;
   type: string;
 }
 
 export default function EmpleoScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const mockJobs: Job[] = [
-    { id: 1, title: 'Desarrollador React Native Senior', company: 'AppCreators', location: 'Remoto (Madrid)', salary: '45K - 55K €/año', type: 'Jornada Completa' },
-    { id: 2, title: 'Administrador de Sistemas Cloud', company: 'Global Data', location: 'Barcelona', salary: '38K - 44K €/año', type: 'Híbrido' },
-    { id: 3, title: 'Consultor SAP', company: 'Bussines Consult', location: 'Valencia', salary: '40K - 50K €/año', type: 'Jornada Completa' },
-    { id: 4, title: 'Diseñador UI/UX Junior', company: 'Pixel Art', location: 'Málaga', salary: '22K - 26K €/año', type: 'Remoto' },
-    { id: 5, title: 'Desarrollador Fullstack Laravel/React', company: 'CodeDev', location: 'Remoto', salary: '32K - 38K €/año', type: 'Jornada Completa' },
-  ];
+  const fetchJobs = async (search = '') => {
+    try {
+      const url = search ? `/job-listings?search=${encodeURIComponent(search)}` : '/job-listings';
+      const response = await apiRequest(url);
+      if (response.status === 'success' && response.listings) {
+        setJobs(response.listings);
+      }
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
 
-  const filteredJobs = mockJobs.filter(job => 
-    job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    job.company.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    fetchJobs(searchQuery);
+  }, [searchQuery]);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    fetchJobs(searchQuery);
+  };
 
   return (
     <LinearGradient
@@ -60,9 +76,18 @@ export default function EmpleoScreen() {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {filteredJobs.length > 0 ? (
-          filteredJobs.map((job) => (
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor="#ffffff" />
+        }
+      >
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#3b82f6" />
+          </View>
+        ) : jobs.length > 0 ? (
+          jobs.map((job) => (
             <TouchableOpacity key={job.id} style={styles.jobCard} onPress={() => alert(`Postularse a ${job.title}`)}>
               <View style={styles.jobCardHeader}>
                 <View style={styles.companyIconBg}>
@@ -70,7 +95,7 @@ export default function EmpleoScreen() {
                 </View>
                 <View style={styles.jobTitleContainer}>
                   <ThemedText style={styles.jobTitle}>{job.title}</ThemedText>
-                  <ThemedText style={styles.companyName}>{job.company}</ThemedText>
+                  <ThemedText style={styles.companyName}>{job.company_name}</ThemedText>
                 </View>
               </View>
 
@@ -79,10 +104,12 @@ export default function EmpleoScreen() {
                   <Ionicons name="location-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
                   <ThemedText style={styles.detailText}>{job.location}</ThemedText>
                 </View>
-                <View style={styles.detailRow}>
-                  <Ionicons name="cash-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
-                  <ThemedText style={styles.detailText}>{job.salary}</ThemedText>
-                </View>
+                {job.salary ? (
+                  <View style={styles.detailRow}>
+                    <Ionicons name="cash-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
+                    <ThemedText style={styles.detailText}>{job.salary}</ThemedText>
+                  </View>
+                ) : null}
               </View>
 
               <View style={styles.jobCardFooter}>
@@ -234,5 +261,11 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.4)',
     fontSize: 14,
     textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 80,
   },
 });
