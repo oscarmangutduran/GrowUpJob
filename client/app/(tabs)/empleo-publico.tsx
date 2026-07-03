@@ -6,30 +6,30 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '../../components/themed-text';
 import { ThemedView } from '../../components/themed-view';
 
-interface Job {
+interface PublicJob {
   id: number;
   title: string;
-  company: string;
-  location: string;
-  salary: string;
+  organism: string;
+  places: number;
+  deadline: string;
   type: string;
 }
 
-export default function EmpleoScreen() {
+export default function EmpleoPublicoScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const mockJobs: Job[] = [
-    { id: 1, title: 'Desarrollador React Native Senior', company: 'AppCreators', location: 'Remoto (Madrid)', salary: '45K - 55K €/año', type: 'Jornada Completa' },
-    { id: 2, title: 'Administrador de Sistemas Cloud', company: 'Global Data', location: 'Barcelona', salary: '38K - 44K €/año', type: 'Híbrido' },
-    { id: 3, title: 'Consultor SAP', company: 'Bussines Consult', location: 'Valencia', salary: '40K - 50K €/año', type: 'Jornada Completa' },
-    { id: 4, title: 'Diseñador UI/UX Junior', company: 'Pixel Art', location: 'Málaga', salary: '22K - 26K €/año', type: 'Remoto' },
-    { id: 5, title: 'Desarrollador Fullstack Laravel/React', company: 'CodeDev', location: 'Remoto', salary: '32K - 38K €/año', type: 'Jornada Completa' },
+  const mockPublicJobs: PublicJob[] = [
+    { id: 1, title: 'Auxiliar Administrativo del Estado', organism: 'Ministerio de Hacienda', places: 1250, deadline: '25/08/2026', type: 'Oposición Libre' },
+    { id: 2, title: 'Enfermero/a de Atención Primaria', organism: 'Servicio de Salud de la Comunidad', places: 340, deadline: '15/07/2026', type: 'Concurso-Oposición' },
+    { id: 3, title: 'Técnico de Soporte Informático', organism: 'Ayuntamiento de Madrid', places: 15, deadline: '30/08/2026', type: 'Oposición' },
+    { id: 4, title: 'Profesor de Enseñanza Secundaria (Informática)', organism: 'Consejería de Educación', places: 120, deadline: '10/09/2026', type: 'Concurso-Oposición' },
+    { id: 5, title: 'Agente de Policía Local', organism: 'Ayuntamiento', places: 45, deadline: '05/08/2026', type: 'Oposición' },
   ];
 
-  const filteredJobs = mockJobs.filter(job => 
+  const filteredJobs = mockPublicJobs.filter(job => 
     job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    job.company.toLowerCase().includes(searchQuery.toLowerCase())
+    job.organism.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -38,7 +38,7 @@ export default function EmpleoScreen() {
       style={styles.container}
     >
       <View style={styles.header}>
-        <ThemedText type="subtitle" style={styles.headerTitle}>Empleo Privado</ThemedText>
+        <ThemedText type="subtitle" style={styles.headerTitle}>Empleo Público</ThemedText>
       </View>
 
       <View style={styles.searchSection}>
@@ -46,7 +46,7 @@ export default function EmpleoScreen() {
           <Ionicons name="search" size={20} color="rgba(255, 255, 255, 0.5)" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Buscar puestos, empresas..."
+            placeholder="Buscar convocatorias, organismos..."
             placeholderTextColor="rgba(255, 255, 255, 0.5)"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -63,25 +63,25 @@ export default function EmpleoScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {filteredJobs.length > 0 ? (
           filteredJobs.map((job) => (
-            <TouchableOpacity key={job.id} style={styles.jobCard} onPress={() => alert(`Postularse a ${job.title}`)}>
+            <TouchableOpacity key={job.id} style={styles.jobCard} onPress={() => alert(`Más detalles de ${job.title}`)}>
               <View style={styles.jobCardHeader}>
-                <View style={styles.companyIconBg}>
-                  <Ionicons name="briefcase" size={24} color="#3b82f6" />
+                <View style={styles.organismIconBg}>
+                  <Ionicons name="document-text" size={24} color="#a855f7" />
                 </View>
                 <View style={styles.jobTitleContainer}>
                   <ThemedText style={styles.jobTitle}>{job.title}</ThemedText>
-                  <ThemedText style={styles.companyName}>{job.company}</ThemedText>
+                  <ThemedText style={styles.organismName}>{job.organism}</ThemedText>
                 </View>
               </View>
 
               <View style={styles.jobCardDetails}>
                 <View style={styles.detailRow}>
-                  <Ionicons name="location-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
-                  <ThemedText style={styles.detailText}>{job.location}</ThemedText>
+                  <Ionicons name="people-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
+                  <ThemedText style={styles.detailText}>Plazas convocadas: {job.places}</ThemedText>
                 </View>
                 <View style={styles.detailRow}>
-                  <Ionicons name="cash-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
-                  <ThemedText style={styles.detailText}>{job.salary}</ThemedText>
+                  <Ionicons name="calendar-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
+                  <ThemedText style={styles.detailText}>Plazo límite: {job.deadline}</ThemedText>
                 </View>
               </View>
 
@@ -89,14 +89,14 @@ export default function EmpleoScreen() {
                 <View style={styles.typeBadge}>
                   <ThemedText style={styles.typeText}>{job.type}</ThemedText>
                 </View>
-                <ThemedText style={styles.postulateText}>Postularse &rarr;</ThemedText>
+                <ThemedText style={styles.postulateText}>Ver Bases &rarr;</ThemedText>
               </View>
             </TouchableOpacity>
           ))
         ) : (
           <View style={styles.emptyContainer}>
             <Ionicons name="search-outline" size={48} color="rgba(255, 255, 255, 0.2)" />
-            <ThemedText style={styles.emptyText}>No se encontraron ofertas de empleo.</ThemedText>
+            <ThemedText style={styles.emptyText}>No se encontraron convocatorias públicas.</ThemedText>
           </View>
         )}
       </ScrollView>
@@ -168,11 +168,11 @@ const styles = StyleSheet.create({
     gap: 14,
     marginBottom: 16,
   },
-  companyIconBg: {
+  organismIconBg: {
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+    backgroundColor: 'rgba(168, 85, 247, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -184,8 +184,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  companyName: {
-    color: '#3b82f6',
+  organismName: {
+    color: '#a855f7',
     fontSize: 13,
     marginTop: 2,
   },
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   postulateText: {
-    color: '#3b82f6',
+    color: '#a855f7',
     fontWeight: 'bold',
     fontSize: 13,
   },

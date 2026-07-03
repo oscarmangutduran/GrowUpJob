@@ -6,30 +6,30 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '../../components/themed-text';
 import { ThemedView } from '../../components/themed-view';
 
-interface Job {
+interface Course {
   id: number;
   title: string;
-  company: string;
-  location: string;
-  salary: string;
-  type: string;
+  provider: string;
+  duration: string;
+  modality: string;
+  category: string;
 }
 
-export default function EmpleoScreen() {
+export default function FormacionScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const mockJobs: Job[] = [
-    { id: 1, title: 'Desarrollador React Native Senior', company: 'AppCreators', location: 'Remoto (Madrid)', salary: '45K - 55K €/año', type: 'Jornada Completa' },
-    { id: 2, title: 'Administrador de Sistemas Cloud', company: 'Global Data', location: 'Barcelona', salary: '38K - 44K €/año', type: 'Híbrido' },
-    { id: 3, title: 'Consultor SAP', company: 'Bussines Consult', location: 'Valencia', salary: '40K - 50K €/año', type: 'Jornada Completa' },
-    { id: 4, title: 'Diseñador UI/UX Junior', company: 'Pixel Art', location: 'Málaga', salary: '22K - 26K €/año', type: 'Remoto' },
-    { id: 5, title: 'Desarrollador Fullstack Laravel/React', company: 'CodeDev', location: 'Remoto', salary: '32K - 38K €/año', type: 'Jornada Completa' },
+  const mockCourses: Course[] = [
+    { id: 1, title: 'Masterclass en React Native y Expo', provider: 'GrowUp Academy', duration: '40 horas', modality: 'Online (Asíncrono)', category: 'Desarrollo' },
+    { id: 2, title: 'Introducción a Laravel 11', provider: 'PHP Institute', duration: '25 horas', modality: 'Online (En Vivo)', category: 'Desarrollo' },
+    { id: 3, title: 'Diseño UX/UX para Aplicaciones Híbridas', provider: 'Creative School', duration: '30 horas', modality: 'Presencial', category: 'Diseño' },
+    { id: 4, title: 'Estrategias de Marketing Digital', provider: 'GrowUp Academy', duration: '50 horas', modality: 'Online (Asíncrono)', category: 'Marketing' },
+    { id: 5, title: 'Metodologías Ágiles y Scrum Master', provider: 'Agile World', duration: '15 horas', modality: 'Híbrido', category: 'Gestión' },
   ];
 
-  const filteredJobs = mockJobs.filter(job => 
-    job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    job.company.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCourses = mockCourses.filter(course => 
+    course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    course.provider.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -38,7 +38,7 @@ export default function EmpleoScreen() {
       style={styles.container}
     >
       <View style={styles.header}>
-        <ThemedText type="subtitle" style={styles.headerTitle}>Empleo Privado</ThemedText>
+        <ThemedText type="subtitle" style={styles.headerTitle}>Formación</ThemedText>
       </View>
 
       <View style={styles.searchSection}>
@@ -46,7 +46,7 @@ export default function EmpleoScreen() {
           <Ionicons name="search" size={20} color="rgba(255, 255, 255, 0.5)" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Buscar puestos, empresas..."
+            placeholder="Buscar cursos, categorías..."
             placeholderTextColor="rgba(255, 255, 255, 0.5)"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -61,42 +61,42 @@ export default function EmpleoScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {filteredJobs.length > 0 ? (
-          filteredJobs.map((job) => (
-            <TouchableOpacity key={job.id} style={styles.jobCard} onPress={() => alert(`Postularse a ${job.title}`)}>
-              <View style={styles.jobCardHeader}>
-                <View style={styles.companyIconBg}>
-                  <Ionicons name="briefcase" size={24} color="#3b82f6" />
+        {filteredCourses.length > 0 ? (
+          filteredCourses.map((course) => (
+            <TouchableOpacity key={course.id} style={styles.courseCard} onPress={() => alert(`Inscribirse en ${course.title}`)}>
+              <View style={styles.courseCardHeader}>
+                <View style={styles.providerIconBg}>
+                  <Ionicons name="school" size={24} color="#10b981" />
                 </View>
-                <View style={styles.jobTitleContainer}>
-                  <ThemedText style={styles.jobTitle}>{job.title}</ThemedText>
-                  <ThemedText style={styles.companyName}>{job.company}</ThemedText>
-                </View>
-              </View>
-
-              <View style={styles.jobCardDetails}>
-                <View style={styles.detailRow}>
-                  <Ionicons name="location-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
-                  <ThemedText style={styles.detailText}>{job.location}</ThemedText>
-                </View>
-                <View style={styles.detailRow}>
-                  <Ionicons name="cash-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
-                  <ThemedText style={styles.detailText}>{job.salary}</ThemedText>
+                <View style={styles.courseTitleContainer}>
+                  <ThemedText style={styles.courseTitle}>{course.title}</ThemedText>
+                  <ThemedText style={styles.providerName}>{course.provider}</ThemedText>
                 </View>
               </View>
 
-              <View style={styles.jobCardFooter}>
-                <View style={styles.typeBadge}>
-                  <ThemedText style={styles.typeText}>{job.type}</ThemedText>
+              <View style={styles.courseCardDetails}>
+                <View style={styles.detailRow}>
+                  <Ionicons name="time-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
+                  <ThemedText style={styles.detailText}>Duración: {course.duration}</ThemedText>
                 </View>
-                <ThemedText style={styles.postulateText}>Postularse &rarr;</ThemedText>
+                <View style={styles.detailRow}>
+                  <Ionicons name="videocam-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
+                  <ThemedText style={styles.detailText}>Modalidad: {course.modality}</ThemedText>
+                </View>
+              </View>
+
+              <View style={styles.courseCardFooter}>
+                <View style={styles.categoryBadge}>
+                  <ThemedText style={styles.categoryText}>{course.category}</ThemedText>
+                </View>
+                <ThemedText style={styles.enrollText}>Inscribirse &rarr;</ThemedText>
               </View>
             </TouchableOpacity>
           ))
         ) : (
           <View style={styles.emptyContainer}>
             <Ionicons name="search-outline" size={48} color="rgba(255, 255, 255, 0.2)" />
-            <ThemedText style={styles.emptyText}>No se encontraron ofertas de empleo.</ThemedText>
+            <ThemedText style={styles.emptyText}>No se encontraron cursos disponibles.</ThemedText>
           </View>
         )}
       </ScrollView>
@@ -155,41 +155,41 @@ const styles = StyleSheet.create({
     padding: 24,
     gap: 16,
   },
-  jobCard: {
+  courseCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.08)',
   },
-  jobCardHeader: {
+  courseCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
     marginBottom: 16,
   },
-  companyIconBg: {
+  providerIconBg: {
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+    backgroundColor: 'rgba(16, 185, 129, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  jobTitleContainer: {
+  courseTitleContainer: {
     flex: 1,
   },
-  jobTitle: {
+  courseTitle: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  companyName: {
-    color: '#3b82f6',
+  providerName: {
+    color: '#10b981',
     fontSize: 13,
     marginTop: 2,
   },
-  jobCardDetails: {
+  courseCardDetails: {
     gap: 8,
     marginBottom: 16,
   },
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.65)',
     fontSize: 13,
   },
-  jobCardFooter: {
+  courseCardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -210,18 +210,18 @@ const styles = StyleSheet.create({
     borderTopColor: 'rgba(255, 255, 255, 0.06)',
     paddingTop: 12,
   },
-  typeBadge: {
+  categoryBadge: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
   },
-  typeText: {
+  categoryText: {
     color: '#ffffff',
     fontSize: 12,
   },
-  postulateText: {
-    color: '#3b82f6',
+  enrollText: {
+    color: '#10b981',
     fontWeight: 'bold',
     fontSize: 13,
   },

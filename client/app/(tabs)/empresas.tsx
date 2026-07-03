@@ -6,30 +6,30 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '../../components/themed-text';
 import { ThemedView } from '../../components/themed-view';
 
-interface Job {
+interface Company {
   id: number;
-  title: string;
-  company: string;
-  location: string;
-  salary: string;
-  type: string;
+  name: string;
+  industry: string;
+  size: string;
+  description: string;
+  jobsCount: number;
 }
 
-export default function EmpleoScreen() {
+export default function EmpresasScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const mockJobs: Job[] = [
-    { id: 1, title: 'Desarrollador React Native Senior', company: 'AppCreators', location: 'Remoto (Madrid)', salary: '45K - 55K €/año', type: 'Jornada Completa' },
-    { id: 2, title: 'Administrador de Sistemas Cloud', company: 'Global Data', location: 'Barcelona', salary: '38K - 44K €/año', type: 'Híbrido' },
-    { id: 3, title: 'Consultor SAP', company: 'Bussines Consult', location: 'Valencia', salary: '40K - 50K €/año', type: 'Jornada Completa' },
-    { id: 4, title: 'Diseñador UI/UX Junior', company: 'Pixel Art', location: 'Málaga', salary: '22K - 26K €/año', type: 'Remoto' },
-    { id: 5, title: 'Desarrollador Fullstack Laravel/React', company: 'CodeDev', location: 'Remoto', salary: '32K - 38K €/año', type: 'Jornada Completa' },
+  const mockCompanies: Company[] = [
+    { id: 1, name: 'AppCreators', industry: 'Desarrollo de Software', size: '50-100 empleados', description: 'Empresa líder en el desarrollo de aplicaciones móviles nativas e híbridas.', jobsCount: 3 },
+    { id: 2, name: 'Global Data', industry: 'Big Data & IA', size: '100-500 empleados', description: 'Servicios de análisis de datos e infraestructura inteligente en la nube.', jobsCount: 5 },
+    { id: 3, name: 'Bussines Consult', industry: 'Consultoría TI', size: '500+ empleados', description: 'Consultoría estratégica para implantaciones ERP y transformación digital.', jobsCount: 2 },
+    { id: 4, name: 'Pixel Art', industry: 'Diseño Gráfico y UI/UX', size: '10-50 empleados', description: 'Agencia boutique especializada en diseño de experiencias e identidad visual.', jobsCount: 1 },
+    { id: 5, name: 'CodeDev', industry: 'Desarrollo de Software', size: '20-50 empleados', description: 'Factoría de software ágil especializada en Laravel, Vue y React.', jobsCount: 4 },
   ];
 
-  const filteredJobs = mockJobs.filter(job => 
-    job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    job.company.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCompanies = mockCompanies.filter(company => 
+    company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    company.industry.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -38,7 +38,7 @@ export default function EmpleoScreen() {
       style={styles.container}
     >
       <View style={styles.header}>
-        <ThemedText type="subtitle" style={styles.headerTitle}>Empleo Privado</ThemedText>
+        <ThemedText type="subtitle" style={styles.headerTitle}>Empresas</ThemedText>
       </View>
 
       <View style={styles.searchSection}>
@@ -46,7 +46,7 @@ export default function EmpleoScreen() {
           <Ionicons name="search" size={20} color="rgba(255, 255, 255, 0.5)" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Buscar puestos, empresas..."
+            placeholder="Buscar empresas, sectores..."
             placeholderTextColor="rgba(255, 255, 255, 0.5)"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -61,42 +61,34 @@ export default function EmpleoScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {filteredJobs.length > 0 ? (
-          filteredJobs.map((job) => (
-            <TouchableOpacity key={job.id} style={styles.jobCard} onPress={() => alert(`Postularse a ${job.title}`)}>
-              <View style={styles.jobCardHeader}>
+        {filteredCompanies.length > 0 ? (
+          filteredCompanies.map((company) => (
+            <TouchableOpacity key={company.id} style={styles.companyCard} onPress={() => alert(`Detalles de ${company.name}`)}>
+              <View style={styles.companyCardHeader}>
                 <View style={styles.companyIconBg}>
-                  <Ionicons name="briefcase" size={24} color="#3b82f6" />
+                  <Ionicons name="business" size={24} color="#f59e0b" />
                 </View>
-                <View style={styles.jobTitleContainer}>
-                  <ThemedText style={styles.jobTitle}>{job.title}</ThemedText>
-                  <ThemedText style={styles.companyName}>{job.company}</ThemedText>
-                </View>
-              </View>
-
-              <View style={styles.jobCardDetails}>
-                <View style={styles.detailRow}>
-                  <Ionicons name="location-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
-                  <ThemedText style={styles.detailText}>{job.location}</ThemedText>
-                </View>
-                <View style={styles.detailRow}>
-                  <Ionicons name="cash-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
-                  <ThemedText style={styles.detailText}>{job.salary}</ThemedText>
+                <View style={styles.companyTitleContainer}>
+                  <ThemedText style={styles.companyName}>{company.name}</ThemedText>
+                  <ThemedText style={styles.companyIndustry}>{company.industry}</ThemedText>
                 </View>
               </View>
 
-              <View style={styles.jobCardFooter}>
-                <View style={styles.typeBadge}>
-                  <ThemedText style={styles.typeText}>{job.type}</ThemedText>
+              <ThemedText style={styles.companyDescription}>{company.description}</ThemedText>
+
+              <View style={styles.companyCardFooter}>
+                <View style={styles.sizeBadge}>
+                  <Ionicons name="people-outline" size={14} color="rgba(255, 255, 255, 0.5)" />
+                  <ThemedText style={styles.sizeText}>{company.size}</ThemedText>
                 </View>
-                <ThemedText style={styles.postulateText}>Postularse &rarr;</ThemedText>
+                <ThemedText style={styles.activeJobsText}>{company.jobsCount} ofertas activas &rarr;</ThemedText>
               </View>
             </TouchableOpacity>
           ))
         ) : (
           <View style={styles.emptyContainer}>
             <Ionicons name="search-outline" size={48} color="rgba(255, 255, 255, 0.2)" />
-            <ThemedText style={styles.emptyText}>No se encontraron ofertas de empleo.</ThemedText>
+            <ThemedText style={styles.emptyText}>No se encontraron empresas.</ThemedText>
           </View>
         )}
       </ScrollView>
@@ -155,54 +147,47 @@ const styles = StyleSheet.create({
     padding: 24,
     gap: 16,
   },
-  jobCard: {
+  companyCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.08)',
   },
-  jobCardHeader: {
+  companyCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
-    marginBottom: 16,
+    marginBottom: 12,
   },
   companyIconBg: {
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+    backgroundColor: 'rgba(245, 158, 11, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  jobTitleContainer: {
+  companyTitleContainer: {
     flex: 1,
   },
-  jobTitle: {
+  companyName: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  companyName: {
-    color: '#3b82f6',
+  companyIndustry: {
+    color: '#f59e0b',
     fontSize: 13,
     marginTop: 2,
   },
-  jobCardDetails: {
-    gap: 8,
-    marginBottom: 16,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  detailText: {
+  companyDescription: {
     color: 'rgba(255, 255, 255, 0.65)',
     fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 16,
   },
-  jobCardFooter: {
+  companyCardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -210,18 +195,21 @@ const styles = StyleSheet.create({
     borderTopColor: 'rgba(255, 255, 255, 0.06)',
     paddingTop: 12,
   },
-  typeBadge: {
+  sizeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
+    gap: 6,
   },
-  typeText: {
+  sizeText: {
     color: '#ffffff',
     fontSize: 12,
   },
-  postulateText: {
-    color: '#3b82f6',
+  activeJobsText: {
+    color: '#f59e0b',
     fontWeight: 'bold',
     fontSize: 13,
   },
