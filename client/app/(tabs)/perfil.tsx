@@ -50,7 +50,9 @@ export default function PerfilScreen() {
           <ThemedText type="subtitle" style={styles.userName}>{user?.name || 'Nombre del Candidato'}</ThemedText>
           <ThemedText style={styles.userEmail}>{user?.email || 'correo@ejemplo.com'}</ThemedText>
           <View style={styles.tag}>
-            <ThemedText style={styles.tagText}>Candidato Activo</ThemedText>
+            <ThemedText style={styles.tagText}>
+              {user?.role === 'empresa' ? 'Empresa / Reclutador' : 'Trabajador / Candidato'}
+            </ThemedText>
           </View>
         </View>
 

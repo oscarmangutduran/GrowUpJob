@@ -6,6 +6,7 @@ interface User {
   name: string;
   email: string;
   google_id: string | null;
+  role: string;
   created_at: string;
 }
 
@@ -14,7 +15,7 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string, role: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -74,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (name: string, email: string, password: string, role: string) => {
     setIsLoading(true);
     try {
       const response = await apiRequest('/auth/register', {
@@ -83,9 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           name,
           email,
           password,
-          password_confirmed: password, // Laravel 11 espera password_confirmation, pero en register() pusimos confirmed. Validemos en el controlador. 
-          // Espera, en el controlador pusimos 'password' => 'required|string|min:8|confirmed', lo que significa que requiere 'password_confirmation'.
-          // Enviemos password_confirmation.
+          role,
           password_confirmation: password,
         }),
       });

@@ -24,6 +24,7 @@ export default function RegisterScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<'trabajador' | 'empresa'>('trabajador');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -42,7 +43,7 @@ export default function RegisterScreen() {
     setErrorMessage('');
     setIsSubmitting(true);
     try {
-      await register(name, email, password);
+      await register(name, email, password, role);
       router.replace('/(tabs)');
     } catch (error: any) {
       setErrorMessage(error.message || 'Error al registrarse.');
@@ -125,6 +126,38 @@ export default function RegisterScreen() {
                   size={20}
                   color="rgba(255, 255, 255, 0.6)"
                 />
+              </TouchableOpacity>
+            </View>
+
+            {/* Selector de Rol */}
+            <View style={styles.roleSelectorContainer}>
+              <TouchableOpacity
+                style={[styles.roleOption, role === 'trabajador' && styles.roleOptionActive]}
+                onPress={() => setRole('trabajador')}
+              >
+                <Ionicons
+                  name="person"
+                  size={16}
+                  color={role === 'trabajador' ? '#ffffff' : 'rgba(255, 255, 255, 0.5)'}
+                  style={styles.roleIcon}
+                />
+                <ThemedText style={[styles.roleText, role === 'trabajador' && styles.roleTextActive]}>
+                  Trabajador
+                </ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.roleOption, role === 'empresa' && styles.roleOptionActive]}
+                onPress={() => setRole('empresa')}
+              >
+                <Ionicons
+                  name="business"
+                  size={16}
+                  color={role === 'empresa' ? '#ffffff' : 'rgba(255, 255, 255, 0.5)'}
+                  style={styles.roleIcon}
+                />
+                <ThemedText style={[styles.roleText, role === 'empresa' && styles.roleTextActive]}>
+                  Empresa
+                </ThemedText>
               </TouchableOpacity>
             </View>
 
@@ -264,6 +297,39 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     padding: 6,
+  },
+  roleSelectorContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 14,
+    padding: 4,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+  },
+  roleOption: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  roleOptionActive: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+  },
+  roleIcon: {
+    marginRight: 6,
+  },
+  roleText: {
+    color: 'rgba(255, 255, 255, 0.5)',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  roleTextActive: {
+    color: '#ffffff',
   },
   registerButtonContainer: {
     width: '100%',

@@ -42,14 +42,7 @@ export default function LoginScreen() {
     setIsSubmitting(true);
     try {
       await login(email, password);
-      if (Platform.OS === 'web') {
-        alert('bienvenid@ a GrowUpJob');
-        router.replace('/(tabs)');
-      } else {
-        Alert.alert('¡Bienvenido!', 'bienvenid@ a GrowUpJob', [
-          { text: 'Aceptar', onPress: () => router.replace('/(tabs)') }
-        ], { cancelable: false });
-      }
+      router.replace('/(tabs)');
     } catch (error: any) {
       setErrorMessage(error.message || 'Error al iniciar sesión.');
     } finally {
@@ -62,14 +55,7 @@ export default function LoginScreen() {
     setIsGoogleSubmitting(true);
     try {
       await loginWithGoogle();
-      if (Platform.OS === 'web') {
-        alert('bienvenid@ a GrowUpJob');
-        router.replace('/(tabs)');
-      } else {
-        Alert.alert('¡Bienvenido!', 'bienvenid@ a GrowUpJob', [
-          { text: 'Aceptar', onPress: () => router.replace('/(tabs)') }
-        ], { cancelable: false });
-      }
+      router.replace('/(tabs)');
     } catch (error: any) {
       setErrorMessage(error.message || 'Error al iniciar con Google.');
     } finally {
