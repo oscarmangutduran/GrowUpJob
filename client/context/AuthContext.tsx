@@ -7,6 +7,12 @@ interface User {
   email: string;
   google_id: string | null;
   role: string;
+  last_name: string | null;
+  headline: string | null;
+  phone: string | null;
+  location: string | null;
+  birthday: string | null;
+  avatar: string | null;
   created_at: string;
 }
 
@@ -18,6 +24,15 @@ interface AuthContextType {
   register: (name: string, email: string, password: string, role: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  updateProfile: (profileData: {
+    name: string;
+    last_name: string | null;
+    headline: string | null;
+    phone: string | null;
+    location: string | null;
+    birthday: string | null;
+    avatar: string | null;
+  }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -143,6 +158,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateProfile = async (profileData: {
+    name: string;
+    last_name: string | null;
+    headline: string | null;
+    phone: string | null;
+    location: string | null;
+    birthday: string | null;
+    avatar: string | null;
+  }) => {
+    setIsLoading(true);
+    try {
+      const response = await apiRequest('/user/profile', {
+        method: 'PUT',
+        body: JSON.stringify(profileData),
+      });
+
+      if (response.status === 'success' && response.user) {
+        setUser(response.user);
+      } else {
+        throw new Error(response.message || 'Error al actualizar el perfil');
+      }
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -153,6 +196,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         register,
         loginWithGoogle,
         logout,
+        updateProfile,
       }}
     >
       {children}

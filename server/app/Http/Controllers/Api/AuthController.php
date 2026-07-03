@@ -206,4 +206,38 @@ class AuthController extends Controller
             'user' => $request->user(),
         ]);
     }
+
+    /**
+     * Update authenticated user profile details.
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'headline' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'birthday' => 'nullable|string|max:255',
+            'avatar' => 'nullable|string',
+        ]);
+
+        $user->update($request->only([
+            'name',
+            'last_name',
+            'headline',
+            'phone',
+            'location',
+            'birthday',
+            'avatar',
+        ]));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Perfil actualizado correctamente',
+            'user' => $user,
+        ]);
+    }
 }
