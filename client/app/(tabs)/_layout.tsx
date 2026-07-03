@@ -33,7 +33,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="empleo-publico"
         options={{
-          title: 'E. Público',
+          title: 'Empleo Público',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'document-text' : 'document-text-outline'} size={22} color={color} />
           ),

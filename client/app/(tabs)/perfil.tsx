@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Platform, Alert } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Platform, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { useAuth } from '../../context/AuthContext';
 import { ThemedText } from '../../components/themed-text';
 import { ThemedView } from '../../components/themed-view';
@@ -10,22 +11,10 @@ import { ThemedView } from '../../components/themed-view';
 export default function PerfilScreen() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const [showLogoutModal, setShowLogoutModal] = React.useState(false);
 
   const handleLogout = () => {
-    if (Platform.OS === 'web') {
-      if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-        logout();
-      }
-    } else {
-      Alert.alert(
-        'Cerrar Sesión',
-        '¿Estás seguro de que quieres cerrar sesión?',
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          { text: 'Sí, cerrar', style: 'destructive', onPress: logout },
-        ]
-      );
-    }
+    setShowLogoutModal(true);
   };
 
   return (
@@ -96,6 +85,45 @@ export default function PerfilScreen() {
           </View>
         </View>
       </ScrollView>
+
+      {/* Modal de Confirmación de Cierre de Sesión */}
+      <Modal
+        visible={showLogoutModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowLogoutModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <BlurView intensity={25} tint="dark" style={styles.modalBlur}>
+            <View style={styles.modalCard}>
+              <View style={styles.modalIconBg}>
+                <Ionicons name="log-out" size={32} color="#ff453a" />
+              </View>
+              <ThemedText style={styles.modalTitle}>Cerrar Sesión</ThemedText>
+              <ThemedText style={styles.modalMessage}>
+                ¿Estás seguro de que deseas cerrar sesión en GrowUpJob?
+              </ThemedText>
+              <View style={styles.modalButtonsRow}>
+                <TouchableOpacity
+                  style={styles.modalButtonCancel}
+                  onPress={() => setShowLogoutModal(false)}
+                >
+                  <ThemedText style={styles.modalButtonCancelText}>Cancelar</ThemedText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalButtonConfirm}
+                  onPress={() => {
+                    setShowLogoutModal(false);
+                    logout();
+                  }}
+                >
+                  <ThemedText style={styles.modalButtonConfirmText}>Cerrar</ThemedText>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </BlurView>
+        </View>
+      </Modal>
     </LinearGradient>
   );
 }
@@ -230,5 +258,88 @@ const styles = StyleSheet.create({
   skillText: {
     color: '#ffffff',
     fontSize: 13,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBlur: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalCard: {
+    width: '85%',
+    maxWidth: 340,
+    backgroundColor: 'rgba(21, 16, 40, 0.95)',
+    borderRadius: 28,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.4,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  modalIconBg: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(255, 69, 58, 0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 69, 58, 0.25)',
+  },
+  modalTitle: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  modalMessage: {
+    color: 'rgba(255, 255, 255, 0.65)',
+    fontSize: 14,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalButtonsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  modalButtonCancel: {
+    flex: 1,
+    height: 44,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  modalButtonCancelText: {
+    color: 'rgba(255, 255, 255, 0.75)',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  modalButtonConfirm: {
+    flex: 1,
+    height: 44,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ff453a',
+  },
+  modalButtonConfirmText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
