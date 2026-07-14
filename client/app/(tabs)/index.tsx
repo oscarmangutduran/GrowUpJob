@@ -38,6 +38,36 @@ export default function EmpleoScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalError, setModalError] = useState<string | null>(null);
 
+  // Filtros de búsqueda
+  const [showFilters, setShowFilters] = useState(false);
+  const [filterLocation, setFilterLocation] = useState('');
+  const [filterTitle, setFilterTitle] = useState('');
+  const [filterType, setFilterType] = useState('');
+  const [filterExperience, setFilterExperience] = useState('');
+
+  const filteredJobs = jobs.filter(job => {
+    const matchesQuery = !searchQuery || 
+      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.company_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.location.toLowerCase().includes(searchQuery.toLowerCase());
+      
+    const matchesLocation = !filterLocation || 
+      job.location.toLowerCase().includes(filterLocation.toLowerCase());
+      
+    const matchesTitle = !filterTitle || 
+      job.title.toLowerCase().includes(filterTitle.toLowerCase());
+      
+    const matchesType = !filterType || 
+      job.type.toLowerCase().includes(filterType.toLowerCase());
+      
+    const matchesExperience = !filterExperience || 
+      job.title.toLowerCase().includes(filterExperience.toLowerCase()) ||
+      job.description.toLowerCase().includes(filterExperience.toLowerCase());
+      
+    return matchesQuery && matchesLocation && matchesTitle && matchesType && matchesExperience;
+  });
+
   const handleCreateJob = async () => {
     if (!newTitle || !newDescription || !newLocation || !newType) {
       setModalError('Por favor, rellena los campos obligatorios.');
@@ -123,7 +153,107 @@ export default function EmpleoScreen() {
             </TouchableOpacity>
           )}
         </View>
+        <TouchableOpacity 
+          style={[styles.filterButton, (showFilters || filterLocation || filterTitle || filterType || filterExperience) ? styles.filterButtonActive : null]} 
+          onPress={() => setShowFilters(!showFilters)}
+        >
+          <Ionicons name="options-outline" size={22} color="#ffffff" />
+        </TouchableOpacity>
       </View>
+
+      {showFilters && (
+        <View style={styles.filterPanel}>
+          {/* Fila: Localidad y Puesto */}
+          <View style={styles.filterRow}>
+            <View style={styles.filterCol}>
+              <ThemedText style={styles.filterLabel}>Localidad</ThemedText>
+              <View style={styles.filterInputWrapper}>
+                <Ionicons name="location-outline" size={16} color="rgba(15, 23, 42, 0.45)" />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Ej. Madrid"
+                  placeholderTextColor="rgba(15, 23, 42, 0.45)"
+                  value={filterLocation}
+                  onChangeText={setFilterLocation}
+                />
+              </View>
+            </View>
+            <View style={styles.filterCol}>
+              <ThemedText style={styles.filterLabel}>Puesto de trabajo</ThemedText>
+              <View style={styles.filterInputWrapper}>
+                <Ionicons name="briefcase-outline" size={16} color="rgba(15, 23, 42, 0.45)" />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Ej. Desarrollador"
+                  placeholderTextColor="rgba(15, 23, 42, 0.45)"
+                  value={filterTitle}
+                  onChangeText={setFilterTitle}
+                />
+              </View>
+            </View>
+          </View>
+
+          {/* Tipo de jornada */}
+          <View style={styles.filterCol}>
+            <ThemedText style={styles.filterLabel}>Tipo de jornada</ThemedText>
+            <View style={styles.filterSelectorRow}>
+              {['Remoto', 'Híbrido', 'Presencial'].map((type) => {
+                const isActive = filterType === type;
+                return (
+                  <TouchableOpacity 
+                    key={type} 
+                    style={[styles.filterBadge, isActive && styles.filterBadgeActive]}
+                    onPress={() => setFilterType(isActive ? '' : type)}
+                  >
+                    <ThemedText style={[styles.filterBadgeText, isActive && styles.filterBadgeTextActive]}>
+                      {type}
+                    </ThemedText>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+
+          {/* Experiencia */}
+          <View style={styles.filterCol}>
+            <ThemedText style={styles.filterLabel}>Experiencia</ThemedText>
+            <View style={styles.filterSelectorRow}>
+              {['Junior', 'Mid', 'Senior'].map((exp) => {
+                const isActive = filterExperience === exp;
+                return (
+                  <TouchableOpacity 
+                    key={exp} 
+                    style={[styles.filterBadge, isActive && styles.filterBadgeActive]}
+                    onPress={() => setFilterExperience(isActive ? '' : exp)}
+                  >
+                    <ThemedText style={[styles.filterBadgeText, isActive && styles.filterBadgeTextActive]}>
+                      {exp}
+                    </ThemedText>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+
+          {/* Acciones */}
+          {(filterLocation || filterTitle || filterType || filterExperience) ? (
+            <View style={styles.filterPanelActions}>
+              <TouchableOpacity 
+                style={styles.clearFiltersButton} 
+                onPress={() => {
+                  setFilterLocation('');
+                  setFilterTitle('');
+                  setFilterType('');
+                  setFilterExperience('');
+                }}
+              >
+                <Ionicons name="trash-outline" size={14} color="rgba(255, 255, 255, 0.5)" />
+                <ThemedText style={styles.clearFiltersText}>Limpiar filtros</ThemedText>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+        </View>
+      )}
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -135,8 +265,8 @@ export default function EmpleoScreen() {
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#C50337" />
           </View>
-        ) : jobs.length > 0 ? (
-          jobs.map((job) => (
+        ) : filteredJobs.length > 0 ? (
+          filteredJobs.map((job) => (
               <TouchableOpacity key={job.id} style={styles.jobCard} onPress={() => alert(`Postularse a ${job.title}`)}>
                 <View style={styles.jobCardHeader}>
                   <View style={styles.companyIconBg}>
