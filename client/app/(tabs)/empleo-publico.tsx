@@ -44,20 +44,19 @@ export default function EmpleoPublicoScreen() {
 
       <View style={styles.searchSection}>
         <View style={styles.searchWrapper}>
-          <Ionicons name="search" size={20} color="rgba(255, 255, 255, 0.5)" style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color="#64748b" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar convocatorias, organismos..."
             placeholderTextColor="rgba(15, 23, 42, 0.45)"
             value={searchQuery}
             onChangeText={setSearchQuery}
-            {...Platform.select({
-              web: {
-                outlineStyle: 'none' as any,
-              },
-              default: {},
-            })}
           />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearSearchButton}>
+              <Ionicons name="close-circle" size={20} color="#64748b" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 

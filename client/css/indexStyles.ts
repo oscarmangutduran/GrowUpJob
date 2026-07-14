@@ -53,6 +53,15 @@ const styles = StyleSheet.create({
     color: '#0f172a',
     fontSize: 15,
     height: '100%',
+    ...Platform.select({
+      web: {
+        outlineStyle: 'none' as any,
+        borderWidth: 0,
+      },
+    }),
+  },
+  clearSearchButton: {
+    padding: 4,
   },
   scrollContent: {
     padding: 24,
