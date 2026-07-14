@@ -3,9 +3,14 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { useFonts } from 'expo-font';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import * as SplashScreen from 'expo-splash-screen';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider, useAuth } from '../context/AuthContext';
+
+SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -46,6 +51,20 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
+  const [loaded, error] = useFonts({
+    ...Ionicons.font,
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
+  }
+
   return (
     <AuthProvider>
       <RootLayoutNav />

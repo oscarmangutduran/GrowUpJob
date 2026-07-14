@@ -8,6 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../context/AuthContext';
 import { ThemedText } from '../../components/themed-text';
 import { ThemedView } from '../../components/themed-view';
+import DatePicker from '../../components/ui/DatePicker';
 
 export default function PerfilScreen() {
   const { user, logout, updateProfile } = useAuth();
@@ -26,6 +27,8 @@ export default function PerfilScreen() {
   const [editAvatar, setEditAvatar] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [editError, setEditError] = useState('');
+  
+
 
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -369,16 +372,7 @@ export default function PerfilScreen() {
 
                 {/* Campo: Cumpleaños */}
                 <ThemedText style={styles.inputLabel}>Cumpleaños</ThemedText>
-                <View style={styles.modalInputWrapper}>
-                  <Ionicons name="calendar-outline" size={20} color="rgba(255, 255, 255, 0.6)" style={styles.inputIcon} />
-                  <TextInput
-                    style={styles.modalInput}
-                    placeholder="DD/MM/AAAA"
-                    placeholderTextColor="rgba(255, 255, 255, 0.4)"
-                    value={editBirthday}
-                    onChangeText={setEditBirthday}
-                  />
-                </View>
+                <DatePicker value={editBirthday} onChange={setEditBirthday} />
 
               </ScrollView>
 
@@ -737,6 +731,7 @@ const styles = StyleSheet.create({
     height: '100%',
     marginLeft: 8,
   },
+
   inputIcon: {
     marginRight: 4,
   },

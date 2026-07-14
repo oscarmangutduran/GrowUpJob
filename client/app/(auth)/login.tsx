@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -10,12 +10,15 @@ import {
   ScrollView,
   Pressable,
   Alert,
+  ImageBackground,
+  useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import * as SecureStore from 'expo-secure-store';
 import { useAuth } from '../../context/AuthContext';
 import { ThemedText } from '../../components/themed-text';
 import { ThemedView } from '../../components/themed-view';
@@ -30,32 +33,91 @@ export default function LoginScreen() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Cargar credenciales guardadas al iniciar la pantalla
+  useEffect(() => {
+    const loadCredentials = async () => {
+      try {
+        let savedEmail = '';
+        let savedPassword = '';
+        let remember = false;
+
+        if (Platform.OS === 'web') {
+          savedEmail = localStorage.getItem('saved_email') || '';
+          savedPassword = localStorage.getItem('saved_password') || '';
+          remember = localStorage.getItem('remember_me') === 'true';
+        } else {
+          savedEmail = await SecureStore.getItemAsync('saved_email') || '';
+          savedPassword = await SecureStore.getItemAsync('saved_password') || '';
+          remember = (await SecureStore.getItemAsync('remember_me')) === 'true';
+        }
+
+        if (remember) {
+          setEmail(savedEmail);
+          setPassword(savedPassword);
+          setRememberMe(true);
+        }
+      } catch (error) {
+        console.error('Error loading credentials:', error);
+      }
+    };
+
+    loadCredentials();
+  }, []);
+
+  const saveCredentials = async (emailVal: string, passwordVal: string, remember: boolean) => {
+    try {
+      if (remember) {
+        if (Platform.OS === 'web') {
+          localStorage.setItem('saved_email', emailVal);
+          localStorage.setItem('saved_password', passwordVal);
+          localStorage.setItem('remember_me', 'true');
+        } else {
+          await SecureStore.setItemAsync('saved_email', emailVal);
+          await SecureStore.setItemAsync('saved_password', passwordVal);
+          await SecureStore.setItemAsync('remember_me', 'true');
+        }
+      } else {
+        if (Platform.OS === 'web') {
+          localStorage.removeItem('saved_email');
+          localStorage.removeItem('saved_password');
+          localStorage.removeItem('remember_me');
+        } else {
+          await SecureStore.deleteItemAsync('saved_email');
+          await SecureStore.deleteItemAsync('saved_password');
+          await SecureStore.deleteItemAsync('remember_me');
+        }
+      }
+    } catch (error) {
+      console.error('Error saving credentials:', error);
+    }
+  };
 
   const handleLogin = async () => {
     if (!email || !password) {
-      setErrorMessage('Por favor, completa todos los campos.');
+      setErrorMessage('Por favor, rellena todos los campos.');
       return;
     }
 
-    setErrorMessage('');
     setIsSubmitting(true);
+    setErrorMessage(null);
+
     try {
       await login(email, password);
-      router.replace('/(tabs)');
+      await saveCredentials(email, password, rememberMe);
     } catch (error: any) {
-      setErrorMessage(error.message || 'Error al iniciar sesión.');
+      setErrorMessage(error.message || 'Credenciales incorrectas o error de servidor.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleGoogleLogin = async () => {
-    setErrorMessage('');
     setIsGoogleSubmitting(true);
+    setErrorMessage(null);
     try {
       await loginWithGoogle();
-      router.replace('/(tabs)');
     } catch (error: any) {
       setErrorMessage(error.message || 'Error al iniciar con Google.');
     } finally {
@@ -63,242 +125,236 @@ export default function LoginScreen() {
     }
   };
 
+  const { width } = useWindowDimensions();
+  const isLargeScreen = Platform.OS === 'web' && width >= 768;
+
   return (
-    <LinearGradient
-      colors={['#0f0c20', '#15102a', '#06030d']}
-      style={styles.container}
+    <ImageBackground
+      source={require('../../assets/images/login_bg.png')}
+      style={styles.backgroundImage}
+      resizeMode="cover"
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-      >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          {/* Tarjeta con efecto Glassmorphism */}
-          <BlurView intensity={Platform.OS === 'ios' ? 30 : 40} tint="dark" style={styles.glassCard}>
+      <View style={[styles.overlayContainer, { flexDirection: isLargeScreen ? 'row' : 'column' }]}>
+        {/* Sección izquierda (Fondo limpio visible en pantallas grandes) */}
+        {isLargeScreen && <View style={styles.leftSection} />}
 
-            {/* Aura roja brillante de fondo */}
-            <View style={styles.glowAura} />
+        {/* Línea divisoria vertical blanca (Visible en pantallas grandes) */}
+        {isLargeScreen && <View style={styles.verticalDivider} />}
 
-            {/* Avatar circular con silueta de perfil */}
-            <View style={styles.avatarWrapper}>
-              <View style={styles.avatarCircle}>
-                <Ionicons name="person" size={72} color="rgba(255, 255, 255, 0.4)" />
-              </View>
-            </View>
+        {/* Sección derecha: Formulario de Login */}
+        <View style={[styles.rightSection, { flex: isLargeScreen ? 0.9 : 1, paddingHorizontal: isLargeScreen ? '8%' : 24 }]}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.keyboardView}
+          >
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+              <ThemedText style={styles.loginTitle}>Iniciar sesión</ThemedText>
 
-            {errorMessage ? (
-              <View style={styles.errorContainer}>
-                <Ionicons name="alert-circle" size={18} color="#ff453a" />
-                <ThemedText style={styles.errorText}>{errorMessage}</ThemedText>
-              </View>
-            ) : null}
-
-            {/* Input de Email (Subrayado minimalista) */}
-            <View style={styles.inputWrapper}>
-              <Ionicons name="mail" size={20} color="#ffffff" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Email ID"
-                placeholderTextColor="rgba(255, 255, 255, 0.6)"
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-                keyboardType="email-address"
-              />
-            </View>
-
-            {/* Input de Contraseña (Subrayado minimalista) */}
-            <View style={styles.inputWrapper}>
-              <Ionicons name="lock-closed" size={20} color="#ffffff" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="rgba(255, 255, 255, 0.6)"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-                autoCapitalize="none"
-              />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
-                <Ionicons
-                  name={showPassword ? 'eye-off' : 'eye'}
-                  size={20}
-                  color="rgba(255, 255, 255, 0.6)"
-                />
-              </TouchableOpacity>
-            </View>
-
-            {/* Fila Opciones: Remember Me y Forgot Password */}
-            <View style={styles.optionsRow}>
-              <Pressable
-                style={styles.checkboxContainer}
-                onPress={() => setRememberMe(!rememberMe)}
-              >
-                <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
-                  {rememberMe && <Ionicons name="checkmark" size={12} color="#ffffff" />}
+              {errorMessage ? (
+                <View style={styles.errorContainer}>
+                  <Ionicons name="alert-circle" size={18} color="#ff453a" />
+                  <ThemedText style={styles.errorText}>{errorMessage}</ThemedText>
                 </View>
-                <ThemedText style={styles.checkboxLabel}>Recordarme</ThemedText>
-              </Pressable>
+              ) : null}
 
-              <TouchableOpacity onPress={() => alert('Próximamente...')}>
-                <ThemedText style={styles.forgotText}>¿Olvidaste tu contraseña?</ThemedText>
-              </TouchableOpacity>
-            </View>
+              {/* Input de Email */}
+              <ThemedText style={styles.inputLabel}>Correo electrónico</ThemedText>
+              <View style={styles.inputCard}>
+                <Ionicons name="mail-outline" size={20} color="#64748b" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Introduce tu correo electrónico"
+                  placeholderTextColor="#94a3b8"
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  autoComplete="off"
+                  textContentType="none"
+                />
+              </View>
 
-            {/* Botón de LOGIN con degradado circular/horizontal */}
-            <TouchableOpacity
-              onPress={handleLogin}
-              disabled={isSubmitting || isGoogleSubmitting}
-              style={styles.loginButtonContainer}
-            >
-              <LinearGradient
-                colors={['#400321', '#1f0d3d', '#3b82f6']}
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
+              {/* Input de Contraseña */}
+              <ThemedText style={styles.inputLabel}>Contraseña</ThemedText>
+              <View style={styles.inputCard}>
+                <Ionicons name="shield-outline" size={20} color="#64748b" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Introduce tu contraseña"
+                  placeholderTextColor="#94a3b8"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  textContentType="none"
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+                  <Ionicons
+                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={20}
+                    color="#64748b"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {/* Fila de opciones: Recordarme y Olvidaste tu contraseña */}
+              <View style={styles.optionsRow}>
+                <Pressable
+                  style={styles.checkboxContainer}
+                  onPress={() => setRememberMe(!rememberMe)}
+                >
+                  <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
+                    {rememberMe && <Ionicons name="checkmark" size={12} color="#ffffff" />}
+                  </View>
+                  <ThemedText style={styles.checkboxLabel}>Recordarme</ThemedText>
+                </Pressable>
+
+                <TouchableOpacity onPress={() => alert('Próximamente...')}>
+                  <ThemedText style={styles.forgotText}>¿Olvidaste tu contraseña?</ThemedText>
+                </TouchableOpacity>
+              </View>
+
+              {/* Botón de Iniciar Sesión (Rojo con flecha) */}
+              <TouchableOpacity
+                onPress={handleLogin}
+                disabled={isSubmitting || isGoogleSubmitting}
                 style={styles.loginButton}
               >
                 {isSubmitting ? (
                   <ActivityIndicator color="#ffffff" />
                 ) : (
-                  <ThemedText style={styles.loginButtonText}>ENTRAR</ThemedText>
+                  <View style={styles.loginButtonContent}>
+                    <ThemedText style={styles.loginButtonText}>Iniciar sesión</ThemedText>
+                    <Ionicons name="arrow-forward" size={16} color="#ffffff" style={styles.buttonArrow} />
+                  </View>
                 )}
-              </LinearGradient>
-            </TouchableOpacity>
-
-            <View style={styles.dividerContainer}>
-              <View style={styles.dividerLine} />
-              <ThemedText style={styles.dividerText}>continúa con</ThemedText>
-              <View style={styles.dividerLine} />
-            </View>
-
-            {/* Botón de Google (Estilo Glassmorphic / Blanco) */}
-            <TouchableOpacity
-              style={styles.googleButton}
-              onPress={handleGoogleLogin}
-              disabled={isSubmitting || isGoogleSubmitting}
-            >
-              {isGoogleSubmitting ? (
-                <ActivityIndicator color="#ffffff" />
-              ) : (
-                <View style={styles.googleButtonContent}>
-                  <Image source={require('../../assets/images/google-logo.png')} style={styles.googleIcon} />
-                  <ThemedText style={styles.googleButtonText}>Google</ThemedText>
-                </View>
-              )}
-            </TouchableOpacity>
-
-            {/* Enlace de Registro */}
-            <View style={styles.footer}>
-              <ThemedText style={styles.footerText}>¿No tienes una cuenta? </ThemedText>
-              <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
-                <ThemedText style={styles.linkText}>
-                  Regístrate aquí
-                </ThemedText>
               </TouchableOpacity>
-            </View>
 
-          </BlurView>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+              {/* Divisor o continuar con */}
+              <View style={styles.dividerContainer}>
+                <View style={styles.dividerLine} />
+                <ThemedText style={styles.dividerText}>o continuar con</ThemedText>
+                <View style={styles.dividerLine} />
+              </View>
+
+              {/* Botón de Google Circular Blanco */}
+              <TouchableOpacity
+                style={styles.googleCircleButton}
+                onPress={handleGoogleLogin}
+                disabled={isSubmitting || isGoogleSubmitting}
+              >
+                {isGoogleSubmitting ? (
+                  <ActivityIndicator color="#0f172a" />
+                ) : (
+                  <Image source={require('../../assets/images/google-logo.png')} style={styles.googleIcon} />
+                )}
+              </TouchableOpacity>
+
+              {/* Enlace de Registro */}
+              <View style={styles.footer}>
+                <ThemedText style={styles.footerText}>¿No tienes una cuenta? </ThemedText>
+                <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+                  <ThemedText style={styles.linkText}>
+                    Regístrate aquí
+                  </ThemedText>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  backgroundImage: {
     flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  overlayContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+  },
+  leftSection: {
+    flex: 1.1,
+  },
+  verticalDivider: {
+    width: 1.5,
+    height: '65%',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    alignSelf: 'center',
+  },
+  rightSection: {
+    justifyContent: 'center',
   },
   keyboardView: {
+    width: '100%',
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 24,
     justifyContent: 'center',
     paddingVertical: 40,
   },
-  glassCard: {
-    borderRadius: 36,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    paddingVertical: 40,
-    paddingHorizontal: 28,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 8,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(21, 16, 40, 0.45)', // Filtro translúcido oscuro
-  },
-  glowAura: {
-    width: 240,
-    height: 240,
-    borderRadius: 120,
-    backgroundColor: '#ea4335',
-    opacity: 0.18,
-    position: 'absolute',
-    top: -50,
-    alignSelf: 'center',
-    // Efecto de desenfoque suave para web
-    ...Platform.select({
-      web: {
-        filter: 'blur(50px)',
-      },
-    }),
-  },
-  avatarWrapper: {
-    alignItems: 'center',
-    marginBottom: 36,
-    zIndex: 1,
-  },
-  avatarCircle: {
-    width: 130,
-    height: 130,
-    borderRadius: 65,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
+  loginTitle: {
+    fontSize: 34,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    marginBottom: 32,
+    alignSelf: 'flex-start',
   },
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 69, 58, 0.15)',
+    backgroundColor: 'rgba(255, 69, 58, 0.12)',
     padding: 12,
     borderRadius: 12,
     marginBottom: 20,
     gap: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 69, 58, 0.25)',
+    borderColor: 'rgba(255, 69, 58, 0.2)',
   },
   errorText: {
     color: '#ff453a',
     fontSize: 13,
     flex: 1,
   },
-  inputWrapper: {
+  inputLabel: {
+    fontSize: 13,
+    color: '#ffffff',
+    fontWeight: '600',
+    marginBottom: 8,
+    alignSelf: 'flex-start',
+  },
+  inputCard: {
+    borderRadius: 12,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 16,
+    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomWidth: 1.5,
-    borderBottomColor: 'rgba(255, 255, 255, 0.35)',
-    marginBottom: 24,
-    height: 48,
-    paddingHorizontal: 4,
+    marginBottom: 20,
+    width: '100%',
   },
   inputIcon: {
     marginRight: 12,
-    opacity: 0.9,
   },
   input: {
     flex: 1,
-    fontSize: 16,
-    color: '#ffffff',
+    fontSize: 14,
+    color: '#0f172a',
     height: '100%',
+    backgroundColor: 'transparent',
+    borderWidth: 0,
     ...Platform.select({
       web: {
         outlineStyle: 'none' as any,
+        WebkitBoxShadow: '0 0 0px 1000px #ffffff inset' as any,
+        transition: 'background-color 5000s ease-in-out 0s' as any,
+        WebkitTextFillColor: '#0f172a' as any,
       },
     }),
   },
@@ -309,7 +365,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 24,
+    width: '100%',
+    paddingHorizontal: 2,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -319,92 +377,90 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.65)',
-    borderRadius: 4,
-    marginRight: 8,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
+    borderRadius: 5,
+    marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
   checkboxChecked: {
-    backgroundColor: '#3b82f6',
-    borderColor: '#3b82f6',
+    backgroundColor: '#dc2626',
+    borderColor: '#dc2626',
   },
   checkboxLabel: {
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: 'rgba(255, 255, 255, 0.85)',
     fontSize: 13,
   },
   forgotText: {
-    color: 'rgba(255, 255, 255, 0.65)',
+    color: 'rgba(255, 255, 255, 0.75)',
     fontSize: 13,
     fontStyle: 'italic',
   },
-  loginButtonContainer: {
-    width: '100%',
-    borderRadius: 24,
-    overflow: 'hidden',
-    marginBottom: 20,
-  },
   loginButton: {
+    backgroundColor: '#dc2626',
+    borderRadius: 12,
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 24,
+    width: '100%',
+  },
+  loginButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loginButtonText: {
     color: '#ffffff',
     fontSize: 15,
     fontWeight: 'bold',
-    letterSpacing: 2,
+  },
+  buttonArrow: {
+    marginLeft: 6,
   },
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 16,
+    marginVertical: 18,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   dividerText: {
-    marginHorizontal: 12,
+    marginHorizontal: 14,
     fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.45)',
+    color: 'rgba(255, 255, 255, 0.5)',
   },
-  googleButton: {
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 24,
+  googleCircleButton: {
+    width: 48,
     height: 48,
+    borderRadius: 24,
+    backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  googleButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: 28,
   },
   googleIcon: {
     width: 20,
     height: 20,
-    marginRight: 8,
-  },
-  googleButtonText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#ffffff',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 28,
+    marginTop: 12,
   },
   footerText: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.75)',
   },
   linkText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: 'bold',
-    color: '#3b82f6',
+    color: '#ffffff',
+    textDecorationLine: 'underline',
   },
 });
