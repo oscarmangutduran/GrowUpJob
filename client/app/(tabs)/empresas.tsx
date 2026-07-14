@@ -34,7 +34,7 @@ export default function EmpresasScreen() {
 
   return (
     <LinearGradient
-      colors={['#0f0c20', '#15102a', '#06030d']}
+      colors={['#02060E', '#3a0814', '#02060E']}
       style={styles.container}
     >
       <View style={styles.header}>
@@ -47,7 +47,7 @@ export default function EmpresasScreen() {
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar empresas, sectores..."
-            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            placeholderTextColor="rgba(15, 23, 42, 0.45)"
             value={searchQuery}
             onChangeText={setSearchQuery}
             {...Platform.select({
@@ -66,7 +66,7 @@ export default function EmpresasScreen() {
             <TouchableOpacity key={company.id} style={styles.companyCard} onPress={() => alert(`Detalles de ${company.name}`)}>
               <View style={styles.companyCardHeader}>
                 <View style={styles.companyIconBg}>
-                  <Ionicons name="business" size={24} color="#f59e0b" />
+                  <Ionicons name="business" size={24} color="#C50337" />
                 </View>
                 <View style={styles.companyTitleContainer}>
                   <ThemedText style={styles.companyName}>{company.name}</ThemedText>
@@ -127,10 +127,8 @@ const styles = StyleSheet.create({
   searchWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
     paddingHorizontal: 16,
     height: 48,
   },
@@ -139,7 +137,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: '#ffffff',
+    color: '#0f172a',
     fontSize: 15,
     height: '100%',
   },
@@ -148,11 +146,11 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   companyCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    backgroundColor: 'rgba(2, 6, 14, 0.65)',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: 'rgba(197, 3, 55, 0.25)',
   },
   companyCardHeader: {
     flexDirection: 'row',
@@ -164,7 +162,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+    backgroundColor: 'rgba(197, 3, 55, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -177,7 +175,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   companyIndustry: {
-    color: '#f59e0b',
+    color: '#C50337',
     fontSize: 13,
     marginTop: 2,
   },
@@ -209,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   activeJobsText: {
-    color: '#f59e0b',
+    color: '#C50337',
     fontWeight: 'bold',
     fontSize: 13,
   },

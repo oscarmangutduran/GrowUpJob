@@ -50,7 +50,7 @@ export default function EmpleoScreen() {
 
   return (
     <LinearGradient
-      colors={['#0f0c20', '#15102a', '#06030d']}
+      colors={['#02060E', '#3a0814', '#02060E']}
       style={styles.container}
     >
       <View style={styles.header}>
@@ -63,7 +63,7 @@ export default function EmpleoScreen() {
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar puestos, empresas..."
-            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            placeholderTextColor="rgba(15, 23, 42, 0.45)"
             value={searchQuery}
             onChangeText={setSearchQuery}
             {...Platform.select({
@@ -84,49 +84,49 @@ export default function EmpleoScreen() {
       >
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#3b82f6" />
+            <ActivityIndicator size="large" color="#C50337" />
           </View>
         ) : jobs.length > 0 ? (
           jobs.map((job) => (
-            <TouchableOpacity key={job.id} style={styles.jobCard} onPress={() => alert(`Postularse a ${job.title}`)}>
-              <View style={styles.jobCardHeader}>
-                <View style={styles.companyIconBg}>
-                  <Ionicons name="briefcase" size={24} color="#3b82f6" />
-                </View>
-                <View style={styles.jobTitleContainer}>
-                  <ThemedText style={styles.jobTitle}>{job.title}</ThemedText>
-                  <ThemedText style={styles.companyName}>{job.company_name}</ThemedText>
-                </View>
-              </View>
-
-              <View style={styles.jobCardDetails}>
-                <View style={styles.detailRow}>
-                  <Ionicons name="location-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
-                  <ThemedText style={styles.detailText}>{job.location}</ThemedText>
-                </View>
-                {job.salary ? (
-                  <View style={styles.detailRow}>
-                    <Ionicons name="cash-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
-                    <ThemedText style={styles.detailText}>{job.salary}</ThemedText>
+              <TouchableOpacity key={job.id} style={styles.jobCard} onPress={() => alert(`Postularse a ${job.title}`)}>
+                <View style={styles.jobCardHeader}>
+                  <View style={styles.companyIconBg}>
+                    <Ionicons name="briefcase" size={24} color="#C50337" />
                   </View>
-                ) : null}
-              </View>
-
-              <View style={styles.jobCardFooter}>
-                <View style={styles.typeBadge}>
-                  <ThemedText style={styles.typeText}>{job.type}</ThemedText>
+                  <View style={styles.jobTitleContainer}>
+                    <ThemedText style={styles.jobTitle}>{job.title}</ThemedText>
+                    <ThemedText style={styles.companyName}>{job.company_name}</ThemedText>
+                  </View>
                 </View>
-                <ThemedText style={styles.postulateText}>Postularse &rarr;</ThemedText>
-              </View>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Ionicons name="search-outline" size={48} color="rgba(255, 255, 255, 0.2)" />
-            <ThemedText style={styles.emptyText}>No se encontraron ofertas de empleo.</ThemedText>
-          </View>
-        )}
-      </ScrollView>
+
+                <View style={styles.jobCardDetails}>
+                  <View style={styles.detailRow}>
+                    <Ionicons name="location-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
+                    <ThemedText style={styles.detailText}>{job.location}</ThemedText>
+                  </View>
+                  {job.salary ? (
+                    <View style={styles.detailRow}>
+                      <Ionicons name="cash-outline" size={16} color="rgba(255, 255, 255, 0.5)" />
+                      <ThemedText style={styles.detailText}>{job.salary}</ThemedText>
+                    </View>
+                  ) : null}
+                </View>
+
+                <View style={styles.jobCardFooter}>
+                  <View style={styles.typeBadge}>
+                    <ThemedText style={styles.typeText}>{job.type}</ThemedText>
+                  </View>
+                  <ThemedText style={styles.postulateText}>Postularse &rarr;</ThemedText>
+                </View>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Ionicons name="search-outline" size={48} color="rgba(255, 255, 255, 0.2)" />
+              <ThemedText style={styles.emptyText}>No se encontraron ofertas de empleo.</ThemedText>
+            </View>
+          )}
+        </ScrollView>
     </LinearGradient>
   );
 }
@@ -162,10 +162,8 @@ const styles = StyleSheet.create({
   searchWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
     paddingHorizontal: 16,
     height: 48,
   },
@@ -174,7 +172,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: '#ffffff',
+    color: '#0f172a',
     fontSize: 15,
     height: '100%',
   },
@@ -183,11 +181,11 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   jobCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    backgroundColor: 'rgba(2, 6, 14, 0.65)',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: 'rgba(197, 3, 55, 0.25)',
   },
   jobCardHeader: {
     flexDirection: 'row',
@@ -199,7 +197,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+    backgroundColor: 'rgba(197, 3, 55, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -212,7 +210,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   companyName: {
-    color: '#3b82f6',
+    color: '#C50337',
     fontSize: 13,
     marginTop: 2,
   },
@@ -248,7 +246,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   postulateText: {
-    color: '#3b82f6',
+    color: '#C50337',
     fontWeight: 'bold',
     fontSize: 13,
   },

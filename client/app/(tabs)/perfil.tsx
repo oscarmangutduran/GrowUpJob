@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Platform, Modal, Image, TextInput, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Platform, Modal, Image, TextInput, ActivityIndicator, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -103,7 +103,7 @@ export default function PerfilScreen() {
 
   return (
     <LinearGradient
-      colors={['#0f0c20', '#15102a', '#06030d']}
+      colors={['#02060E', '#3a0814', '#02060E']}
       style={styles.container}
     >
       <View style={styles.header}>
@@ -434,12 +434,12 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   profileCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: 'rgba(2, 6, 14, 0.65)',
     borderRadius: 24,
     padding: 24,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: 'rgba(197, 3, 55, 0.25)',
   },
   avatarCircle: {
     width: 100,
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   userHeadline: {
-    color: '#3b82f6',
+    color: '#C50337',
     fontSize: 14,
     marginTop: 4,
     textAlign: 'center',
@@ -477,14 +477,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   tag: {
-    backgroundColor: '#3b82f630',
+    backgroundColor: 'rgba(197, 3, 55, 0.15)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
     marginTop: 12,
   },
   tagText: {
-    color: '#3b82f6',
+    color: '#C50337',
     fontSize: 12,
     fontWeight: '600',
   },
@@ -506,11 +506,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   sectionCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    backgroundColor: 'rgba(2, 6, 14, 0.65)',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: 'rgba(197, 3, 55, 0.25)',
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   itemSubtitle: {
-    color: '#3b82f6',
+    color: '#C50337',
     fontSize: 13,
     marginTop: 2,
   },
@@ -592,7 +592,7 @@ const styles = StyleSheet.create({
   modalCard: {
     width: '85%',
     maxWidth: 340,
-    backgroundColor: 'rgba(21, 16, 40, 0.95)',
+    backgroundColor: 'rgba(10, 15, 30, 0.95)',
     borderRadius: 28,
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.15)',
@@ -676,7 +676,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: '80%',
     maxHeight: 650,
-    backgroundColor: 'rgba(21, 16, 40, 0.98)',
+    backgroundColor: 'rgba(10, 15, 30, 0.98)',
     borderRadius: 28,
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.15)',
@@ -708,7 +708,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   inputLabel: {
-    color: 'rgba(255, 255, 255, 0.6)',
+    color: 'rgba(255, 255, 255, 0.85)',
     fontSize: 12,
     fontWeight: '600',
     marginTop: 14,
@@ -717,16 +717,14 @@ const styles = StyleSheet.create({
   modalInputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: '#ffffff',
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.10)',
     paddingHorizontal: 12,
     height: 48,
   },
   modalInput: {
     flex: 1,
-    color: '#ffffff',
+    color: '#0f172a',
     fontSize: 14,
     height: '100%',
     marginLeft: 8,
@@ -774,7 +772,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#C50337',
   },
   modalButtonSaveText: {
     color: '#ffffff',
@@ -801,10 +799,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    backgroundColor: 'rgba(197, 3, 55, 0.08)',
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: '#3b82f6',
+    borderColor: '#C50337',
     borderRadius: 14,
     paddingVertical: 14,
     gap: 8,
@@ -812,7 +810,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   imagePickerButtonText: {
-    color: '#3b82f6',
+    color: '#C50337',
     fontSize: 14,
     fontWeight: '600',
   },

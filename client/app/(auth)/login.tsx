@@ -134,7 +134,10 @@ export default function LoginScreen() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      <View style={[styles.overlayContainer, { flexDirection: isLargeScreen ? 'row' : 'column' }]}>
+      <LinearGradient
+        colors={['rgba(2, 6, 14, 0.85)', 'rgba(58, 8, 20, 0.85)', 'rgba(2, 6, 14, 0.85)']}
+        style={[styles.overlayContainer, { flexDirection: isLargeScreen ? 'row' : 'column' }]}
+      >
         {/* Sección izquierda (Fondo limpio visible en pantallas grandes) */}
         {isLargeScreen && <View style={styles.leftSection} />}
 
@@ -198,9 +201,9 @@ export default function LoginScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Fila de opciones: Recordarme y Olvidaste tu contraseña */}
+              {/* Fila de opciones: Recordarme y ¿Olvidaste tu contraseña? */}
               <View style={styles.optionsRow}>
-                <Pressable
+                <TouchableOpacity
                   style={styles.checkboxContainer}
                   onPress={() => setRememberMe(!rememberMe)}
                 >
@@ -208,21 +211,21 @@ export default function LoginScreen() {
                     {rememberMe && <Ionicons name="checkmark" size={12} color="#ffffff" />}
                   </View>
                   <ThemedText style={styles.checkboxLabel}>Recordarme</ThemedText>
-                </Pressable>
+                </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => alert('Próximamente...')}>
+                <TouchableOpacity onPress={() => alert('Recuperar contraseña')}>
                   <ThemedText style={styles.forgotText}>¿Olvidaste tu contraseña?</ThemedText>
                 </TouchableOpacity>
               </View>
 
-              {/* Botón de Iniciar Sesión (Rojo con flecha) */}
+              {/* Botón de Iniciar Sesión */}
               <TouchableOpacity
-                onPress={handleLogin}
-                disabled={isSubmitting || isGoogleSubmitting}
                 style={styles.loginButton}
+                onPress={handleLogin}
+                disabled={isSubmitting}
               >
                 {isSubmitting ? (
-                  <ActivityIndicator color="#ffffff" />
+                  <ActivityIndicator size="small" color="#ffffff" />
                 ) : (
                   <View style={styles.loginButtonContent}>
                     <ThemedText style={styles.loginButtonText}>Iniciar sesión</ThemedText>
@@ -231,21 +234,21 @@ export default function LoginScreen() {
                 )}
               </TouchableOpacity>
 
-              {/* Divisor o continuar con */}
+              {/* Divisor con texto */}
               <View style={styles.dividerContainer}>
                 <View style={styles.dividerLine} />
-                <ThemedText style={styles.dividerText}>o continuar con</ThemedText>
+                <ThemedText style={styles.dividerText}>O continuar con</ThemedText>
                 <View style={styles.dividerLine} />
               </View>
 
-              {/* Botón de Google Circular Blanco */}
+              {/* Botones de Redes Sociales (Solo Google) */}
               <TouchableOpacity
                 style={styles.googleCircleButton}
                 onPress={handleGoogleLogin}
-                disabled={isSubmitting || isGoogleSubmitting}
+                disabled={isGoogleSubmitting}
               >
                 {isGoogleSubmitting ? (
-                  <ActivityIndicator color="#0f172a" />
+                  <ActivityIndicator size="small" color="#0f172a" />
                 ) : (
                   <Image source={require('../../assets/images/google-logo.png')} style={styles.googleIcon} />
                 )}
@@ -263,7 +266,7 @@ export default function LoginScreen() {
             </ScrollView>
           </KeyboardAvoidingView>
         </View>
-      </View>
+      </LinearGradient>
     </ImageBackground>
   );
 }
@@ -276,7 +279,7 @@ const styles = StyleSheet.create({
   },
   overlayContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    backgroundColor: 'rgba(2, 6, 14, 0.25)',
   },
   leftSection: {
     flex: 1.1,
@@ -284,7 +287,7 @@ const styles = StyleSheet.create({
   verticalDivider: {
     width: 1.5,
     height: '65%',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'rgba(197, 3, 55, 0.45)',
     alignSelf: 'center',
   },
   rightSection: {
@@ -385,8 +388,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   checkboxChecked: {
-    backgroundColor: '#dc2626',
-    borderColor: '#dc2626',
+    backgroundColor: '#C50337',
+    borderColor: '#C50337',
   },
   checkboxLabel: {
     color: 'rgba(255, 255, 255, 0.85)',
@@ -398,7 +401,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   loginButton: {
-    backgroundColor: '#dc2626',
+    backgroundColor: '#C50337',
     borderRadius: 12,
     height: 48,
     justifyContent: 'center',
@@ -460,7 +463,7 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#C50337',
     textDecorationLine: 'underline',
   },
 });

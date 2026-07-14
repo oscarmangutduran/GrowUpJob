@@ -20,7 +20,7 @@ export default function InsigniasScreen() {
 
   const mockBadges: Badge[] = [
     { id: 1, title: 'Primer Registro', description: '¡Bienvenido a bordo! Has completado tu cuenta.', icon: 'rocket', color: '#10b981', unlocked: true },
-    { id: 2, title: 'Cuenta Vinculada', description: 'Has enlazado tu perfil con Google de forma segura.', icon: 'key', color: '#3b82f6', unlocked: true },
+    { id: 2, title: 'Cuenta Vinculada', description: 'Has enlazado tu perfil con Google de forma segura.', icon: 'key', color: '#C50337', unlocked: true },
     { id: 3, title: 'Currículum al 100%', description: 'Completaste todos los campos de tu currículum vitae.', icon: 'document-text', color: '#f59e0b', unlocked: false },
     { id: 4, title: 'Primer Postulante', description: 'Te has inscrito a tu primera oferta de empleo.', icon: 'send', color: '#a855f7', unlocked: false },
     { id: 5, title: 'Estudiante Constante', description: 'Completaste tu primer curso formativo.', icon: 'ribbon', color: '#ec4899', unlocked: false },
@@ -28,7 +28,7 @@ export default function InsigniasScreen() {
 
   return (
     <LinearGradient
-      colors={['#0f0c20', '#15102a', '#06030d']}
+      colors={['#02060E', '#3a0814', '#02060E']}
       style={styles.container}
     >
       <View style={styles.header}>
@@ -106,12 +106,12 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   overviewCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: 'rgba(2, 6, 14, 0.65)',
     borderRadius: 24,
     padding: 24,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: 'rgba(197, 3, 55, 0.25)',
   },
   trophyIcon: {
     marginBottom: 12,
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   overviewSubtitle: {
-    color: 'rgba(255, 255, 255, 0.6)',
+    color: 'rgba(255, 230, 235, 0.65)',
     fontSize: 13,
     marginTop: 6,
     textAlign: 'center',
@@ -132,11 +132,11 @@ const styles = StyleSheet.create({
   },
   badgeCard: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    backgroundColor: 'rgba(2, 6, 14, 0.65)',
     borderRadius: 20,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: 'rgba(197, 3, 55, 0.25)',
     gap: 16,
     alignItems: 'center',
   },
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   badgeDescription: {
-    color: 'rgba(255, 255, 255, 0.6)',
+    color: 'rgba(255, 230, 235, 0.65)',
     fontSize: 13,
     lineHeight: 18,
   },

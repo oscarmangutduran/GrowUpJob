@@ -54,7 +54,7 @@ export default function RegisterScreen() {
 
   return (
     <LinearGradient
-      colors={['#0f0c20', '#15102a', '#06030d']}
+      colors={['#02060E', '#3a0814', '#02060E']}
       style={styles.container}
     >
       <KeyboardAvoidingView
@@ -173,7 +173,7 @@ export default function RegisterScreen() {
               style={styles.registerButtonContainer}
             >
               <LinearGradient
-                colors={['#400321', '#1f0d3d', '#3b82f6']}
+                colors={['#C50337', '#02060E']}
                 start={{ x: 0, y: 0.5 }}
                 end={{ x: 1, y: 0.5 }}
                 style={styles.registerButton}
@@ -219,7 +219,8 @@ const styles = StyleSheet.create({
   glassCard: {
     borderRadius: 36,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: 'rgba(2, 6, 14, 0.65)',
+    borderColor: 'rgba(197, 3, 55, 0.25)',
     paddingVertical: 40,
     paddingHorizontal: 28,
     shadowColor: '#000',
@@ -228,13 +229,12 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 8,
     overflow: 'hidden',
-    backgroundColor: 'rgba(21, 16, 40, 0.45)', // Filtro translúcido oscuro
   },
   glowAura: {
     width: 240,
     height: 240,
     borderRadius: 120,
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#C50337',
     opacity: 0.18,
     position: 'absolute',
     top: -50,
@@ -366,6 +366,6 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#3b82f6',
+    color: '#C50337',
   },
 });
