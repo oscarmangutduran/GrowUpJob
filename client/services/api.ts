@@ -27,6 +27,9 @@ export const API_BASE_URL = getBaseUrl();
  */
 export async function getAuthToken(): Promise<string | null> {
   try {
+    if (Platform.OS === 'web') {
+      return localStorage.getItem('auth_token');
+    }
     return await SecureStore.getItemAsync('auth_token');
   } catch (error) {
     console.error('Error al leer el token:', error);
@@ -39,6 +42,10 @@ export async function getAuthToken(): Promise<string | null> {
  */
 export async function setAuthToken(token: string): Promise<void> {
   try {
+    if (Platform.OS === 'web') {
+      localStorage.setItem('auth_token', token);
+      return;
+    }
     await SecureStore.setItemAsync('auth_token', token);
   } catch (error) {
     console.error('Error al guardar el token:', error);
@@ -50,6 +57,10 @@ export async function setAuthToken(token: string): Promise<void> {
  */
 export async function removeAuthToken(): Promise<void> {
   try {
+    if (Platform.OS === 'web') {
+      localStorage.removeItem('auth_token');
+      return;
+    }
     await SecureStore.deleteItemAsync('auth_token');
   } catch (error) {
     console.error('Error al borrar el token:', error);

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, TextInput, Platform, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, ScrollView, TouchableOpacity, TextInput, Platform, ActivityIndicator, RefreshControl, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import styles from '../../css/indexStyles';
 import { ThemedText } from '../../components/themed-text';
 import { ThemedView } from '../../components/themed-view';
 import { apiRequest } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 interface Job {
   id: number;
@@ -20,10 +22,57 @@ interface Job {
 
 export default function EmpleoScreen() {
   const router = useRouter();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Formulario de nueva oferta de empleo
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [newLocation, setNewLocation] = useState('');
+  const [newSalary, setNewSalary] = useState('');
+  const [newType, setNewType] = useState('Remoto');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [modalError, setModalError] = useState<string | null>(null);
+
+  const handleCreateJob = async () => {
+    if (!newTitle || !newDescription || !newLocation || !newType) {
+      setModalError('Por favor, rellena los campos obligatorios.');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setModalError(null);
+    try {
+      await apiRequest('/job-listings', {
+        method: 'POST',
+        body: JSON.stringify({
+          title: newTitle,
+          company_name: user?.name || 'Empresa Anónima',
+          description: newDescription,
+          location: newLocation,
+          salary: newSalary || null,
+          type: newType,
+        }),
+      });
+      // Reset form
+      setNewTitle('');
+      setNewDescription('');
+      setNewLocation('');
+      setNewSalary('');
+      setNewType('Remoto');
+      setShowAddModal(false);
+      // Refresh jobs list
+      fetchJobs(searchQuery);
+    } catch (error: any) {
+      setModalError(error.message || 'Error al publicar la oferta.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const fetchJobs = async (search = '') => {
     try {
@@ -127,6 +176,123 @@ export default function EmpleoScreen() {
             </View>
           )}
         </ScrollView>
+
+      {user?.role === 'empresa' && (
+        <TouchableOpacity style={styles.fab} onPress={() => setShowAddModal(true)}>
+          <Ionicons name="add" size={30} color="#ffffff" />
+        </TouchableOpacity>
+      )}
+
+      <Modal
+        visible={showAddModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowAddModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <BlurView intensity={30} tint="dark" style={styles.modalBlur}>
+            <View style={styles.modalCard}>
+              <View style={styles.modalHeader}>
+                <ThemedText style={styles.modalTitle}>Publicar Oferta</ThemedText>
+                <TouchableOpacity onPress={() => setShowAddModal(false)} style={styles.closeButton}>
+                  <Ionicons name="close" size={24} color="#ffffff" />
+                </TouchableOpacity>
+              </View>
+
+              {modalError ? (
+                <View style={styles.modalErrorContainer}>
+                  <Ionicons name="alert-circle" size={18} color="#ff453a" />
+                  <ThemedText style={styles.modalErrorText}>{modalError}</ThemedText>
+                </View>
+              ) : null}
+
+              <ScrollView style={styles.formScroll} showsVerticalScrollIndicator={false}>
+                <ThemedText style={styles.inputLabel}>Título del Puesto *</ThemedText>
+                <View style={styles.modalInputWrapper}>
+                  <Ionicons name="briefcase-outline" size={20} color="rgba(15, 23, 42, 0.45)" style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.modalInput}
+                    placeholder="Ej. Desarrollador React Native"
+                    placeholderTextColor="rgba(15, 23, 42, 0.45)"
+                    value={newTitle}
+                    onChangeText={setNewTitle}
+                  />
+                </View>
+
+                <ThemedText style={styles.inputLabel}>Ubicación *</ThemedText>
+                <View style={styles.modalInputWrapper}>
+                  <Ionicons name="location-outline" size={20} color="rgba(15, 23, 42, 0.45)" style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.modalInput}
+                    placeholder="Ej. Madrid, España (o Remoto)"
+                    placeholderTextColor="rgba(15, 23, 42, 0.45)"
+                    value={newLocation}
+                    onChangeText={setNewLocation}
+                  />
+                </View>
+
+                <ThemedText style={styles.inputLabel}>Salario (Opcional)</ThemedText>
+                <View style={styles.modalInputWrapper}>
+                  <Ionicons name="cash-outline" size={20} color="rgba(15, 23, 42, 0.45)" style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.modalInput}
+                    placeholder="Ej. 30.000€ - 35.000€"
+                    placeholderTextColor="rgba(15, 23, 42, 0.45)"
+                    value={newSalary}
+                    onChangeText={setNewSalary}
+                  />
+                </View>
+
+                <ThemedText style={styles.inputLabel}>Tipo de Jornada *</ThemedText>
+                <View style={styles.modalInputWrapper}>
+                  <Ionicons name="time-outline" size={20} color="rgba(15, 23, 42, 0.45)" style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.modalInput}
+                    placeholder="Ej. Jornada Completa / Remoto"
+                    placeholderTextColor="rgba(15, 23, 42, 0.45)"
+                    value={newType}
+                    onChangeText={setNewType}
+                  />
+                </View>
+
+                <ThemedText style={styles.inputLabel}>Descripción del Puesto *</ThemedText>
+                <View style={styles.modalInputAreaWrapper}>
+                  <TextInput
+                    style={styles.modalInputArea}
+                    placeholder="Describe los requisitos, responsabilidades y lo que ofrece la empresa..."
+                    placeholderTextColor="rgba(15, 23, 42, 0.45)"
+                    value={newDescription}
+                    onChangeText={setNewDescription}
+                    multiline={true}
+                    numberOfLines={4}
+                  />
+                </View>
+              </ScrollView>
+
+              <View style={styles.modalFooter}>
+                <TouchableOpacity
+                  style={styles.modalButtonCancel}
+                  onPress={() => setShowAddModal(false)}
+                  disabled={isSubmitting}
+                >
+                  <ThemedText style={styles.modalButtonCancelText}>Cancelar</ThemedText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalButtonSave}
+                  onPress={handleCreateJob}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <ActivityIndicator size="small" color="#ffffff" />
+                  ) : (
+                    <ThemedText style={styles.modalButtonSaveText}>Publicar</ThemedText>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+          </BlurView>
+        </View>
+      </Modal>
     </LinearGradient>
   );
 }

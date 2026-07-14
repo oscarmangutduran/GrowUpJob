@@ -222,9 +222,10 @@ class AuthController extends Controller
             'location' => 'nullable|string|max:255',
             'birthday' => 'nullable|string|max:255',
             'avatar' => 'nullable|string',
+            'cv_base64' => 'nullable|string',
         ]);
 
-        $user->update($request->only([
+        $data = $request->only([
             'name',
             'last_name',
             'headline',
@@ -232,7 +233,17 @@ class AuthController extends Controller
             'location',
             'birthday',
             'avatar',
-        ]));
+        ]);
+
+        if ($request->cv_base64) {
+            $base64 = preg_replace('#^data:application/\w+;base64,#i', '', $request->cv_base64);
+            $pdfData = base64_decode($base64);
+            $fileName = 'cv_' . $user->id . '_' . time() . '.pdf';
+            \Storage::disk('public')->put('cvs/' . $fileName, $pdfData);
+            $data['cv_path'] = asset('storage/cvs/' . $fileName);
+        }
+
+        $user->update($data);
 
         return response()->json([
             'status' => 'success',
@@ -240,4 +251,17 @@ class AuthController extends Controller
             'user' => $user,
         ]);
     }
+
+    /**
+     * Retrieve all registered companies.
+     */
+    public function getCompanies(Request $request)
+    {
+        $companies = User::where('role', 'empresa')->get();
+        return response()->json([
+            'status' => 'success',
+            'companies' => $companies,
+        ]);
+    }
 }
+

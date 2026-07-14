@@ -11,6 +11,7 @@ Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/google', [AuthController::class, 'googleLogin']);
 Route::get('/job-listings', [JobListingController::class, 'index']);
+Route::get('/companies', [AuthController::class, 'getCompanies']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {

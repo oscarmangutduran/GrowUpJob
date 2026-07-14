@@ -13,6 +13,7 @@ interface User {
   location: string | null;
   birthday: string | null;
   avatar: string | null;
+  cv_path: string | null;
   created_at: string;
 }
 
@@ -32,6 +33,7 @@ interface AuthContextType {
     location: string | null;
     birthday: string | null;
     avatar: string | null;
+    cv_base64?: string | null;
   }) => Promise<void>;
 }
 
@@ -166,6 +168,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     location: string | null;
     birthday: string | null;
     avatar: string | null;
+    cv_base64?: string | null;
   }) => {
     setIsLoading(true);
     try {

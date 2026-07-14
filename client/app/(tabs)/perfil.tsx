@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, Platform, Modal, Image, TextInput, ActivityIndicator } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Platform, Modal, Image, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -26,8 +26,32 @@ export default function PerfilScreen() {
   const [editLocation, setEditLocation] = useState('');
   const [editBirthday, setEditBirthday] = useState('');
   const [editAvatar, setEditAvatar] = useState('');
+  const [editCvBase64, setEditCvBase64] = useState<string | null>(null);
+  const [editCvName, setEditCvName] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [editError, setEditError] = useState('');
+
+  const handleSelectCV = () => {
+    if (Platform.OS === 'web') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'application/pdf';
+      input.onchange = (e: any) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => {
+            setEditCvBase64(reader.result as string);
+            setEditCvName(file.name);
+          };
+        }
+      };
+      input.click();
+    } else {
+      Alert.alert('Subir archivo', 'Esta funcionalidad en móvil requiere expo-document-picker.');
+    }
+  };
   
 
 
@@ -43,6 +67,8 @@ export default function PerfilScreen() {
     setEditLocation(user?.location || '');
     setEditBirthday(user?.birthday || '');
     setEditAvatar(user?.avatar || '');
+    setEditCvBase64(null);
+    setEditCvName(null);
     setEditError('');
     setShowEditModal(true);
   };
@@ -93,7 +119,10 @@ export default function PerfilScreen() {
         location: editLocation || null,
         birthday: editBirthday || null,
         avatar: editAvatar || null,
+        cv_base64: editCvBase64 || null,
       });
+      setEditCvBase64(null);
+      setEditCvName(null);
       setShowEditModal(false);
     } catch (err: any) {
       setEditError(err.message || 'Error al actualizar el perfil.');
@@ -176,6 +205,52 @@ export default function PerfilScreen() {
                   <ThemedText style={styles.detailValue}>{user.birthday || 'No especificado'}</ThemedText>
                 </View>
               </View>
+            </View>
+          </View>
+        )}
+
+        {/* Sección: Currículum Vitae (Solo para Trabajadores) */}
+        {user?.role === 'trabajador' && (
+          <View style={styles.sectionCard}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="document-text" size={20} color="#C50337" />
+              <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>Currículum Vitae</ThemedText>
+            </View>
+            <View style={styles.detailsGrid}>
+              {user.cv_path ? (
+                <View style={{ gap: 12 }}>
+                  <ThemedText style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: 14 }}>
+                    Currículum subido correctamente en formato PDF.
+                  </ThemedText>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      backgroundColor: '#C50337',
+                      paddingVertical: 10,
+                      paddingHorizontal: 16,
+                      borderRadius: 12,
+                      alignSelf: 'flex-start',
+                      gap: 8,
+                    }}
+                    onPress={() => {
+                      const { Linking } = require('react-native');
+                      Linking.openURL(user.cv_path!);
+                    }}
+                  >
+                    <Ionicons name="eye-outline" size={18} color="#ffffff" />
+                    <ThemedText style={{ color: '#ffffff', fontWeight: 'bold', fontSize: 13 }}>
+                      Ver o Descargar Currículum
+                    </ThemedText>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View>
+                  <ThemedText style={{ color: 'rgba(255, 255, 255, 0.55)', fontSize: 13 }}>
+                    No has subido ningún currículum todavía. Edita tu perfil para subir tu currículum en PDF.
+                  </ThemedText>
+                </View>
+              )}
             </View>
           </View>
         )}
@@ -374,6 +449,15 @@ export default function PerfilScreen() {
                 {/* Campo: Cumpleaños */}
                 <ThemedText style={styles.inputLabel}>Cumpleaños</ThemedText>
                 <DatePicker value={editBirthday} onChange={setEditBirthday} />
+
+                {/* Campo: Currículum PDF */}
+                <ThemedText style={styles.inputLabel}>Currículum (PDF)</ThemedText>
+                <TouchableOpacity style={styles.imagePickerButton} onPress={handleSelectCV}>
+                  <Ionicons name="document-attach-outline" size={20} color="#C50337" style={styles.inputIcon} />
+                  <ThemedText style={styles.imagePickerButtonText}>
+                    {editCvName ? `PDF: ${editCvName}` : (user?.cv_path ? 'Reemplazar PDF actual' : 'Subir Currículum (PDF)')}
+                  </ThemedText>
+                </TouchableOpacity>
 
               </ScrollView>
 

@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, TextInput, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, TouchableOpacity, TextInput, Platform, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import styles from '../../css/empresasStyles';
 import { ThemedText } from '../../components/themed-text';
 import { ThemedView } from '../../components/themed-view';
+import { apiRequest } from '../../services/api';
 
 interface Company {
-  id: number;
+  id: number | string;
   name: string;
   industry: string;
   size: string;
@@ -19,6 +20,8 @@ interface Company {
 export default function EmpresasScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const mockCompanies: Company[] = [
     { id: 1, name: 'AppCreators', industry: 'Desarrollo de Software', size: '50-100 empleados', description: 'Empresa líder en el desarrollo de aplicaciones móviles nativas e híbridas.', jobsCount: 3 },
@@ -28,7 +31,35 @@ export default function EmpresasScreen() {
     { id: 5, name: 'CodeDev', industry: 'Desarrollo de Software', size: '20-50 empleados', description: 'Factoría de software ágil especializada en Laravel, Vue y React.', jobsCount: 4 },
   ];
 
-  const filteredCompanies = mockCompanies.filter(company => 
+  const fetchCompanies = async () => {
+    try {
+      const response = await apiRequest('/companies');
+      if (response.status === 'success' && response.companies) {
+        const dbCompanies = response.companies.map((u: any) => ({
+          id: `db-${u.id}`,
+          name: u.name,
+          industry: u.headline || 'Sector General',
+          size: u.location || 'Localización no especificada',
+          description: `Empresa registrada en GrowUpJob. Contacto: ${u.email}`,
+          jobsCount: 0,
+        }));
+        setCompanies([...dbCompanies, ...mockCompanies]);
+      } else {
+        setCompanies(mockCompanies);
+      }
+    } catch (error) {
+      console.error('Error fetching companies:', error);
+      setCompanies(mockCompanies);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCompanies();
+  }, []);
+
+  const filteredCompanies = companies.filter(company => 
     company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     company.industry.toLowerCase().includes(searchQuery.toLowerCase())
   );
