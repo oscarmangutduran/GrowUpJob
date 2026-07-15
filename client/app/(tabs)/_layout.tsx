@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { HapticTab } from '@/components/haptic-tab';
 import { Colors } from '@/constants/theme';
@@ -9,24 +9,26 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const activeColor = Colors[colorScheme ?? 'light'].tint;
+  const { width } = useWindowDimensions();
+  const isDesktopWeb = Platform.OS === 'web' && width >= 1024;
 
   return (
     <Tabs
       screenOptions={{
-        tabBarPosition: Platform.OS === 'web' ? 'top' : 'bottom',
+        tabBarPosition: isDesktopWeb ? 'top' : 'bottom',
         tabBarActiveTintColor: activeColor,
         tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.45)',
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
           backgroundColor: '#02060E',
-          borderTopWidth: Platform.OS === 'web' ? 0 : 1,
-          borderTopColor: Platform.OS === 'web' ? 'transparent' : 'rgba(197, 3, 55, 0.15)',
-          borderBottomWidth: Platform.OS === 'web' ? 1 : 0,
-          borderBottomColor: Platform.OS === 'web' ? 'rgba(197, 3, 55, 0.15)' : 'transparent',
+          borderTopWidth: isDesktopWeb ? 0 : 1,
+          borderTopColor: isDesktopWeb ? 'transparent' : 'rgba(197, 3, 55, 0.15)',
+          borderBottomWidth: isDesktopWeb ? 1 : 0,
+          borderBottomColor: isDesktopWeb ? 'rgba(197, 3, 55, 0.15)' : 'transparent',
           height: 60,
-          paddingBottom: Platform.OS === 'web' ? 0 : 8,
-          paddingTop: Platform.OS === 'web' ? 0 : 8,
+          paddingBottom: isDesktopWeb ? 0 : 8,
+          paddingTop: isDesktopWeb ? 0 : 8,
         },
         tabBarLabelStyle: {
           fontSize: 10,
