@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { HapticTab } from '@/components/haptic-tab';
 import { Colors } from '@/constants/theme';
@@ -12,17 +13,20 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        tabBarPosition: Platform.OS === 'web' ? 'top' : 'bottom',
         tabBarActiveTintColor: activeColor,
         tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.45)',
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
           backgroundColor: '#02060E',
-          borderTopWidth: 1,
-          borderTopColor: 'rgba(197, 3, 55, 0.15)',
+          borderTopWidth: Platform.OS === 'web' ? 0 : 1,
+          borderTopColor: Platform.OS === 'web' ? 'transparent' : 'rgba(197, 3, 55, 0.15)',
+          borderBottomWidth: Platform.OS === 'web' ? 1 : 0,
+          borderBottomColor: Platform.OS === 'web' ? 'rgba(197, 3, 55, 0.15)' : 'transparent',
           height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          paddingBottom: Platform.OS === 'web' ? 0 : 8,
+          paddingTop: Platform.OS === 'web' ? 0 : 8,
         },
         tabBarLabelStyle: {
           fontSize: 10,
