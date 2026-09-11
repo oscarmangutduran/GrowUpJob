@@ -2,8 +2,13 @@ import { useState } from 'react';
 import {
   Search, Bell, Edit, Upload, Eye, MapPin, Star, FileText, ChevronRight,
   Briefcase, GraduationCap, Globe, Github, Linkedin, Award, Plus,
-  Video, Clock, CheckCircle, Zap, Settings, Moon, ToggleRight, ExternalLink, Download
+  Video, Clock, CheckCircle, Zap, Settings, Moon, ToggleRight, ExternalLink, Download,
+  LogOut
 } from 'lucide-react';
+
+interface PerfilProps {
+  onLogout?: () => void;
+}
 
 // ── Sub-sections ───────────────────────────────────────────────────────────
 
@@ -103,7 +108,7 @@ function MiCandidatura() {
 }
 
 // ── Main Page ──────────────────────────────────────────────────────────────
-export default function Perfil() {
+export default function Perfil({ onLogout }: PerfilProps) {
   const [notificaciones, setNotificaciones] = useState(true);
 
   return (
@@ -359,6 +364,17 @@ export default function Perfil() {
                 <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
               </button>
             </div>
+          </div>
+
+          {/* Botón Cerrar Sesión */}
+          <div className="pt-2 pb-6">
+            <button
+              onClick={onLogout}
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-2xl font-bold text-xs transition-all shadow-sm active:scale-[0.99] cursor-pointer"
+            >
+              <LogOut className="w-4 h-4 text-red-500" />
+              <span>Cerrar sesión</span>
+            </button>
           </div>
         </main>
       </div>

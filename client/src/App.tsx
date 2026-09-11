@@ -157,7 +157,11 @@ export default function App() {
   if (activeTab === 'Perfil') {
     return (
       <>
-        <Perfil />
+        <Perfil onLogout={() => {
+          localStorage.removeItem('auth_token');
+          setIsLoggedIn(false);
+          setActiveTab('Empleo');
+        }} />
         <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
       </>
     );
