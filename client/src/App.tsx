@@ -13,6 +13,7 @@ import { mockJobs } from './data/mockJobs';
 import LoginScreen from './components/LoginScreen';
 import RegisterScreen from './components/RegisterScreen';
 import EmpleoPublico from './components/EmpleoPublico';
+import Cursos from './components/Cursos';
 
 const filterPills = ['Todo', '100% Remoto', 'Híbrido', 'Presencial', 'Verificadas'];
 
@@ -119,8 +120,18 @@ export default function App() {
     );
   }
 
+  // Render Cursos tab
+  if (activeTab === 'Cursos') {
+    return (
+      <>
+        <Cursos />
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      </>
+    );
+  }
+
   // Placeholder for other tabs
-  if (!['Empleo', 'Público'].includes(activeTab)) {
+  if (!['Empleo', 'Público', 'Cursos'].includes(activeTab)) {
     return (
       <>
         <div className="min-h-screen bg-[#F4F6FA] flex flex-col items-center justify-center pb-24 text-center px-6">
