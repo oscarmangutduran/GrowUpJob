@@ -15,15 +15,13 @@ import LoginScreen from './components/LoginScreen';
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  if (!isLoggedIn) {
+    return <LoginScreen onLoginSuccess={() => setIsLoggedIn(true)} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans selection:bg-[#1F9B5E] selection:text-white pb-20">
-      
-      {!isLoggedIn && (
-        <LoginScreen onLoginSuccess={() => setIsLoggedIn(true)} />
-      )}
-
-      {isLoggedIn && (
-        <motion.div
+      <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -88,8 +86,7 @@ export default function App() {
         </main>
         
         <Navigation />
-        </motion.div>
-      )}
+      </motion.div>
     </div>
   );
 }
