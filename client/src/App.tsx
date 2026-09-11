@@ -14,6 +14,7 @@ import LoginScreen from './components/LoginScreen';
 import RegisterScreen from './components/RegisterScreen';
 import EmpleoPublico from './components/EmpleoPublico';
 import Cursos from './components/Cursos';
+import Empresas from './components/Empresas';
 
 const filterPills = ['Todo', '100% Remoto', 'Híbrido', 'Presencial', 'Verificadas'];
 
@@ -130,8 +131,18 @@ export default function App() {
     );
   }
 
+  // Render Empresas tab
+  if (activeTab === 'Empresas') {
+    return (
+      <>
+        <Empresas />
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      </>
+    );
+  }
+
   // Placeholder for other tabs
-  if (!['Empleo', 'Público', 'Cursos'].includes(activeTab)) {
+  if (!['Empleo', 'Público', 'Cursos', 'Empresas'].includes(activeTab)) {
     return (
       <>
         <div className="min-h-screen bg-[#F4F6FA] flex flex-col items-center justify-center pb-24 text-center px-6">
