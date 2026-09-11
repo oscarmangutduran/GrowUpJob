@@ -15,6 +15,7 @@ import RegisterScreen from './components/RegisterScreen';
 import EmpleoPublico from './components/EmpleoPublico';
 import Cursos from './components/Cursos';
 import Empresas from './components/Empresas';
+import Insignias from './components/Insignias';
 
 const filterPills = ['Todo', '100% Remoto', 'Híbrido', 'Presencial', 'Verificadas'];
 
@@ -141,8 +142,18 @@ export default function App() {
     );
   }
 
+  // Render Insignias tab
+  if (activeTab === 'Insignias') {
+    return (
+      <>
+        <Insignias />
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      </>
+    );
+  }
+
   // Placeholder for other tabs
-  if (!['Empleo', 'Público', 'Cursos', 'Empresas'].includes(activeTab)) {
+  if (!['Empleo', 'Público', 'Cursos', 'Empresas', 'Insignias'].includes(activeTab)) {
     return (
       <>
         <div className="min-h-screen bg-[#F4F6FA] flex flex-col items-center justify-center pb-24 text-center px-6">
