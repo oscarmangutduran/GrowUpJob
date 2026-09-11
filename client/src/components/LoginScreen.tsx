@@ -6,9 +6,10 @@ import { Logo, BrandText } from './Logo';
 
 interface LoginScreenProps {
   onLoginSuccess: () => void;
+  onNavigateToRegister: () => void;
 }
 
-export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
+export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: LoginScreenProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -154,7 +155,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           <div className="text-center mt-6">
             <p className="text-sm text-white/70">
               ¿No tienes una cuenta? <br />
-              <a href="#" className="text-white font-semibold hover:underline">Regístrate aquí</a>
+              <button type="button" onClick={onNavigateToRegister} className="text-white font-semibold hover:underline mt-1">Regístrate aquí</button>
             </p>
           </div>
 

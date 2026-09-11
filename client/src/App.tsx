@@ -11,12 +11,28 @@ import Navigation from './components/Navigation';
 import { BrandText, Logo } from './components/Logo';
 import { mockJobs } from './data/mockJobs';
 import LoginScreen from './components/LoginScreen';
+import RegisterScreen from './components/RegisterScreen';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authView, setAuthView] = useState<'login' | 'register'>('login');
 
   if (!isLoggedIn) {
-    return <LoginScreen onLoginSuccess={() => setIsLoggedIn(true)} />;
+    if (authView === 'login') {
+      return (
+        <LoginScreen 
+          onLoginSuccess={() => setIsLoggedIn(true)} 
+          onNavigateToRegister={() => setAuthView('register')}
+        />
+      );
+    } else {
+      return (
+        <RegisterScreen 
+          onRegisterSuccess={() => setIsLoggedIn(true)} 
+          onNavigateToLogin={() => setAuthView('login')}
+        />
+      );
+    }
   }
 
   return (
