@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class JobListing extends Model
 {
@@ -16,6 +16,21 @@ class JobListing extends Model
         'location',
         'salary',
         'type',
+        'modality',
+        'jornada',
+        'tags',
+        'verified',
+        'badge',
+        'fast_apply',
+        'logo_color',
+        'logo_initial',
+        'salary_color',
+    ];
+
+    protected $casts = [
+        'tags' => 'array',
+        'verified' => 'boolean',
+        'fast_apply' => 'boolean',
     ];
 
     /**
@@ -24,5 +39,13 @@ class JobListing extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Applications for this job listing.
+     */
+    public function applications(): HasMany
+    {
+        return $this->hasMany(JobApplication::class);
     }
 }
