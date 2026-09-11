@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Mail, Shield, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'motion/react';
+import { Logo, BrandText } from './Logo';
 
 interface LoginScreenProps {
   onLoginSuccess: () => void;
@@ -24,7 +25,13 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full max-w-md h-full md:h-auto min-h-screen md:min-h-[85vh] md:mr-[10%] bg-black/40 backdrop-blur-xl md:rounded-3xl border border-white/20 shadow-2xl flex flex-col justify-center px-8 py-10 relative z-10"
       >
-        <h1 className="text-4xl font-bold text-white text-center mb-10 tracking-tight">Login</h1>
+        {/* Logo Section */}
+        <div className="flex flex-col items-center justify-center mb-10 bg-white/90 py-4 px-6 rounded-2xl shadow-sm">
+          <div className="flex items-center gap-3">
+            <Logo className="w-12 h-12" />
+            <BrandText className="text-3xl" />
+          </div>
+        </div>
 
         <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); onLoginSuccess(); }}>
           {/* Email Field */}
