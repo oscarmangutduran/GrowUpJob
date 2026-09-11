@@ -16,6 +16,7 @@ import EmpleoPublico from './components/EmpleoPublico';
 import Cursos from './components/Cursos';
 import Empresas from './components/Empresas';
 import Insignias from './components/Insignias';
+import Perfil from './components/Perfil';
 
 const filterPills = ['Todo', '100% Remoto', 'Híbrido', 'Presencial', 'Verificadas'];
 
@@ -152,8 +153,18 @@ export default function App() {
     );
   }
 
-  // Placeholder for other tabs
-  if (!['Empleo', 'Público', 'Cursos', 'Empresas', 'Insignias'].includes(activeTab)) {
+  // Render Perfil tab
+  if (activeTab === 'Perfil') {
+    return (
+      <>
+        <Perfil />
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      </>
+    );
+  }
+
+  // Fallback placeholder
+  if (!['Empleo', 'Público', 'Cursos', 'Empresas', 'Insignias', 'Perfil'].includes(activeTab)) {
     return (
       <>
         <div className="min-h-screen bg-[#F4F6FA] flex flex-col items-center justify-center pb-24 text-center px-6">
