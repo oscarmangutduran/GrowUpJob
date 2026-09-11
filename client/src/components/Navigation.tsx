@@ -1,11 +1,10 @@
-import { Briefcase, Building2, BookOpen, Award, User, LandmarkIcon } from 'lucide-react';
+import { Briefcase, Building2, BookOpen, User, LandmarkIcon } from 'lucide-react';
 
 const navItems = [
   { icon: Briefcase, label: 'Empleo' },
   { icon: LandmarkIcon, label: 'Público' },
   { icon: BookOpen, label: 'Cursos' },
   { icon: Building2, label: 'Empresas' },
-  { icon: Award, label: 'Insignias' },
   { icon: User, label: 'Perfil' },
 ];
 

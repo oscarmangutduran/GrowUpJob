@@ -1,7 +1,40 @@
 import { useState, useMemo } from 'react';
-import { Search, Bell, Star, Users, ChevronRight, Bookmark, Award, Building2, Leaf, Cpu, HeartPulse, Banknote, Filter } from 'lucide-react';
+import { Search, Bell, Star, ChevronRight, Bookmark, Award, Leaf, Cpu, HeartPulse, Banknote, Filter, ThumbsUp, MessageSquare, X } from 'lucide-react';
+
+// ── Insignia types ─────────────────────────────────────────────────────────
+interface Insignia {
+  id: string;
+  icon: string;
+  label: string;
+  color: string;
+  description: string;
+  minRating: number;  // threshold of positive reviews needed
+}
+
+const ALL_INSIGNIAS: Insignia[] = [
+  { id: 'ambiente', icon: '😊', label: 'Mejor Ambiente', color: 'bg-yellow-100 text-yellow-700 border-yellow-200', description: 'Valorado por su excelente ambiente laboral', minRating: 4.5 },
+  { id: 'flexible', icon: '🕐', label: 'Flexibilidad', color: 'bg-blue-100 text-blue-700 border-blue-200', description: 'Reconocido por su política de horarios flexibles', minRating: 4.3 },
+  { id: 'liderazgo', icon: '🏆', label: 'Liderazgo Top', color: 'bg-purple-100 text-purple-700 border-purple-200', description: 'Sus managers son considerados referentes del sector', minRating: 4.6 },
+  { id: 'salario', icon: '💰', label: 'Salario Justo', color: 'bg-green-100 text-green-700 border-green-200', description: 'Sus empleados valoran la competitividad salarial', minRating: 4.2 },
+  { id: 'remoto', icon: '🌐', label: '100% Remoto', color: 'bg-sky-100 text-sky-700 border-sky-200', description: 'Empresa comprometida con el trabajo remoto real', minRating: 4.0 },
+  { id: 'diversidad', icon: '🌈', label: 'Diversidad', color: 'bg-pink-100 text-pink-700 border-pink-200', description: 'Certificada en políticas de inclusión y diversidad', minRating: 4.4 },
+  { id: 'formacion', icon: '📚', label: 'Formación', color: 'bg-indigo-100 text-indigo-700 border-indigo-200', description: 'Invierte activamente en el desarrollo del equipo', minRating: 4.3 },
+  { id: 'sostenible', icon: '🌿', label: 'Sostenible', color: 'bg-emerald-100 text-emerald-700 border-emerald-200', description: 'Empresa comprometida con la sostenibilidad', minRating: 4.1 },
+  { id: 'conciliacion', icon: '👨‍👩‍👧', label: 'Conciliación', color: 'bg-rose-100 text-rose-700 border-rose-200', description: 'Facilita la conciliación familiar de sus empleados', minRating: 4.2 },
+  { id: 'equity', icon: '📈', label: 'Equity', color: 'bg-amber-100 text-amber-700 border-amber-200', description: 'Ofrece participación accionarial a su equipo', minRating: 4.0 },
+];
 
 // ── Types ──────────────────────────────────────────────────────────────────
+interface Reseña {
+  id: string;
+  autor: string;
+  cargo: string;
+  texto: string;
+  rating: number;
+  fecha: string;
+  insigniasVotadas: string[];
+}
+
 interface Empresa {
   id: string;
   name: string;
@@ -11,12 +44,12 @@ interface Empresa {
   ratingCount: number;
   vacantes: number;
   descripcion: string;
-  perks: string[];
-  perkIcons: string[];
   logoColor: string;
   logoIcon: 'tech' | 'green' | 'fintech' | 'pharma';
   filterTag: string;
   topCultura?: { rank: number; quote: string };
+  insigniasObtenidas: string[];  // IDs of earned badges
+  reseñas: Reseña[];
 }
 
 // ── Mock Data ──────────────────────────────────────────────────────────────
@@ -30,12 +63,15 @@ const EMPRESAS: Empresa[] = [
     ratingCount: 312,
     vacantes: 14,
     descripcion: 'Autonomía real, sin microgestión y presupuesto ilimitado en formación y herramientas.',
-    perks: ['Flexibilidad horaria', 'Bono formación', 'Diversidad certificada'],
-    perkIcons: ['🕐', '📚', '🏳️‍🌈'],
     logoColor: 'bg-blue-100 text-blue-700',
     logoIcon: 'tech',
     filterTag: 'Tecnología',
     topCultura: { rank: 1, quote: 'Autonomía real, sin microgestión y presupuesto ilimitado en...' },
+    insigniasObtenidas: ['ambiente', 'flexible', 'liderazgo', 'formacion', 'diversidad'],
+    reseñas: [
+      { id: 'r1', autor: 'Miguel R.', cargo: 'Senior Dev', texto: 'El mejor sitio donde he trabajado. Total autonomía y un equipo increíble.', rating: 5, fecha: 'Hace 2 días', insigniasVotadas: ['ambiente', 'liderazgo', 'formacion'] },
+      { id: 'r2', autor: 'Sara L.', cargo: 'Cloud Architect', texto: 'Excelente ambiente y presupuesto real para formación sin burocracia.', rating: 5, fecha: 'Hace 1 semana', insigniasVotadas: ['flexible', 'formacion', 'diversidad'] },
+    ],
   },
   {
     id: '2',
@@ -46,12 +82,15 @@ const EMPRESAS: Empresa[] = [
     ratingCount: 189,
     vacantes: 8,
     descripcion: 'Cultura orientada a sostenibilidad y conciliación. 100% remoto con reuniones asíncronas.',
-    perks: ['Conciliación familiar', 'Trabajo 100% remoto'],
-    perkIcons: ['👨‍👩‍👧', '🌐'],
     logoColor: 'bg-green-100 text-green-700',
     logoIcon: 'green',
     filterTag: 'Tecnología',
     topCultura: { rank: 2, quote: 'Jornada intensiva todo el año y propósito real en cada proyecto...' },
+    insigniasObtenidas: ['sostenible', 'remoto', 'conciliacion', 'flexible'],
+    reseñas: [
+      { id: 'r3', autor: 'Ana P.', cargo: 'DevOps Engineer', texto: 'Empresa con propósito real. Se nota que les importa el planeta y las personas.', rating: 5, fecha: 'Hace 3 días', insigniasVotadas: ['sostenible', 'conciliacion'] },
+      { id: 'r4', autor: 'Carlos M.', cargo: 'Backend Dev', texto: '100% remoto real, no como en otras empresas donde te piden volver a la oficina.', rating: 4, fecha: 'Hace 2 semanas', insigniasVotadas: ['remoto', 'flexible'] },
+    ],
   },
   {
     id: '3',
@@ -62,11 +101,13 @@ const EMPRESAS: Empresa[] = [
     ratingCount: 543,
     vacantes: 22,
     descripcion: 'Salarios certificados en el Top 10% del mercado con equity y plan de pensiones.',
-    perks: ['Plan de pensiones match 6%', 'Equity & Stock Options'],
-    perkIcons: ['💼', '📈'],
     logoColor: 'bg-violet-100 text-violet-700',
     logoIcon: 'fintech',
     filterTag: 'Fintech',
+    insigniasObtenidas: ['salario', 'equity', 'liderazgo'],
+    reseñas: [
+      { id: 'r5', autor: 'Javier T.', cargo: 'Product Manager', texto: 'Los salarios son los mejores del sector. El equity plan es real y transparente.', rating: 4, fecha: 'Hace 5 días', insigniasVotadas: ['salario', 'equity'] },
+    ],
   },
   {
     id: '4',
@@ -77,11 +118,13 @@ const EMPRESAS: Empresa[] = [
     ratingCount: 97,
     vacantes: 5,
     descripcion: 'Investigación clínica puntera e instalaciones de última generación en España.',
-    perks: ['Seguro médico premium familiar', 'Comedor subvencionado'],
-    perkIcons: ['🏥', '🍽️'],
     logoColor: 'bg-red-100 text-red-700',
     logoIcon: 'pharma',
     filterTag: 'Salud',
+    insigniasObtenidas: ['conciliacion', 'ambiente'],
+    reseñas: [
+      { id: 'r6', autor: 'Laura G.', cargo: 'Investigadora', texto: 'Instalaciones de primer nivel y un equipo muy comprometido con la ciencia.', rating: 4, fecha: 'Hace 1 mes', insigniasVotadas: ['ambiente', 'conciliacion'] },
+    ],
   },
 ];
 
@@ -89,12 +132,7 @@ const SECTOR_PILLS = ['Todas', 'Tecnología', 'Fintech', '100% Remoto', 'Salud',
 
 // ── Logo icon helper ───────────────────────────────────────────────────────
 function CompanyLogo({ type, colorClass }: { type: Empresa['logoIcon']; colorClass: string }) {
-  const icons: Record<Empresa['logoIcon'], React.ElementType> = {
-    tech: Cpu,
-    green: Leaf,
-    fintech: Banknote,
-    pharma: HeartPulse,
-  };
+  const icons: Record<Empresa['logoIcon'], React.ElementType> = { tech: Cpu, green: Leaf, fintech: Banknote, pharma: HeartPulse };
   const Icon = icons[type];
   return (
     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${colorClass}`}>
@@ -103,26 +141,114 @@ function CompanyLogo({ type, colorClass }: { type: Empresa['logoIcon']; colorCla
   );
 }
 
-// ── Star rating ────────────────────────────────────────────────────────────
 function Stars({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map(i => (
-        <Star
-          key={i}
-          className={`w-3.5 h-3.5 ${i <= Math.floor(rating) ? 'text-amber-400 fill-amber-400' : 'text-gray-200 fill-gray-200'}`}
-        />
+        <Star key={i} className={`w-3.5 h-3.5 ${i <= Math.floor(rating) ? 'text-amber-400 fill-amber-400' : 'text-gray-200 fill-gray-200'}`} />
       ))}
     </div>
   );
 }
 
+// ── Reseña Modal ───────────────────────────────────────────────────────────
+function ReseñaModal({ empresa, onClose }: { empresa: Empresa; onClose: () => void }) {
+  const [hoveredInsignia, setHoveredInsignia] = useState<string | null>(null);
+
+  // Count votes per insignia
+  const voteCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    empresa.reseñas.forEach(r => r.insigniasVotadas.forEach(id => {
+      counts[id] = (counts[id] ?? 0) + 1;
+    }));
+    return counts;
+  }, [empresa]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative bg-white rounded-t-3xl w-full max-w-md max-h-[85vh] overflow-y-auto p-5 pb-10 shadow-2xl">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-gray-900">Reseñas · {empresa.name}</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
+        </div>
+
+        {/* Insignias distribution */}
+        <div className="mb-4">
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Insignias otorgadas por la comunidad</p>
+          <div className="flex flex-wrap gap-2">
+            {empresa.insigniasObtenidas.map(id => {
+              const ins = ALL_INSIGNIAS.find(i => i.id === id)!;
+              const votes = voteCounts[id] ?? 0;
+              return (
+                <div
+                  key={id}
+                  onMouseEnter={() => setHoveredInsignia(id)}
+                  onMouseLeave={() => setHoveredInsignia(null)}
+                  className={`relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold cursor-default transition-all ${ins.color}`}
+                >
+                  <span>{ins.icon}</span>
+                  <span>{ins.label}</span>
+                  {votes > 0 && <span className="font-bold opacity-70">·{votes}</span>}
+                  {hoveredInsignia === id && (
+                    <div className="absolute -top-10 left-0 bg-gray-900 text-white text-[10px] px-2 py-1 rounded-lg whitespace-nowrap shadow-lg z-10">
+                      {ins.description}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Reviews list */}
+        <div className="space-y-3">
+          {empresa.reseñas.map(r => (
+            <div key={r.id} className="bg-gray-50 rounded-2xl p-3">
+              <div className="flex items-start justify-between mb-1">
+                <div>
+                  <p className="text-xs font-bold text-gray-800">{r.autor}</p>
+                  <p className="text-[10px] text-gray-400">{r.cargo} · {r.fecha}</p>
+                </div>
+                <div className="flex items-center gap-0.5">
+                  {[1,2,3,4,5].map(i => <Star key={i} className={`w-3 h-3 ${i <= r.rating ? 'text-amber-400 fill-amber-400' : 'text-gray-200 fill-gray-200'}`} />)}
+                </div>
+              </div>
+              <p className="text-xs text-gray-600 leading-relaxed mb-2">"{r.texto}"</p>
+              {r.insigniasVotadas.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {r.insigniasVotadas.map(id => {
+                    const ins = ALL_INSIGNIAS.find(i => i.id === id);
+                    return ins ? (
+                      <span key={id} className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${ins.color}`}>
+                        {ins.icon} {ins.label}
+                      </span>
+                    ) : null;
+                  })}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <button className="mt-4 w-full border border-blue-200 text-blue-600 text-xs font-bold py-2.5 rounded-xl hover:bg-blue-50 transition-colors flex items-center justify-center gap-1.5">
+          <MessageSquare className="w-3.5 h-3.5" /> Escribir una reseña
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ── Company Card ───────────────────────────────────────────────────────────
-function EmpresaCard({ e }: { e: Empresa }) {
+function EmpresaCard({ e, onShowReseñas }: { e: Empresa; onShowReseñas: () => void }) {
+  const insignias = e.insigniasObtenidas
+    .map(id => ALL_INSIGNIAS.find(i => i.id === id))
+    .filter(Boolean) as Insignia[];
+
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="px-4 py-4">
-        {/* Header row */}
+        {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
             <CompanyLogo type={e.logoIcon} colorClass={e.logoColor} />
@@ -141,29 +267,43 @@ function EmpresaCard({ e }: { e: Empresa }) {
           </div>
         </div>
 
-        {/* Rating */}
+        {/* Rating + reviews */}
         <div className="flex items-center gap-2 mb-2">
           <Stars rating={e.rating} />
           <span className="text-sm font-bold text-gray-800">{e.rating}</span>
-          <span className="text-xs text-gray-400">({e.ratingCount} v.)</span>
+          <button onClick={onShowReseñas} className="text-xs text-blue-600 hover:underline flex items-center gap-0.5">
+            <MessageSquare className="w-3 h-3" />({e.ratingCount} valoraciones)
+          </button>
         </div>
 
         {/* Description */}
         <p className="text-xs text-gray-500 mb-3 leading-relaxed">{e.descripcion}</p>
 
-        {/* Perks */}
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          {e.perks.map((perk, i) => (
-            <span key={perk} className="text-[10px] bg-gray-50 border border-gray-200 text-gray-600 px-2 py-1 rounded-lg font-medium flex items-center gap-1">
-              {e.perkIcons[i]} {perk}
-            </span>
-          ))}
-        </div>
+        {/* Insignias earned from workers */}
+        {insignias.length > 0 && (
+          <div className="mb-3">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <Award className="w-3.5 h-3.5 text-amber-500" />
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Insignias de la comunidad</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {insignias.slice(0, 4).map(ins => (
+                <span key={ins.id} className={`text-[10px] font-semibold px-2 py-1 rounded-lg border flex items-center gap-1 ${ins.color}`}>
+                  {ins.icon} {ins.label}
+                </span>
+              ))}
+              {insignias.length > 4 && (
+                <button onClick={onShowReseñas} className="text-[10px] font-semibold px-2 py-1 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors">
+                  +{insignias.length - 4} más
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* CTA */}
         <button className="w-full flex items-center justify-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs py-2.5 rounded-xl transition-colors border border-blue-100">
-          Ver perfil y {e.vacantes} vacantes
-          <ChevronRight className="w-4 h-4" />
+          Ver perfil y {e.vacantes} vacantes <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>
@@ -174,8 +314,9 @@ function EmpresaCard({ e }: { e: Empresa }) {
 export default function Empresas() {
   const [sectorFilter, setSectorFilter] = useState('Todas');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedEmpresa, setSelectedEmpresa] = useState<Empresa | null>(null);
 
-  const topCultura = EMPRESAS.filter(e => e.topCultura).sort((a, b) => (a.topCultura!.rank) - (b.topCultura!.rank));
+  const topCultura = EMPRESAS.filter(e => e.topCultura).sort((a, b) => a.topCultura!.rank - b.topCultura!.rank);
 
   const filtered = useMemo(() => {
     return EMPRESAS.filter(e => {
@@ -184,116 +325,147 @@ export default function Empresas() {
       const matchSector =
         sectorFilter === 'Todas' ||
         e.filterTag === sectorFilter ||
-        (sectorFilter === '100% Remoto' && e.perks.some(p => p.toLowerCase().includes('remoto')));
+        (sectorFilter === '100% Remoto' && e.insigniasObtenidas.includes('remoto'));
       return matchSearch && matchSector;
     });
   }, [searchQuery, sectorFilter]);
 
   return (
-    <div className="min-h-screen bg-[#F4F6FA] font-sans pb-24">
-      <div className="max-w-md mx-auto">
-        {/* Header */}
-        <header className="px-4 pt-10 pb-3 bg-white sticky top-0 z-10 shadow-sm">
-          <div className="flex justify-between items-center mb-3">
-            <h1 className="text-sm font-bold text-gray-800">Empresas</h1>
-            <div className="flex items-center gap-2">
-              <button className="w-9 h-9 rounded-full border border-gray-100 bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
-                <Search className="w-4 h-4" />
-              </button>
-              <button className="w-9 h-9 rounded-full border border-gray-100 bg-gray-50 flex items-center justify-center text-gray-500 relative hover:bg-gray-100 transition-colors">
-                <Bell className="w-4 h-4" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
-              </button>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">OD</div>
-            </div>
-          </div>
-
-          {/* Search */}
-          <div className="relative mb-3">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              type="text"
-              placeholder="Buscar empresa por nombre, sector o..."
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-9 pr-9 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400"
-            />
-            <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-              <Filter className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {/* Sector pills */}
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
-            {SECTOR_PILLS.map(p => (
-              <button
-                key={p}
-                onClick={() => setSectorFilter(p)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${sectorFilter === p ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        </header>
-
-        <main className="px-4 py-4 space-y-4">
-          {/* Top Cultura Laboral */}
-          {!searchQuery && sectorFilter === 'Todas' && (
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-bold text-gray-800">Top Cultura Laboral 2024</h2>
-                  <Award className="w-4 h-4 text-amber-500" />
-                </div>
-                <span className="text-[10px] font-semibold text-gray-400 border border-gray-200 px-2 py-0.5 rounded-full">Según candidatos</span>
+    <>
+      <div className="min-h-screen bg-[#F4F6FA] font-sans pb-24">
+        <div className="max-w-md mx-auto">
+          {/* Header */}
+          <header className="px-4 pt-10 pb-3 bg-white sticky top-0 z-10 shadow-sm">
+            <div className="flex justify-between items-center mb-3">
+              <h1 className="text-sm font-bold text-gray-800">Empresas</h1>
+              <div className="flex items-center gap-2">
+                <button className="w-9 h-9 rounded-full border border-gray-100 bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
+                  <Search className="w-4 h-4" />
+                </button>
+                <button className="w-9 h-9 rounded-full border border-gray-100 bg-gray-50 flex items-center justify-center text-gray-500 relative hover:bg-gray-100 transition-colors">
+                  <Bell className="w-4 h-4" />
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
+                </button>
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">OD</div>
               </div>
-              <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
-                {topCultura.map(e => (
-                  <div key={e.id} className="flex-shrink-0 w-44 bg-white rounded-2xl border border-gray-100 shadow-sm p-3 cursor-pointer hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-2 mb-2">
-                      <CompanyLogo type={e.logoIcon} colorClass={e.logoColor} />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1">
-                          <p className="text-xs font-bold text-gray-800 truncate">{e.name.split(' ')[0]} {e.name.split(' ')[1]?.slice(0,3)}.</p>
-                          <span className="text-[10px] font-extrabold bg-amber-100 text-amber-700 px-1.5 rounded-full flex-shrink-0">#{e.topCultura!.rank}</span>
+            </div>
+
+            {/* Search */}
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                type="text"
+                placeholder="Buscar empresa por nombre, sector o..."
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-9 pr-9 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+              />
+              <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <Filter className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Sector pills */}
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
+              {SECTOR_PILLS.map(p => (
+                <button
+                  key={p}
+                  onClick={() => setSectorFilter(p)}
+                  className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${sectorFilter === p ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+          </header>
+
+          <main className="px-4 py-4 space-y-4">
+            {/* Insignias legend */}
+            <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-100 rounded-2xl p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Award className="w-5 h-5 text-amber-600" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-amber-800 mb-0.5">Insignias de empresa, por la comunidad</h3>
+                  <p className="text-[10px] text-amber-700 leading-relaxed">
+                    Las insignias son otorgadas por trabajadores que valoran su experiencia. Cada estrella y cada insignia refleja opiniones reales.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Top Cultura Laboral */}
+            {!searchQuery && sectorFilter === 'Todas' && (
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-sm font-bold text-gray-800">Top Cultura Laboral 2024</h2>
+                    <Award className="w-4 h-4 text-amber-500" />
+                  </div>
+                  <span className="text-[10px] font-semibold text-gray-400 border border-gray-200 px-2 py-0.5 rounded-full">Según candidatos</span>
+                </div>
+                <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
+                  {topCultura.map(e => {
+                    const topIns = e.insigniasObtenidas.slice(0, 2).map(id => ALL_INSIGNIAS.find(i => i.id === id)).filter(Boolean) as Insignia[];
+                    return (
+                      <div key={e.id} className="flex-shrink-0 w-48 bg-white rounded-2xl border border-gray-100 shadow-sm p-3 cursor-pointer hover:shadow-md transition-shadow" onClick={() => setSelectedEmpresa(e)}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <CompanyLogo type={e.logoIcon} colorClass={e.logoColor} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1">
+                              <p className="text-xs font-bold text-gray-800 truncate">{e.name.split(' ')[0]}</p>
+                              <span className="text-[10px] font-extrabold bg-amber-100 text-amber-700 px-1.5 rounded-full flex-shrink-0">#{e.topCultura!.rank}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                              <span className="text-[10px] font-semibold text-gray-600">{e.rating} · {e.ratingCount}v.</span>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                          <span className="text-[10px] font-semibold text-gray-600">{e.rating} ({e.ratingCount} v.)</span>
+                        <div className="flex flex-wrap gap-1">
+                          {topIns.map(ins => (
+                            <span key={ins.id} className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${ins.color}`}>{ins.icon} {ins.label}</span>
+                          ))}
                         </div>
                       </div>
-                    </div>
-                    <p className="text-[10px] text-gray-500 leading-relaxed line-clamp-2">"{e.topCultura!.quote}"</p>
-                  </div>
-                ))}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Recommended companies */}
-          <div className="flex justify-between items-center">
-            <h2 className="text-sm font-bold text-gray-800">Empresas Recomendadas</h2>
-            <span className="text-xs text-gray-400">Mostrando {filtered.length} destacadas</span>
-          </div>
-
-          {filtered.length > 0 ? (
-            filtered.map(e => <EmpresaCard key={e.id} e={e} />)
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="text-4xl mb-3">🏢</div>
-              <h3 className="font-bold text-gray-700 mb-1">Sin resultados</h3>
-              <p className="text-sm text-gray-400">Prueba con otros términos o sectores</p>
-              <button
-                onClick={() => { setSearchQuery(''); setSectorFilter('Todas'); }}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl"
-              >
-                Ver todas
-              </button>
+            {/* Recommended */}
+            <div className="flex justify-between items-center">
+              <h2 className="text-sm font-bold text-gray-800">Empresas Recomendadas</h2>
+              <span className="text-xs text-gray-400">Mostrando {filtered.length} destacadas</span>
             </div>
-          )}
-        </main>
+
+            {filtered.length > 0 ? (
+              filtered.map(e => (
+                <EmpresaCard key={e.id} e={e} onShowReseñas={() => setSelectedEmpresa(e)} />
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="text-4xl mb-3">🏢</div>
+                <h3 className="font-bold text-gray-700 mb-1">Sin resultados</h3>
+                <p className="text-sm text-gray-400">Prueba con otros términos o sectores</p>
+                <button
+                  onClick={() => { setSearchQuery(''); setSectorFilter('Todas'); }}
+                  className="mt-4 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl"
+                >
+                  Ver todas
+                </button>
+              </div>
+            )}
+          </main>
+        </div>
       </div>
-    </div>
+
+      {/* Reseña modal */}
+      {selectedEmpresa && (
+        <ReseñaModal empresa={selectedEmpresa} onClose={() => setSelectedEmpresa(null)} />
+      )}
+    </>
   );
 }
