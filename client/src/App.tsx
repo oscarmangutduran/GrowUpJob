@@ -6,25 +6,29 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Search, SlidersHorizontal, Bell } from 'lucide-react';
-import SplashScreen from './components/SplashScreen';
 import JobCard from './components/JobCard';
 import Navigation from './components/Navigation';
 import { BrandText, Logo } from './components/Logo';
 import { mockJobs } from './data/mockJobs';
+import LoginScreen from './components/LoginScreen';
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans selection:bg-[#1F9B5E] selection:text-white pb-20">
-      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
       
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: showSplash ? 0 : 1 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-md mx-auto sm:max-w-xl md:max-w-3xl bg-[#F8FAFC] min-h-screen relative shadow-sm"
-      >
+      {!isLoggedIn && (
+        <LoginScreen onLoginSuccess={() => setIsLoggedIn(true)} />
+      )}
+
+      {isLoggedIn && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-md mx-auto sm:max-w-xl md:max-w-3xl bg-[#F8FAFC] min-h-screen relative shadow-sm"
+        >
         {/* Header */}
         <header className="px-5 pt-10 pb-4 bg-white sticky top-0 z-10 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)]">
           <div className="flex justify-between items-center mb-6">
@@ -84,7 +88,8 @@ export default function App() {
         </main>
         
         <Navigation />
-      </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }
