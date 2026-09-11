@@ -4,10 +4,10 @@ export default function Navigation() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 pb-safe z-40">
       <div className="max-w-md mx-auto flex justify-around items-center h-16">
-        <NavItem icon={<Home className="w-6 h-6" />} label="Home" active />
-        <NavItem icon={<Search className="w-6 h-6" />} label="Search" />
-        <NavItem icon={<Bookmark className="w-6 h-6" />} label="Saved" />
-        <NavItem icon={<User className="w-6 h-6" />} label="Profile" />
+        <NavItem icon={<Home className="w-6 h-6" />} label="Inicio" active />
+        <NavItem icon={<Search className="w-6 h-6" />} label="Buscar" />
+        <NavItem icon={<Bookmark className="w-6 h-6" />} label="Guardado" />
+        <NavItem icon={<User className="w-6 h-6" />} label="Perfil" />
       </div>
     </nav>
   );

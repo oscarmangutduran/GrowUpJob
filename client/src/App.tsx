@@ -44,7 +44,7 @@ export default function App() {
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input 
                 type="text" 
-                placeholder="Search jobs, companies..." 
+                placeholder="Buscar ofertas, empresas..." 
                 className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3.5 pl-11 pr-4 text-sm focus:ring-2 focus:ring-[#334195] focus:border-transparent outline-none transition-all placeholder:text-gray-400"
               />
             </div>
@@ -58,8 +58,8 @@ export default function App() {
         <main className="px-5 py-6">
           <section className="mb-8">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Recommended for you</h2>
-              <button className="text-[#1F9B5E] text-sm font-semibold hover:underline">See all</button>
+              <h2 className="text-lg font-bold text-gray-900">Recomendado para ti</h2>
+              <button className="text-[#1F9B5E] text-sm font-semibold hover:underline">Ver todo</button>
             </div>
 
             <div className="flex flex-col gap-4">
@@ -71,10 +71,10 @@ export default function App() {
 
           <section>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Recent Searches</h2>
+              <h2 className="text-lg font-bold text-gray-900">Búsquedas recientes</h2>
             </div>
             <div className="flex flex-wrap gap-2">
-              {['React Developer', 'UI Designer', 'Remote', 'Node.js'].map(term => (
+              {['Desarrollador React', 'Diseñador UI', 'Remoto', 'Node.js'].map(term => (
                 <span key={term} className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-medium text-gray-700 shadow-sm cursor-pointer hover:border-[#334195] hover:text-[#334195] transition-colors">
                   {term}
                 </span>
