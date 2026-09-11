@@ -12,6 +12,7 @@ import { Logo } from './components/Logo';
 import { mockJobs } from './data/mockJobs';
 import LoginScreen from './components/LoginScreen';
 import RegisterScreen from './components/RegisterScreen';
+import EmpleoPublico from './components/EmpleoPublico';
 
 const filterPills = ['Todo', '100% Remoto', 'Híbrido', 'Presencial', 'Verificadas'];
 
@@ -22,6 +23,7 @@ const JORNADA_OPTIONS = ['Cualquiera', 'Completa', 'Parcial'];
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
+  const [activeTab, setActiveTab] = useState('Empleo');
   const [activeFilter, setActiveFilter] = useState('Todo');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -105,6 +107,30 @@ export default function App() {
         />
       );
     }
+  }
+
+  // Render Público tab
+  if (activeTab === 'Público') {
+    return (
+      <>
+        <EmpleoPublico />
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      </>
+    );
+  }
+
+  // Placeholder for other tabs
+  if (!['Empleo', 'Público'].includes(activeTab)) {
+    return (
+      <>
+        <div className="min-h-screen bg-[#F4F6FA] flex flex-col items-center justify-center pb-24 text-center px-6">
+          <div className="text-5xl mb-4">🚧</div>
+          <h2 className="text-lg font-bold text-gray-700 mb-2">{activeTab}</h2>
+          <p className="text-sm text-gray-400">Esta sección está en desarrollo. ¡Pronto disponible!</p>
+        </div>
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      </>
+    );
   }
 
   return (
@@ -249,7 +275,7 @@ export default function App() {
           </div>
         </main>
 
-        <Navigation />
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
       </motion.div>
 
       {/* Filter Drawer */}
