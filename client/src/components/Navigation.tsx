@@ -1,25 +1,35 @@
-import { Home, Search, Bookmark, User } from 'lucide-react';
+import { Briefcase, Building2, BookOpen, Award, User, LandmarkIcon } from 'lucide-react';
+import { useState } from 'react';
+
+const navItems = [
+  { icon: Briefcase, label: 'Empleo' },
+  { icon: LandmarkIcon, label: 'Público' },
+  { icon: BookOpen, label: 'Cursos' },
+  { icon: Building2, label: 'Empresas' },
+  { icon: Award, label: 'Insignias' },
+  { icon: User, label: 'Perfil' },
+];
 
 export default function Navigation() {
+  const [active, setActive] = useState('Empleo');
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 pb-safe z-40">
       <div className="max-w-md mx-auto flex justify-around items-center h-16">
-        <NavItem icon={<Home className="w-6 h-6" />} label="Inicio" active />
-        <NavItem icon={<Search className="w-6 h-6" />} label="Buscar" />
-        <NavItem icon={<Bookmark className="w-6 h-6" />} label="Guardado" />
-        <NavItem icon={<User className="w-6 h-6" />} label="Perfil" />
+        {navItems.map(({ icon: Icon, label }) => {
+          const isActive = active === label;
+          return (
+            <button
+              key={label}
+              onClick={() => setActive(label)}
+              className={`flex flex-col items-center justify-center flex-1 h-full space-y-0.5 transition-colors ${isActive ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+            >
+              <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 1.8} />
+              <span className="text-[9px] font-semibold">{label}</span>
+            </button>
+          );
+        })}
       </div>
     </nav>
-  );
-}
-
-function NavItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
-  return (
-    <button className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${active ? 'text-[#334195]' : 'text-gray-400 hover:text-gray-600'}`}>
-      <div className={`${active ? 'fill-current' : ''}`}>
-        {icon}
-      </div>
-      <span className="text-[10px] font-medium">{label}</span>
-    </button>
   );
 }

@@ -4,7 +4,15 @@ export interface Job {
   company: string;
   location: string;
   salary: string;
-  type: 'Full-time' | 'Part-time' | 'Contract' | 'Remote';
+  salaryColor?: string;
+  modality: string;
+  jornada: string;
   postedAt: string;
   logoColor: string;
+  logoInitial?: string;
+  tags: string[];
+  verified?: boolean;
+  badge?: string;
+  fastApply?: boolean;
 }
+
