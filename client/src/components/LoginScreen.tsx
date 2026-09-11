@@ -13,6 +13,12 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [rememberMe, setRememberMe] = useState(() => {
+    return localStorage.getItem('remember_me') === 'true';
+  });
+  const [email, setEmail] = useState(() => {
+    return localStorage.getItem('remembered_email') || '';
+  });
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -34,7 +40,6 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
         const data = await response.json();
 
         if (response.ok && data.status === 'success') {
-          // En una app real, aquí guardaríamos data.token en localStorage
           localStorage.setItem('auth_token', data.token);
           onLoginSuccess();
         } else {
@@ -57,7 +62,7 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
       className="min-h-screen w-full flex items-center justify-center md:justify-end bg-cover bg-center bg-no-repeat relative"
       style={{ backgroundImage: 'url("/bg-login.jpg")' }}
     >
-      {/* Overlay for slightly darkening the background image if needed */}
+      {/* Overlay for slightly darkening the background image */}
       <div className="absolute inset-0 bg-black/20"></div>
 
       {/* Glassmorphism Panel */}
@@ -75,7 +80,20 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
           </div>
         </div>
 
-        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); onLoginSuccess(); }}>
+        <form 
+          className="space-y-6" 
+          onSubmit={(e) => { 
+            e.preventDefault(); 
+            if (rememberMe) {
+              localStorage.setItem('remember_me', 'true');
+              localStorage.setItem('remembered_email', email);
+            } else {
+              localStorage.removeItem('remember_me');
+              localStorage.removeItem('remembered_email');
+            }
+            onLoginSuccess(); 
+          }}
+        >
           {error && (
             <div className="bg-red-500/20 border border-red-500/50 text-red-100 px-4 py-3 rounded-xl text-sm">
               {error}
@@ -89,8 +107,10 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input 
                 type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Ingresa tu correo" 
-                className="w-full bg-white rounded-xl py-3.5 pl-12 pr-4 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#E31B23] focus:outline-none transition-shadow font-medium"
+                className="w-full bg-white rounded-xl py-3.5 pl-12 pr-4 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#3B82F6] focus:outline-none transition-shadow font-medium"
                 required
               />
             </div>
@@ -104,7 +124,7 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
               <input 
                 type={showPassword ? "text" : "password"} 
                 placeholder="Ingresa tu contraseña" 
-                className="w-full bg-white rounded-xl py-3.5 pl-12 pr-12 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#E31B23] focus:outline-none transition-shadow font-medium"
+                className="w-full bg-white rounded-xl py-3.5 pl-12 pr-12 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#3B82F6] focus:outline-none transition-shadow font-medium"
                 required
               />
               <button 
@@ -117,8 +137,17 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
             </div>
           </div>
 
-          {/* Forgot Password */}
-          <div className="flex justify-start">
+          {/* Remember Me & Forgot Password */}
+          <div className="flex items-center justify-between text-xs pt-0.5">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-white/80 hover:text-white transition-colors">
+              <input 
+                type="checkbox" 
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 rounded border-white/30 bg-black/20 text-[#3B82F6] focus:ring-[#3B82F6] focus:ring-offset-0 cursor-pointer accent-[#3B82F6]"
+              />
+              <span className="font-medium text-sm">Recordarme</span>
+            </label>
             <a href="#" className="text-sm text-white/70 hover:text-white transition-colors italic">
               ¿Olvidaste tu contraseña?
             </a>
@@ -134,9 +163,9 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
           {/* Social Login Button */}
           <button 
             type="button" 
-            onClick={() => onLoginSuccess()}
+            onClick={() => googleLogin()}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl py-3.5 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl py-3.5 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {isLoading ? (
               <span className="w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin"></span>
@@ -155,14 +184,14 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
           <div className="text-center mt-6">
             <p className="text-sm text-white/70">
               ¿No tienes una cuenta? <br />
-              <button type="button" onClick={onNavigateToRegister} className="text-white font-semibold hover:underline mt-1">Regístrate aquí</button>
+              <button type="button" onClick={onNavigateToRegister} className="text-white font-semibold hover:underline mt-1 cursor-pointer">Regístrate aquí</button>
             </p>
           </div>
 
           {/* Submit Button */}
           <button 
             type="submit" 
-            className="w-full bg-[#E31B23] hover:bg-[#C9161D] text-white rounded-xl py-4 font-bold flex items-center justify-center gap-2 mt-8 shadow-lg shadow-red-900/50 transition-colors"
+            className="w-full bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-xl py-4 font-bold flex items-center justify-center gap-2 mt-8 shadow-lg shadow-blue-600/40 transition-colors cursor-pointer"
           >
             Ingresar <span className="text-lg">→</span>
           </button>

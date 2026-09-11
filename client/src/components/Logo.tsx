@@ -20,15 +20,17 @@ export function Logo({ className = "w-24 h-24" }: { className?: string }) {
   );
 }
 
-export function BrandText({ className = "text-4xl" }: { className?: string }) {
+export function BrandText({ className = "text-4xl", darkMode = false }: { className?: string; darkMode?: boolean }) {
   return (
     <div className={`flex flex-col justify-center ${className}`}>
       <div className="font-extrabold tracking-tight leading-none">
-        <span className="text-[#0F172A]">Grow </span>
+        <span className={darkMode ? "text-white" : "text-[#0F172A]"}>Grow </span>
         <span className="text-[#3B82F6]">Up </span>
         <span className="text-[#10B981]">Job</span>
       </div>
-      <span className="text-[0.25em] tracking-[0.2em] text-gray-500 font-bold mt-1">EMPLEO & CARRERA PROFESIONAL</span>
+      <span className={`text-[0.25em] tracking-[0.2em] font-bold mt-1 ${darkMode ? "text-slate-400" : "text-gray-500"}`}>
+        EMPLEO & CARRERA PROFESIONAL
+      </span>
     </div>
   );
 }

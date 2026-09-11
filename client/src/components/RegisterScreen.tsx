@@ -45,7 +45,7 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
               <input 
                 type="text" 
                 placeholder="Ingresa tu nombre" 
-                className="w-full bg-white rounded-xl py-3 pl-11 pr-4 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#E31B23] focus:outline-none transition-shadow font-medium text-sm"
+                className="w-full bg-white rounded-xl py-3 pl-11 pr-4 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#3B82F6] focus:outline-none transition-shadow font-medium text-sm"
                 required
               />
             </div>
@@ -59,7 +59,7 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
               <input 
                 type="email" 
                 placeholder="Ingresa tu correo" 
-                className="w-full bg-white rounded-xl py-3 pl-11 pr-4 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#E31B23] focus:outline-none transition-shadow font-medium text-sm"
+                className="w-full bg-white rounded-xl py-3 pl-11 pr-4 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#3B82F6] focus:outline-none transition-shadow font-medium text-sm"
                 required
               />
             </div>
@@ -73,14 +73,14 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
               <input 
                 type={showPassword ? "text" : "password"} 
                 placeholder="Mínimo 8 caracteres" 
-                className="w-full bg-white rounded-xl py-3 pl-11 pr-11 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#E31B23] focus:outline-none transition-shadow font-medium text-sm"
+                className="w-full bg-white rounded-xl py-3 pl-11 pr-11 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#3B82F6] focus:outline-none transition-shadow font-medium text-sm"
                 required
                 minLength={8}
               />
               <button 
                 type="button" 
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -95,14 +95,14 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
               <input 
                 type={showConfirmPassword ? "text" : "password"} 
                 placeholder="Repite tu contraseña" 
-                className="w-full bg-white rounded-xl py-3 pl-11 pr-11 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#E31B23] focus:outline-none transition-shadow font-medium text-sm"
+                className="w-full bg-white rounded-xl py-3 pl-11 pr-11 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#3B82F6] focus:outline-none transition-shadow font-medium text-sm"
                 required
                 minLength={8}
               />
               <button 
                 type="button" 
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer"
               >
                 {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -116,7 +116,7 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
               <button
                 type="button"
                 onClick={() => setRole('trabajador')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${role === 'trabajador' ? 'bg-[#334195] text-white shadow-md' : 'text-white/60 hover:text-white'}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${role === 'trabajador' ? 'bg-[#334195] text-white shadow-md' : 'text-white/60 hover:text-white'}`}
               >
                 <User className="w-4 h-4" />
                 Empleo
@@ -124,7 +124,7 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
               <button
                 type="button"
                 onClick={() => setRole('empresa')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${role === 'empresa' ? 'bg-[#334195] text-white shadow-md' : 'text-white/60 hover:text-white'}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${role === 'empresa' ? 'bg-[#334195] text-white shadow-md' : 'text-white/60 hover:text-white'}`}
               >
                 <Briefcase className="w-4 h-4" />
                 Talento
@@ -136,14 +136,14 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
           <div className="text-center mt-6 pt-2">
             <p className="text-sm text-white/70">
               ¿Ya tienes una cuenta? <br />
-              <button type="button" onClick={onNavigateToLogin} className="text-white font-semibold hover:underline mt-1">Inicia sesión aquí</button>
+              <button type="button" onClick={onNavigateToLogin} className="text-white font-semibold hover:underline mt-1 cursor-pointer">Inicia sesión aquí</button>
             </p>
           </div>
 
           {/* Submit Button */}
           <button 
             type="submit" 
-            className="w-full bg-[#E31B23] hover:bg-[#C9161D] text-white rounded-xl py-3.5 font-bold flex items-center justify-center gap-2 mt-4 shadow-lg shadow-red-900/50 transition-colors"
+            className="w-full bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-xl py-3.5 font-bold flex items-center justify-center gap-2 mt-4 shadow-lg shadow-blue-600/40 transition-colors cursor-pointer"
           >
             Crear cuenta <span className="text-lg">→</span>
           </button>
