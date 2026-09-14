@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Mail, Shield, Eye, EyeOff, User, Briefcase } from 'lucide-react';
+import { useState, type FormEvent } from 'react';
+import { Mail, Lock, Eye, EyeOff, User, Briefcase, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Logo, BrandText } from './Logo';
 
@@ -12,143 +12,257 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [role, setRole] = useState<'trabajador' | 'empresa'>('trabajador');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+    setError('');
+    onRegisterSuccess();
+  };
 
   return (
-    <div 
-      className="min-h-screen w-full flex items-center justify-center md:justify-end bg-cover bg-center bg-no-repeat relative"
-      style={{ backgroundImage: 'url("/bg-login.jpg")' }}
-    >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/20"></div>
+    <div className="min-h-screen w-full flex bg-slate-50 font-sans">
+      {/* Left Column: Brand Story & Values */}
+      <div className="hidden lg:flex lg:w-1/2 bg-slate-900 text-white flex-col justify-between p-12 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:20px_20px]" />
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Glassmorphism Panel */}
-      <motion.div 
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="w-full max-w-md h-full md:h-auto min-h-screen md:min-h-[90vh] md:mr-[10%] bg-black/40 backdrop-blur-xl md:rounded-3xl border border-white/20 shadow-2xl flex flex-col justify-center px-8 py-8 relative z-10 overflow-y-auto"
-      >
-        {/* Logo Section */}
-        <div className="flex flex-col items-center justify-center mb-8 bg-white/90 py-3 px-6 rounded-2xl shadow-sm mx-auto w-fit mt-8 md:mt-0">
-          <div className="flex items-center gap-3">
-            <Logo className="w-10 h-10" />
-            <BrandText className="text-2xl" />
+        {/* Brand Header */}
+        <div className="relative z-10 flex items-center gap-3">
+          <Logo className="w-9 h-9" />
+          <BrandText className="text-xl" darkMode={true} />
+        </div>
+
+        {/* Narrative & Benefits */}
+        <div className="relative z-10 max-w-lg space-y-6 my-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/90 border border-slate-700 text-xs font-semibold text-slate-300">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Únete a más de 50.000 profesionales</span>
+          </div>
+
+          <h1 className="text-4xl xl:text-5xl font-extrabold tracking-tight text-white leading-tight">
+            Crea tu perfil y potencia tus oportunidades.
+          </h1>
+
+          <div className="space-y-3 pt-2">
+            {[
+              'Alertas instantáneas de convocatorias de empleo público y oposiciones',
+              'Ofertas privadas con salarios 100% transparentes',
+              'Insignias técnicas validadas para destacar en el Top 5% de candidatos',
+              'Proceso de inscripción ágil en 1 solo clic',
+            ].map((benefit, i) => (
+              <div key={i} className="flex items-start gap-3 text-slate-300 text-sm">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span>{benefit}</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); onRegisterSuccess(); }}>
-          {/* Name Field */}
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-white/90 ml-1">Nombre completo</label>
-            <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input 
-                type="text" 
-                placeholder="Ingresa tu nombre" 
-                className="w-full bg-white rounded-xl py-3 pl-11 pr-4 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#3B82F6] focus:outline-none transition-shadow font-medium text-sm"
-                required
-              />
-            </div>
+        {/* Footer info */}
+        <div className="relative z-10 text-xs text-slate-400">
+          GrowUpJob cumple con los estándares europeos de protección de datos (RGPD) y verificación de identidad.
+        </div>
+      </div>
+
+      {/* Right Column: Registration Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          className="w-full max-w-md bg-white rounded-2xl border border-slate-200/90 shadow-sm p-8 sm:p-10 my-auto"
+        >
+          {/* Mobile brand header */}
+          <div className="lg:hidden flex items-center gap-3 mb-8">
+            <Logo className="w-8 h-8" />
+            <BrandText className="text-lg" />
           </div>
 
-          {/* Email Field */}
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-white/90 ml-1">Correo electrónico</label>
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input 
-                type="email" 
-                placeholder="Ingresa tu correo" 
-                className="w-full bg-white rounded-xl py-3 pl-11 pr-4 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#3B82F6] focus:outline-none transition-shadow font-medium text-sm"
-                required
-              />
-            </div>
+          <div className="mb-6">
+            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Crear cuenta</h2>
+            <p className="text-sm text-slate-500 mt-1">
+              Completa tus datos para empezar en minutos.
+            </p>
           </div>
 
-          {/* Password Field */}
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-white/90 ml-1">Contraseña</label>
-            <div className="relative">
-              <Shield className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input 
-                type={showPassword ? "text" : "password"} 
-                placeholder="Mínimo 8 caracteres" 
-                className="w-full bg-white rounded-xl py-3 pl-11 pr-11 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#3B82F6] focus:outline-none transition-shadow font-medium text-sm"
-                required
-                minLength={8}
-              />
-              <button 
-                type="button" 
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
+          {error && (
+            <div className="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
+              {error}
             </div>
-          </div>
+          )}
 
-          {/* Confirm Password Field */}
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-white/90 ml-1">Confirmar Contraseña</label>
-            <div className="relative">
-              <Shield className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input 
-                type={showConfirmPassword ? "text" : "password"} 
-                placeholder="Repite tu contraseña" 
-                className="w-full bg-white rounded-xl py-3 pl-11 pr-11 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#3B82F6] focus:outline-none transition-shadow font-medium text-sm"
-                required
-                minLength={8}
-              />
-              <button 
-                type="button" 
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer"
-              >
-                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Role Selector */}
-          <div className="space-y-1 pt-2">
-            <label className="text-xs font-medium text-white/90 ml-1 mb-2 block">¿Qué estás buscando?</label>
-            <div className="flex bg-black/20 p-1 rounded-xl border border-white/10">
+          {/* Role Segmented Switch */}
+          <div className="mb-5">
+            <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1.5">
+              Tipo de perfil
+            </label>
+            <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl border border-slate-200/70">
               <button
                 type="button"
                 onClick={() => setRole('trabajador')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${role === 'trabajador' ? 'bg-[#334195] text-white shadow-md' : 'text-white/60 hover:text-white'}`}
+                className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  role === 'trabajador'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
               >
-                <User className="w-4 h-4" />
-                Empleo
+                <User className="w-3.5 h-3.5" />
+                <span>Candidato / Profesional</span>
               </button>
               <button
                 type="button"
                 onClick={() => setRole('empresa')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${role === 'empresa' ? 'bg-[#334195] text-white shadow-md' : 'text-white/60 hover:text-white'}`}
+                className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  role === 'empresa'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
               >
-                <Briefcase className="w-4 h-4" />
-                Talento
+                <Briefcase className="w-3.5 h-3.5" />
+                <span>Empresa / Empleador</span>
               </button>
             </div>
           </div>
 
+          <form className="space-y-3.5" onSubmit={handleSubmit}>
+            {/* Name Field */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Nombre completo
+              </label>
+              <div className="relative">
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Ej. Ana Fernández Romero"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 outline-none transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Email Field */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Correo electrónico
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="ejemplo@correo.com"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 outline-none transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Contraseña
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Mínimo 8 caracteres"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 outline-none transition-all"
+                  required
+                  minLength={8}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm Password Field */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Confirmar contraseña
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Repite tu contraseña"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 outline-none transition-all"
+                  required
+                  minLength={8}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Terms checkbox */}
+            <div className="pt-1">
+              <label className="flex items-start gap-2 cursor-pointer select-none text-slate-600 text-xs leading-relaxed">
+                <input
+                  type="checkbox"
+                  required
+                  className="w-4 h-4 mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 shrink-0"
+                />
+                <span>
+                  Acepto los <a href="#" className="text-blue-600 underline">Términos de Uso</a> y la <a href="#" className="text-blue-600 underline">Política de Privacidad</a>.
+                </span>
+              </label>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3 font-bold text-sm flex items-center justify-center gap-2 mt-4 shadow-xs hover:shadow transition-all cursor-pointer"
+            >
+              <span>Crear cuenta profesional</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+
           {/* Login Link */}
-          <div className="text-center mt-6 pt-2">
-            <p className="text-sm text-white/70">
-              ¿Ya tienes una cuenta? <br />
-              <button type="button" onClick={onNavigateToLogin} className="text-white font-semibold hover:underline mt-1 cursor-pointer">Inicia sesión aquí</button>
+          <div className="text-center mt-6 pt-5 border-t border-slate-100">
+            <p className="text-xs text-slate-500">
+              ¿Ya tienes cuenta?{' '}
+              <button
+                type="button"
+                onClick={onNavigateToLogin}
+                className="font-bold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+              >
+                Inicia sesión aquí
+              </button>
             </p>
           </div>
-
-          {/* Submit Button */}
-          <button 
-            type="submit" 
-            className="w-full bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-xl py-3.5 font-bold flex items-center justify-center gap-2 mt-4 shadow-lg shadow-blue-600/40 transition-colors cursor-pointer"
-          >
-            Crear cuenta <span className="text-lg">→</span>
-          </button>
-        </form>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }
+

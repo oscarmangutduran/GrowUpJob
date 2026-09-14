@@ -1,11 +1,12 @@
-import { Briefcase, Building2, BookOpen, User, LandmarkIcon } from 'lucide-react';
+import { Briefcase, Building2, BookOpen, User, Landmark, Award } from 'lucide-react';
 
-const navItems = [
-  { icon: Briefcase, label: 'Empleo' },
-  { icon: LandmarkIcon, label: 'Público' },
-  { icon: BookOpen, label: 'Cursos' },
-  { icon: Building2, label: 'Empresas' },
-  { icon: User, label: 'Perfil' },
+export const navItems = [
+  { icon: Briefcase, label: 'Empleo', shortLabel: 'Empleo' },
+  { icon: Landmark, label: 'Público', shortLabel: 'Público' },
+  { icon: BookOpen, label: 'Cursos', shortLabel: 'Cursos' },
+  { icon: Building2, label: 'Empresas', shortLabel: 'Empresas' },
+  { icon: Award, label: 'Insignias', shortLabel: 'Insignias' },
+  { icon: User, label: 'Perfil', shortLabel: 'Perfil' },
 ];
 
 interface NavigationProps {
@@ -15,18 +16,25 @@ interface NavigationProps {
 
 export default function Navigation({ activeTab, onTabChange }: NavigationProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 pb-safe z-40">
-      <div className="max-w-md mx-auto flex justify-around items-center h-16">
-        {navItems.map(({ icon: Icon, label }) => {
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/90 py-1.5 px-2 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
+      <div className="flex justify-around items-center max-w-lg mx-auto">
+        {navItems.map(({ icon: Icon, label, shortLabel }) => {
           const isActive = activeTab === label;
           return (
             <button
               key={label}
               onClick={() => onTabChange(label)}
-              className={`flex flex-col items-center justify-center flex-1 h-full space-y-0.5 transition-colors ${isActive ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+              className={`relative flex flex-col items-center justify-center py-1.5 px-2 rounded-xl transition-all duration-150 ${
+                isActive
+                  ? 'text-blue-600 font-semibold'
+                  : 'text-slate-500 hover:text-slate-900 active:scale-95'
+              }`}
             >
-              <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 1.8} />
-              <span className="text-[9px] font-semibold">{label}</span>
+              {isActive && (
+                <span className="absolute top-0 w-8 h-1 bg-blue-600 rounded-full" />
+              )}
+              <Icon className="w-5 h-5 mb-1" strokeWidth={isActive ? 2.25 : 1.75} />
+              <span className="text-[10px] tracking-tight">{shortLabel}</span>
             </button>
           );
         })}
@@ -34,4 +42,5 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
     </nav>
   );
 }
+
 

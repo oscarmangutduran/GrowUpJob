@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Search, Bell, Star, Clock, Users, CheckCircle, ChevronRight, Bookmark, Zap, Info, BookOpen, Shield, Globe, Brain } from 'lucide-react';
+import { Search, Star, Clock, CheckCircle2, ChevronRight, Bookmark, ArrowUpRight, BookOpen, Shield, Globe, Brain, Sparkles, Award } from 'lucide-react';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type CursoBadgeType = 'gratis' | 'ocupados' | 'camara' | 'internacional';
@@ -29,183 +29,171 @@ const CURSOS: Curso[] = [
   {
     id: '1',
     badge: 'gratis',
-    badgeLabel: '✅ Subvencionado Fondos UE [Gratis]',
-    title: 'Certificación Cloud Practitioner & DevOps Essentials',
+    badgeLabel: '100% Subvencionado por Fondos UE',
+    title: 'Certificación Cloud Architect & Kubernetes Essentials',
     horas: '60h lectivas',
-    nivel: 'Nivel Intermedio',
+    nivel: 'Intermedio',
     modalidad: 'Online flexible',
-    extras: ['Insignia Digital Blockchain'],
+    extras: ['Insignia Digital Verificada'],
     rating: 4.9,
     ratingCount: 420,
     precio: '100% Gratuito',
-    ctaLabel: 'Inscribirme',
+    ctaLabel: 'Inscribirme gratis',
     ctaVariant: 'primary',
   },
   {
     id: '2',
     badge: 'ocupados',
-    badgeLabel: '👤 Para ocupados y desempleados',
-    title: 'Inglés Profesional C1 para Entrevistas IT y Negocios',
+    badgeLabel: 'Programa Sectorial para Profesionales IT',
+    title: 'Inglés Profesional C1 para Negocios y Entrevistas Globales',
     horas: '45h lectivas',
-    nivel: 'B2-C1',
-    modalidad: 'Clases en vivo',
-    extras: ['Simulacros reales'],
+    nivel: 'Nivel B2-C1',
+    modalidad: 'Clases en directo',
+    extras: ['Simulacros reales de entrevista'],
     precio: 'Gratuito',
     inicio: 'Próximo lunes',
-    ctaLabel: 'Ver Programa',
+    ctaLabel: 'Ver temario',
     ctaVariant: 'secondary',
   },
   {
     id: '3',
     badge: 'camara',
-    badgeLabel: '🏛️ Avalado Cámara de Comercio',
-    title: 'Especialista en Inteligencia Artificial Generativa aplicada a Negocio',
-    horas: '80h formativas',
+    badgeLabel: 'Diploma Oficial Cámara de Comercio',
+    title: 'Inteligencia Artificial Generativa & LLMs aplicados a Empresa',
+    horas: '80h lectivas',
     nivel: 'Avanzado',
     modalidad: 'Online flexible',
-    tags: ['Prompt Engineering & LLMs'],
+    tags: ['Prompt Engineering', 'Automatización'],
     rating: 4.8,
     ratingCount: 310,
-    precio: 'Consultar precio',
-    ctaLabel: 'Consultar Plazas',
+    precio: 'Consultar beca',
+    ctaLabel: 'Solicitar información',
     ctaVariant: 'outline',
   },
   {
     id: '4',
     badge: 'internacional',
-    badgeLabel: '🌍 Certificación Oficial Internacional',
-    title: 'Scrum Master & Agile Leadership',
+    badgeLabel: 'Acreditación Oficial Internacional Scrum.org',
+    title: 'Professional Scrum Master (PSM I) & Liderazgo Ágil',
     horas: '30h intensivas',
     nivel: 'Todos los niveles',
     modalidad: 'Online + Examen',
-    extras: ['Examen de Certificación incluido'],
+    extras: ['Tasa de examen oficial incluida'],
     aprobados: '98%',
-    precio: 'Desde 299€',
-    ctaLabel: 'Ver Detalles',
+    precio: '299€ (Beca -50% disponible)',
+    ctaLabel: 'Ver certificación',
     ctaVariant: 'outline',
   },
 ];
 
-const MODALIDAD_PILLS = ['Todos', '100% Subvencionados', 'Gratuitos', 'Certificaciones', 'En Vivo'];
+const MODALIDAD_PILLS = ['Todos', '100% Subvencionados', 'Gratuitos', 'Certificaciones Oficiales', 'En Directo'];
 
 const AREAS = [
-  { icon: Brain, label: 'Tecnología & IA', color: 'bg-blue-100 text-blue-600' },
-  { icon: Shield, label: 'Ciberseguridad', color: 'bg-purple-100 text-purple-600' },
-  { icon: Globe, label: 'Idiomas y Negocios', color: 'bg-green-100 text-green-600' },
-  { icon: BookOpen, label: 'Gestión & Agile', color: 'bg-orange-100 text-orange-600' },
+  { icon: Brain, label: 'Tecnología & IA', count: '18 programas' },
+  { icon: Shield, label: 'Ciberseguridad', count: '9 programas' },
+  { icon: Globe, label: 'Idiomas Profesionales', count: '12 programas' },
+  { icon: BookOpen, label: 'Gestión & Agile', count: '15 programas' },
 ];
 
-// ── Helpers ────────────────────────────────────────────────────────────────
 function badgeStyle(b: CursoBadgeType) {
   const map: Record<CursoBadgeType, string> = {
-    gratis: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-    ocupados: 'bg-blue-50 text-blue-700 border border-blue-200',
-    camara: 'bg-amber-50 text-amber-700 border border-amber-200',
-    internacional: 'bg-violet-50 text-violet-700 border border-violet-200',
+    gratis: 'bg-emerald-50 text-emerald-800 border-emerald-200/80',
+    ocupados: 'bg-blue-50 text-blue-800 border-blue-200/80',
+    camara: 'bg-amber-50 text-amber-800 border-amber-200/80',
+    internacional: 'bg-indigo-50 text-indigo-800 border-indigo-200/80',
   };
   return map[b];
 }
 
-function ctaStyle(v: Curso['ctaVariant']) {
-  const map: Record<string, string> = {
-    primary: 'bg-blue-600 hover:bg-blue-700 text-white',
-    secondary: 'bg-gray-800 hover:bg-gray-700 text-white',
-    outline: 'border border-blue-300 text-blue-600 hover:bg-blue-50',
-  };
-  return map[v];
+interface CursoCardProps {
+  key?: any;
+  c: Curso;
 }
 
-// ── Card Component ─────────────────────────────────────────────────────────
-function CursoCard({ c }: { c: Curso }) {
+function CursoCard({ c }: CursoCardProps) {
+  const [saved, setSaved] = useState(false);
+
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-      {/* Badge */}
-      <div className={`px-4 py-2 text-xs font-semibold ${badgeStyle(c.badge)}`}>
-        {c.badgeLabel}
+    <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between overflow-hidden">
+      <div>
+        <div className={`px-4 py-2 border-b text-xs font-semibold flex items-center gap-1.5 ${badgeStyle(c.badge)}`}>
+          <Award className="w-3.5 h-3.5" />
+          <span>{c.badgeLabel}</span>
+        </div>
+
+        <div className="p-5">
+          <div className="flex justify-between items-start gap-3 mb-2">
+            <h3 className="font-bold text-slate-900 text-base leading-snug hover:text-blue-600 transition-colors cursor-pointer">
+              {c.title}
+            </h3>
+            <button
+              onClick={() => setSaved(!saved)}
+              className={`p-1.5 rounded-lg border transition-colors shrink-0 cursor-pointer ${
+                saved
+                  ? 'border-blue-300 text-blue-600 bg-blue-50'
+                  : 'border-slate-200 text-slate-400 hover:text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              <Bookmark className="w-4 h-4" fill={saved ? 'currentColor' : 'none'} />
+            </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mb-3 text-xs text-slate-500">
+            <span className="flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5 text-slate-400" />
+              {c.horas}
+            </span>
+            <span>·</span>
+            <span>{c.nivel}</span>
+            <span>·</span>
+            <span>{c.modalidad}</span>
+          </div>
+
+          {c.tags && (
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {c.tags.map(t => (
+                <span key={t} className="text-[11px] bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md font-medium border border-slate-200/60">
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {c.extras && (
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {c.extras.map(e => (
+                <span key={e} className="text-[11px] bg-blue-50 text-blue-700 border border-blue-200/60 px-2 py-0.5 rounded font-medium inline-flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-blue-600" />
+                  {e}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {c.rating && (
+            <div className="flex items-center gap-2 mb-2 text-xs">
+              <div className="flex items-center gap-1 bg-amber-50 text-amber-900 px-1.5 py-0.5 rounded font-bold border border-amber-200/60">
+                <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                <span>{c.rating}</span>
+              </div>
+              <span className="text-slate-400">({c.ratingCount} alumnos titulados)</span>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="px-4 py-3">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-bold text-gray-900 text-sm leading-snug flex-1 pr-2">{c.title}</h3>
-          <button className="text-gray-300 hover:text-blue-500 transition-colors flex-shrink-0 mt-0.5">
-            <Bookmark className="w-4 h-4" />
-          </button>
+      <div className="p-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-3 bg-slate-50/50">
+        <div>
+          <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Matrícula</p>
+          <p className="text-sm font-bold text-slate-900">{c.precio}</p>
         </div>
-
-        {/* Meta info */}
-        <div className="flex flex-wrap gap-2 mb-2 text-xs text-gray-500">
-          <span className="flex items-center gap-1">
-            <Clock className="w-3.5 h-3.5 text-blue-400" />
-            {c.horas}
-          </span>
-          <span className="flex items-center gap-1">
-            <Zap className="w-3.5 h-3.5 text-purple-400" />
-            {c.nivel}
-          </span>
-          <span className="flex items-center gap-1">
-            <Globe className="w-3.5 h-3.5 text-green-400" />
-            {c.modalidad}
-          </span>
-        </div>
-
-        {/* Tags */}
-        {c.tags && (
-          <div className="flex flex-wrap gap-1.5 mb-2">
-            {c.tags.map(t => (
-              <span key={t} className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-medium">{t}</span>
-            ))}
-          </div>
-        )}
-
-        {/* Extras */}
-        {c.extras && (
-          <div className="flex flex-wrap gap-1.5 mb-2">
-            {c.extras.map(e => (
-              <span key={e} className="text-[10px] bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
-                <CheckCircle className="w-2.5 h-2.5" />{e}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Rating */}
-        {c.rating && (
-          <div className="flex items-center gap-1 mb-2 text-xs">
-            <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span className="font-bold text-gray-800">{c.rating}</span>
-            <span className="text-gray-400">({c.ratingCount} alumnos)</span>
-          </div>
-        )}
-
-        {/* Inicio */}
-        {c.inicio && (
-          <div className="flex items-center gap-1 mb-2 text-xs text-gray-500">
-            <Clock className="w-3.5 h-3.5" />
-            Inicio: <span className="font-semibold text-gray-700">{c.inicio}</span>
-          </div>
-        )}
-
-        {/* Aprobados */}
-        {c.aprobados && (
-          <div className="flex items-center gap-1 mb-2 text-xs text-emerald-600 font-semibold">
-            <CheckCircle className="w-3.5 h-3.5" />
-            Tasa de aprobados {c.aprobados}
-          </div>
-        )}
-
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-2 mt-1 border-t border-gray-50">
-          <div>
-            <p className="text-[10px] text-gray-400">Coste total</p>
-            <p className={`text-sm font-extrabold ${c.precio.includes('Gratuito') || c.precio.includes('100%') ? 'text-emerald-600' : 'text-gray-800'}`}>
-              {c.precio}
-            </p>
-          </div>
-          <button className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-colors ${ctaStyle(c.ctaVariant)}`}>
-            {c.ctaLabel}
-            {c.ctaVariant === 'primary' && <ChevronRight className="w-3.5 h-3.5" />}
-          </button>
-        </div>
+        <button
+          onClick={() => alert(`Solicitando información para ${c.title}`)}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+        >
+          <span>{c.ctaLabel}</span>
+          <ArrowUpRight className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   );
@@ -224,164 +212,110 @@ export default function Cursos() {
         modalidadFilter === 'Todos' ||
         (modalidadFilter === '100% Subvencionados' && c.badge === 'gratis') ||
         (modalidadFilter === 'Gratuitos' && (c.badge === 'gratis' || c.badge === 'ocupados')) ||
-        (modalidadFilter === 'Certificaciones' && (c.badge === 'internacional' || c.badge === 'camara')) ||
-        (modalidadFilter === 'En Vivo' && c.modalidad.toLowerCase().includes('vivo'));
+        (modalidadFilter === 'Certificaciones Oficiales' && (c.badge === 'internacional' || c.badge === 'camara')) ||
+        (modalidadFilter === 'En Directo' && c.modalidad.toLowerCase().includes('directo'));
       return matchSearch && matchModalidad;
     });
   }, [searchQuery, modalidadFilter]);
 
   return (
-    <div className="min-h-screen bg-[#F4F6FA] font-sans pb-24">
-      <div className="max-w-md mx-auto">
-        {/* Header */}
-        <header className="px-4 pt-10 pb-3 bg-white sticky top-0 z-10 shadow-sm">
-          <div className="flex justify-between items-center mb-3">
-            <div>
-              <p className="text-xs text-gray-400 font-medium leading-none">GrowUp</p>
-              <h1 className="text-sm font-bold text-gray-800 leading-tight">Formación</h1>
-            </div>
-            <div className="flex items-center gap-2">
-              <button className="w-9 h-9 rounded-full border border-gray-100 bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
-                <Search className="w-4 h-4" />
-              </button>
-              <button className="w-9 h-9 rounded-full border border-gray-100 bg-gray-50 flex items-center justify-center text-gray-500 relative hover:bg-gray-100 transition-colors">
-                <Bell className="w-4 h-4" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
-              </button>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">OD</div>
-            </div>
-          </div>
-
-          {/* Search */}
-          <div className="relative mb-3">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              type="text"
-              placeholder="Buscar cursos, certificaciones..."
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-9 pr-4 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400"
-            />
-          </div>
-
-          {/* Modalidad pills */}
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
-            {MODALIDAD_PILLS.map(p => (
-              <button
-                key={p}
-                onClick={() => setModalidadFilter(p)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${modalidadFilter === p ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        </header>
-
-        <main className="px-4 py-4 space-y-4">
-          {/* Hero Banner */}
-          <div className="rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-5 text-white shadow-lg shadow-blue-200 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-6 translate-x-6" />
-            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-4 -translate-x-4" />
-            <span className="text-[10px] font-bold bg-white/20 border border-white/30 px-2 py-0.5 rounded-full mb-2 inline-block">
-              ✅ Certificaciones Verificadas
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Top Banner */}
+      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200/60">
+              Formación Subvencionada & Certificaciones
             </span>
-            <h2 className="text-base font-extrabold leading-snug mb-1">
-              Impulsa tu empleabilidad con<br />certificaciones de alta demanda
-            </h2>
-            <p className="text-xs text-white/80 mb-3 leading-relaxed">
-              Programas avalados por la UE y líderes del sector tecnológico para catapultar tu carrera laboral.
-            </p>
-            <div className="flex items-center gap-1.5">
-              <div className="flex -space-x-1">
-                {['bg-pink-400', 'bg-yellow-400', 'bg-green-400'].map((c, i) => (
-                  <div key={i} className={`w-5 h-5 rounded-full ${c} border-2 border-blue-700`} />
-                ))}
+          </div>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            Catálogo de Cursos Oficiales y Especialización
+          </h1>
+          <p className="text-xs text-slate-500 mt-1">
+            Cursos 100% gratuitos para personas empleadas y desempleadas financiados por fondos europeos y estatales.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 shadow-xs text-center">
+            <div className="text-lg font-black text-slate-900">+50</div>
+            <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-500">Programas Activos</div>
+          </div>
+          <div className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 shadow-xs text-center">
+            <div className="text-lg font-black text-emerald-600">100%</div>
+            <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-500">Subvencionado</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Áreas Temáticas Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+        {AREAS.map(area => {
+          const Icon = area.icon;
+          return (
+            <div
+              key={area.label}
+              className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-xs hover:border-slate-300 transition-all flex items-center gap-3 cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
+                <Icon className="w-5 h-5" />
               </div>
-              <span className="text-[10px] text-white/80 font-medium">+1.800 graduados con empleo esta mes</span>
-            </div>
-          </div>
-
-          {/* Personalized path */}
-          <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Tu itinerario adaptado</span>
-                <h3 className="text-sm font-bold text-gray-900">Senior Cloud & Dev Lead</h3>
-              </div>
-              <span className="text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">85% Listo</span>
-            </div>
-            <div className="w-full h-1.5 bg-gray-100 rounded-full mb-2">
-              <div className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full" style={{ width: '85%' }} />
-            </div>
-            <p className="text-[11px] text-gray-500 mb-3">Paso 3 de 4 en curso · Próxima meta: <span className="font-bold text-blue-600">Certificación DevOps</span></p>
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-              {[
-                { label: 'Git & CI/CD', done: true, color: 'bg-green-100 text-green-700' },
-                { label: 'Docker & K8s', done: true, color: 'bg-green-100 text-green-700' },
-                { label: 'Cloud Dev', done: false, color: 'bg-blue-100 text-blue-700' },
-                { label: 'Liderazgo Ágil', done: false, color: 'bg-gray-100 text-gray-500' },
-              ].map(step => (
-                <div key={step.label} className={`flex-shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[10px] font-semibold ${step.color}`}>
-                  {step.done && <CheckCircle className="w-3 h-3" />}
-                  {step.label}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Áreas temáticas */}
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-sm font-bold text-gray-800">Áreas Temáticas</h2>
-              <button className="text-xs text-blue-600 font-semibold">Ver todas</button>
-            </div>
-            <div className="grid grid-cols-4 gap-2">
-              {AREAS.map(area => (
-                <button key={area.label} className="flex flex-col items-center gap-1.5 p-3 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${area.color}`}>
-                    <area.icon className="w-5 h-5" />
-                  </div>
-                  <span className="text-[9px] font-semibold text-gray-600 text-center leading-tight">{area.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Section header */}
-          <div className="flex justify-between items-center">
-            <h2 className="text-sm font-bold text-gray-800">Cursos y Certificaciones Destacados</h2>
-            <span className="text-xs text-gray-400 font-medium">{filtered.length} programas</span>
-          </div>
-
-          {/* Course cards */}
-          {filtered.length > 0 ? (
-            filtered.map(c => <CursoCard key={c.id} c={c} />)
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="text-4xl mb-3">📚</div>
-              <h3 className="font-bold text-gray-700 mb-1">Sin resultados</h3>
-              <p className="text-sm text-gray-400">Prueba con otros términos o filtros</p>
-            </div>
-          )}
-
-          {/* Help card */}
-          <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4">
-            <div className="flex items-start gap-2">
-              <Info className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-xs font-bold text-blue-800 mb-1">¿Dudas sobre cómo solicitar tu beca?</p>
-                <p className="text-[11px] text-blue-700 leading-relaxed mb-2">
-                  Nuestros asesores laborales revisan tus requisitos sin compromiso.
-                </p>
-                <button className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1">
-                  Hablar con un asesor <ChevronRight className="w-3.5 h-3.5" />
-                </button>
+              <div className="min-w-0">
+                <h3 className="text-xs font-bold text-slate-900 truncate">{area.label}</h3>
+                <span className="text-[11px] text-slate-400 font-medium">{area.count}</span>
               </div>
             </div>
+          );
+        })}
+      </div>
+
+      {/* Search & Filter Bar */}
+      <div className="bg-white rounded-xl border border-slate-200/90 p-4 mb-6 shadow-xs space-y-3">
+        <div className="relative">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            type="text"
+            placeholder="Buscar cursos por tecnología, temática o titulación..."
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 pl-10 pr-4 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none transition-all"
+          />
+        </div>
+
+        {/* Modalidad Filter Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide pt-1 border-t border-slate-100">
+          <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">Modalidad:</span>
+          {MODALIDAD_PILLS.map(p => (
+            <button
+              key={p}
+              onClick={() => setModalidadFilter(p)}
+              className={`shrink-0 px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                modalidadFilter === p
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Course Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+        {filtered.length > 0 ? (
+          filtered.map(c => <CursoCard key={c.id} c={c} />)
+        ) : (
+          <div className="col-span-2 bg-white rounded-xl border border-slate-200/90 p-12 text-center shadow-xs">
+            <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mx-auto mb-3">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <h3 className="font-bold text-slate-800 text-base mb-1">Sin programas formativos</h3>
+            <p className="text-xs text-slate-500">Prueba con otro filtro de modalidad o limpia la búsqueda.</p>
           </div>
-        </main>
+        )}
       </div>
     </div>
   );
 }
+

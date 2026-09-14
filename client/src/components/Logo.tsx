@@ -1,36 +1,33 @@
-export function Logo({ className = "w-24 h-24" }: { className?: string }) {
+export function Logo({ className = "w-8 h-8" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Bar 1 */}
-      <rect x="5" y="55" width="20" height="25" rx="6" fill="#E0E7FF" />
-      <rect x="10" y="62" width="10" height="11" rx="3" fill="#2563EB" />
-      
-      {/* Bar 2 */}
-      <rect x="30" y="35" width="20" height="45" rx="6" fill="#DBEAFE" />
-      <rect x="35" y="42" width="10" height="31" rx="4" fill="#2563EB" />
-      
-      {/* Bar 3 */}
-      <rect x="55" y="20" width="20" height="60" rx="4" fill="#2563EB" />
-      
-      {/* Arrow */}
-      <path d="M 45 40 L 75 15" stroke="#10B981" strokeWidth="8" strokeLinecap="round" />
-      <polygon points="65,15 80,10 75,25" fill="#10B981" />
-      <circle cx="80" cy="10" r="4" fill="#10B981" />
+    <svg viewBox="0 0 40 40" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Background shape */}
+      <rect width="40" height="40" rx="10" fill="#1E293B" />
+      {/* Growth bars */}
+      <rect x="9" y="23" width="5" height="9" rx="2.5" fill="#64748B" />
+      <rect x="17.5" y="16" width="5" height="16" rx="2.5" fill="#3B82F6" />
+      <rect x="26" y="9" width="5" height="23" rx="2.5" fill="#10B981" />
+      {/* Dynamic trajectory dot */}
+      <circle cx="28.5" cy="6" r="2" fill="#34D399" />
     </svg>
   );
 }
 
-export function BrandText({ className = "text-4xl", darkMode = false }: { className?: string; darkMode?: boolean }) {
+export function BrandText({ className = "text-xl", darkMode = false }: { className?: string; darkMode?: boolean }) {
   return (
-    <div className={`flex flex-col justify-center ${className}`}>
-      <div className="font-extrabold tracking-tight leading-none">
-        <span className={darkMode ? "text-white" : "text-[#0F172A]"}>Grow </span>
-        <span className="text-[#3B82F6]">Up </span>
-        <span className="text-[#10B981]">Job</span>
+    <div className={`flex flex-col justify-center select-none ${className}`}>
+      <div className="font-extrabold tracking-tight leading-none flex items-center gap-0.5">
+        <span className={darkMode ? "text-white" : "text-slate-900"}>Grow</span>
+        <span className="text-blue-600">Up</span>
+        <span className="text-emerald-600 ml-0.5">Job</span>
+        <span className="ml-1.5 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200/60 rounded">
+          Pro
+        </span>
       </div>
-      <span className={`text-[0.25em] tracking-[0.2em] font-bold mt-1 ${darkMode ? "text-slate-400" : "text-gray-500"}`}>
-        EMPLEO & CARRERA PROFESIONAL
+      <span className={`text-[9px] tracking-[0.16em] font-semibold mt-1 uppercase ${darkMode ? "text-slate-400" : "text-slate-500"}`}>
+        Empleo & Carrera Profesional
       </span>
     </div>
   );
 }
+

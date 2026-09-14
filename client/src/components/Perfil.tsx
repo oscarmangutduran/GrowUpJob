@@ -1,22 +1,23 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
-  Search, Bell, Edit, Upload, Eye, MapPin, Star, FileText, ChevronRight,
+  Edit, Upload, Eye, MapPin, FileText, ChevronRight,
   Briefcase, GraduationCap, Globe, Github, Linkedin, Award, Plus,
-  Video, Clock, CheckCircle, Zap, Settings, Moon, ToggleRight, ExternalLink, Download,
-  LogOut
+  Video, CheckCircle2, Zap, Settings, Download, LogOut, Check
 } from 'lucide-react';
 
 interface PerfilProps {
   onLogout?: () => void;
 }
 
-// ── Sub-sections ───────────────────────────────────────────────────────────
-
-function SectionHeader({ title, action }: { title: string; action?: React.ReactNode }) {
+function SectionHeader({ title, action }: { title: string; action?: ReactNode }) {
   return (
-    <div className="flex justify-between items-center mb-3">
-      <h2 className="text-sm font-bold text-gray-800">{title}</h2>
-      {action ?? <button className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"><Plus className="w-4 h-4 text-gray-500" /></button>}
+    <div className="flex justify-between items-center mb-3.5 pb-2 border-b border-slate-100">
+      <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wider">{title}</h2>
+      {action ?? (
+        <button className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors cursor-pointer">
+          <Plus className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 }
@@ -25,83 +26,111 @@ function SectionHeader({ title, action }: { title: string; action?: React.ReactN
 const CANDIDATURAS = {
   'En revisión': [
     {
-      id: '1', badge: 'Entrevista', badgeColor: 'bg-blue-100 text-blue-700',
-      title: 'Lead Full Stack', company: 'Frontend Inc.',
-      detail: 'Jueves, 16:00 – 17:15 CST (Google Meet)',
-      detailIcon: <Video className="w-3 h-3" />,
-      cta: 'Ver detalles', ctaColor: 'text-blue-600 border border-blue-200 hover:bg-blue-50',
+      id: '1', badge: 'Entrevista', badgeColor: 'bg-blue-50 text-blue-700 border-blue-200/60',
+      title: 'Lead Full Stack Engineer', company: 'Frontend Inc. · Híbrido',
+      detail: 'Jueves 16:00 – 17:15 CET (Google Meet con CTO)',
+      detailIcon: <Video className="w-3.5 h-3.5 text-blue-600" />,
+      cta: 'Ver sala de entrevista', ctaColor: 'text-blue-700 bg-blue-50 border border-blue-200/80 hover:bg-blue-100',
     },
     {
-      id: '2', badge: 'Finalista', badgeColor: 'bg-purple-100 text-purple-700',
-      title: 'Senior React Dev', company: 'DevPulsar Tech · Remoto (0–40)',
-      detail: 'Resultado: 89% Match',
-      detailIcon: <Star className="w-3 h-3 text-amber-400" />,
-      cta: 'Ver detalles', ctaColor: 'text-purple-600 border border-purple-200 hover:bg-purple-50',
+      id: '2', badge: 'Finalista', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200/60',
+      title: 'Senior React Developer', company: 'DevPulsar Tech · Remoto internacional',
+      detail: 'Resultado de prueba técnica: 89/100 (Top 3)',
+      detailIcon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />,
+      cta: 'Ver feedback técnico', ctaColor: 'text-emerald-700 bg-emerald-50 border border-emerald-200/80 hover:bg-emerald-100',
     },
     {
-      id: '3', badge: 'Invitación', badgeColor: 'bg-green-100 text-green-700',
-      title: 'Platform Architect', company: 'NX Cloud Systems',
-      detail: 'Feedback constructivo disponible. Tienes completa disposición de la presentación...',
-      detailIcon: <CheckCircle className="w-3 h-3 text-green-500" />,
-      cta: 'Ver detalles', ctaColor: 'text-green-600 border border-green-200 hover:bg-green-50',
+      id: '3', badge: 'En proceso', badgeColor: 'bg-slate-100 text-slate-700 border-slate-200',
+      title: 'Platform Architect', company: 'NX Cloud Systems · Madrid',
+      detail: 'Revisión curricular superada. Esperando asignación de fecha.',
+      detailIcon: <Briefcase className="w-3.5 h-3.5 text-slate-500" />,
+      cta: 'Consultar estado', ctaColor: 'text-slate-700 bg-slate-100 border border-slate-200 hover:bg-slate-200',
     },
   ],
-  'Enviadas': [],
-  'Entrevistas': [],
+  'Enviadas': [
+    {
+      id: '4', badge: 'Recibida', badgeColor: 'bg-slate-100 text-slate-700 border-slate-200',
+      title: 'DevOps & SRE Lead', company: 'Banco Digital Santander · Remoto',
+      detail: 'Candidatura enviada hace 2 días',
+      detailIcon: <CheckCircle2 className="w-3.5 h-3.5 text-slate-500" />,
+      cta: 'Ver candidatura', ctaColor: 'text-slate-700 bg-slate-100 border border-slate-200 hover:bg-slate-200',
+    }
+  ],
+  'Entrevistas': [
+    {
+      id: '5', badge: 'Próxima', badgeColor: 'bg-blue-50 text-blue-700 border-blue-200/60',
+      title: 'Lead Full Stack Engineer', company: 'Frontend Inc.',
+      detail: 'Jueves 16:00 CET',
+      detailIcon: <Video className="w-3.5 h-3.5 text-blue-600" />,
+      cta: 'Unirse al Meet', ctaColor: 'text-white bg-blue-600 hover:bg-blue-700',
+    }
+  ],
 };
 
 type CandidaturaTab = keyof typeof CANDIDATURAS;
 
 function MiCandidatura() {
   const [tab, setTab] = useState<CandidaturaTab>('En revisión');
-  const items = CANDIDATURAS[tab];
+  const items = CANDIDATURAS[tab] || [];
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-      <div className="px-4 pt-4 pb-2">
+    <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs overflow-hidden">
+      <div className="p-5 pb-3">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-sm font-bold text-gray-800">Mi Candidatura</h2>
-          <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">En proceso</span>
+          <div>
+            <h2 className="text-sm font-bold text-slate-900">Mis Candidaturas Activas</h2>
+            <p className="text-xs text-slate-500">Seguimiento de procesos de selección abiertos</p>
+          </div>
+          <span className="text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200/60 px-2.5 py-1 rounded-md">
+            {items.length} activas
+          </span>
         </div>
+
         {/* Tabs */}
-        <div className="flex bg-gray-100 rounded-xl p-0.5 mb-3">
+        <div className="flex bg-slate-100 rounded-lg p-1 gap-1">
           {(Object.keys(CANDIDATURAS) as CandidaturaTab[]).map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`flex-1 text-[10px] font-semibold py-1.5 rounded-lg transition-all ${tab === t ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
+              className={`flex-1 text-xs font-semibold py-1.5 rounded-md transition-all cursor-pointer ${
+                tab === t ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'
+              }`}
             >
-              {t}
+              {t} ({CANDIDATURAS[t].length})
             </button>
           ))}
         </div>
       </div>
 
       {items.length > 0 ? (
-        <div className="divide-y divide-gray-50">
+        <div className="divide-y divide-slate-100">
           {items.map(item => (
-            <div key={item.id} className="px-4 py-3">
-              <div className="flex justify-between items-start mb-1">
+            <div key={item.id} className="p-5 hover:bg-slate-50/50 transition-colors">
+              <div className="flex justify-between items-start mb-1.5">
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
-                    <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${item.badgeColor}`}>{item.badge}</span>
+                    <h3 className="text-sm font-bold text-slate-900">{item.title}</h3>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${item.badgeColor}`}>
+                      {item.badge}
+                    </span>
                   </div>
-                  <p className="text-xs text-gray-500">{item.company}</p>
+                  <p className="text-xs text-slate-600 font-medium">{item.company}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
+              <div className="flex items-center gap-2 text-xs text-slate-500 my-2.5">
                 {item.detailIcon}
                 <span>{item.detail}</span>
               </div>
-              <button className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${item.ctaColor}`}>
+              <button className={`text-xs font-bold px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer ${item.ctaColor}`}>
                 {item.cta}
               </button>
             </div>
           ))}
         </div>
       ) : (
-        <div className="px-4 pb-4 text-center text-xs text-gray-400 py-6">No hay candidaturas en esta etapa</div>
+        <div className="p-8 text-center text-xs text-slate-400">
+          No hay candidaturas en esta fase actualmente.
+        </div>
       )}
     </div>
   );
@@ -110,274 +139,269 @@ function MiCandidatura() {
 // ── Main Page ──────────────────────────────────────────────────────────────
 export default function Perfil({ onLogout }: PerfilProps) {
   const [notificaciones, setNotificaciones] = useState(true);
+  const [visibilidad, setVisibilidad] = useState(true);
 
   return (
-    <div className="min-h-screen bg-[#F4F6FA] font-sans pb-24">
-      <div className="max-w-md mx-auto">
-        {/* Header */}
-        <header className="px-4 pt-10 pb-3 bg-white sticky top-0 z-10 shadow-sm">
-          <div className="flex justify-between items-center">
-            <h1 className="text-sm font-bold text-gray-800">Perfil</h1>
-            <div className="flex items-center gap-2">
-              <button className="w-9 h-9 rounded-full border border-gray-100 bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
-                <Search className="w-4 h-4" />
-              </button>
-              <button className="w-9 h-9 rounded-full border border-gray-100 bg-gray-50 flex items-center justify-center text-gray-500 relative hover:bg-gray-100 transition-colors">
-                <Bell className="w-4 h-4" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <main className="px-4 py-4 space-y-4">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Summary, CV & Social Links */}
+        <div className="lg:col-span-4 space-y-5">
           {/* Profile Card */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 relative">
-            <button className="absolute top-4 right-4 flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline">
-              <Edit className="w-3.5 h-3.5" /> Editar
-            </button>
-
-            <div className="flex items-start gap-3 mb-3">
-              {/* Avatar */}
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+          <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5 relative">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-16 h-16 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xl font-bold shrink-0 ring-4 ring-slate-100">
                 EM
               </div>
-              <div className="flex-1 min-w-0 pr-10">
-                <h2 className="text-base font-extrabold text-gray-900 leading-tight">Elena Morales García</h2>
-                <p className="text-xs font-semibold text-gray-600 mt-0.5">Full Stack Engineer & Cloud Architect</p>
-                <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
-                  <MapPin className="w-3 h-3" />
-                  <span>Madrid, España · Disponible para remoto</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h1 className="text-base font-bold text-slate-900 leading-snug">Elena Morales</h1>
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
+                </div>
+                <p className="text-xs font-semibold text-slate-600 mt-0.5">Cloud Architect & Full Stack</p>
+                <div className="flex items-center gap-1 text-xs text-slate-400 mt-1">
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>Madrid, España · Remoto global</span>
                 </div>
               </div>
             </div>
 
-            {/* Status badges */}
-            <div className="flex flex-wrap gap-2 mb-3">
-              <span className="text-[10px] font-bold bg-green-100 text-green-700 border border-green-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-green-500 rounded-full" /> Pre-seleccionada Activa
+            {/* Badges */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              <span className="text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/70 px-2.5 py-1 rounded-md inline-flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+                En búsqueda activa
               </span>
-              <span className="text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 rounded-full flex items-center gap-1">
-                <Zap className="w-2.5 h-2.5" /> Visibilidad directa: +34%
+              <span className="text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200/70 px-2.5 py-1 rounded-md inline-flex items-center gap-1">
+                <Zap className="w-3 h-3 text-blue-600" />
+                Visibilidad: Alta
               </span>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-2">
+            {/* Stats Metrics */}
+            <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100">
               {[
-                { value: '8+', label: 'Años exp.' },
-                { value: '94%', label: 'Match global' },
-                { value: '14', label: 'Ofertas HOY' },
+                { value: '8+ años', label: 'Experiencia' },
+                { value: '94%', label: 'Match medio' },
+                { value: '14', label: 'Consultas hoy' },
               ].map(s => (
-                <div key={s.label} className="bg-gray-50 rounded-xl p-2 text-center">
-                  <div className="text-sm font-extrabold text-gray-900">{s.value}</div>
-                  <div className="text-[9px] text-gray-500 font-medium">{s.label}</div>
+                <div key={s.label} className="bg-slate-50 rounded-lg p-2 text-center border border-slate-100">
+                  <div className="text-sm font-bold text-slate-900">{s.value}</div>
+                  <div className="text-[10px] text-slate-500 font-medium">{s.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Curriculum Vitae */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-red-500" /> Curriculum Vitae
-              </h2>
-              <span className="text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">Subiendo ATS</span>
-            </div>
-            <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-3 mb-3">
-              <div className="w-9 h-9 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <FileText className="w-5 h-5 text-red-600" />
+          {/* Curriculum Vitae Widget */}
+          <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5">
+            <SectionHeader title="Curriculum Vitae" action={
+              <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-200/60">
+                Indexado ATS
+              </span>
+            } />
+            <div className="flex items-center gap-3 bg-slate-50 border border-slate-200/70 rounded-lg p-3 mb-3">
+              <div className="w-10 h-10 bg-rose-50 text-rose-600 border border-rose-200/60 rounded-lg flex items-center justify-center shrink-0">
+                <FileText className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-gray-800 truncate">CV_Elena_Morales_2025.pdf</p>
-                <p className="text-[10px] text-gray-400">1.1 MB · PDF</p>
+                <p className="text-xs font-bold text-slate-800 truncate">CV_Elena_Morales_2026.pdf</p>
+                <p className="text-[10px] text-slate-400">1.2 MB · Actualizado hace 3 días</p>
               </div>
-              <button className="text-gray-400 hover:text-blue-500 transition-colors">
+              <button title="Descargar" className="p-1.5 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer">
                 <Download className="w-4 h-4" />
               </button>
             </div>
             <div className="flex gap-2">
-              <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
-                <Upload className="w-3.5 h-3.5" /> Reemplazar PDF
+              <button className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors cursor-pointer">
+                <Upload className="w-3.5 h-3.5" />
+                <span>Actualizar</span>
               </button>
-              <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors">
-                <Eye className="w-3.5 h-3.5" /> Previsualizar
+              <button className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs">
+                <Eye className="w-3.5 h-3.5" />
+                <span>Previsualizar</span>
               </button>
             </div>
           </div>
 
-          {/* Mi Candidatura */}
-          <MiCandidatura />
-
-          {/* Experiencia Laboral */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <SectionHeader title="Experiencia Laboral" />
-            <div className="space-y-4">
+          {/* Links & Portfolio */}
+          <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5">
+            <SectionHeader title="Redes & Portfolio" />
+            <div className="space-y-1.5">
               {[
-                {
-                  title: 'Staff Cloud Engineer',
-                  company: 'DICE · Actualidad',
-                  org: 'Iberia Digital Solutions',
-                  desc: 'Liderazgo de equipo de arquitectura. Implementó microservicios en AWS con un 54% de mejora en el rendimiento bajo alta carga (2M y visible APls activos).',
-                  tags: ['AWS', 'Terraform', 'Kotlin'],
-                  current: true,
-                },
-                {
-                  title: 'Full Stack Developer',
-                  company: 'Sofia Fintech Labs · Remoto',
-                  period: '2019 – 2022',
-                  desc: 'Contribuyó al núcleo de micro-frontend formando en React/TypeScript y vectores de seguridad de pagos hasta completamente alineados con la normativa PSD2.',
-                  tags: ['React', 'TypeScript', 'PSD2'],
-                  current: false,
-                },
-              ].map((exp, i) => (
-                <div key={i} className={i > 0 ? 'pt-4 border-t border-gray-50' : ''}>
-                  <div className="flex items-start gap-2 mb-1">
-                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Briefcase className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="text-xs font-bold text-gray-900">{exp.title}</h3>
-                          <p className="text-[10px] text-gray-500">{exp.company}</p>
-                          {exp.org && <p className="text-[10px] text-gray-400">{exp.org}</p>}
-                        </div>
-                        {exp.current && <span className="text-[9px] font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full flex-shrink-0">Activo</span>}
-                        {exp.period && <span className="text-[9px] text-gray-400">{exp.period}</span>}
-                      </div>
-                      <p className="text-[10px] text-gray-500 mt-1 leading-relaxed">{exp.desc}</p>
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {exp.tags.map(t => <span key={t} className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-md font-medium">{t}</span>)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Educación & Certificaciones */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <SectionHeader title="Educación & Certificaciones" />
-            <div className="space-y-3">
-              {[
-                {
-                  icon: <Award className="w-4 h-4 text-amber-600" />,
-                  iconBg: 'bg-amber-100',
-                  title: 'AWS Certified Solutions Architect...',
-                  sub: 'Vigente 2025 · $1 AWS-523231',
-                  badge: 'Vigente', badgeColor: 'bg-green-100 text-green-700',
-                },
-                {
-                  icon: <GraduationCap className="w-4 h-4 text-blue-600" />,
-                  iconBg: 'bg-blue-100',
-                  title: 'Grado en Ingeniería del Software',
-                  sub: 'Universidad Politécnica de Madrid · 2014 – 2018',
-                },
-              ].map((edu, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${edu.iconBg}`}>{edu.icon}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-xs font-bold text-gray-800 truncate">{edu.title}</p>
-                      {edu.badge && <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0 ${edu.badgeColor}`}>{edu.badge}</span>}
-                    </div>
-                    <p className="text-[10px] text-gray-400 mt-0.5">{edu.sub}</p>
-                  </div>
-                </div>
+                { icon: <Github className="w-4 h-4" />, label: 'github.com/elenamorales-dev' },
+                { icon: <Linkedin className="w-4 h-4" />, label: 'linkedin.com/in/elena-morales' },
+                { icon: <Globe className="w-4 h-4" />, label: 'elenamorales.engineering' },
+              ].map(l => (
+                <a
+                  key={l.label}
+                  href="#"
+                  className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors text-xs font-medium border border-transparent hover:border-slate-200"
+                >
+                  <span className="text-slate-500">{l.icon}</span>
+                  <span className="flex-1 truncate">{l.label}</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
+                </a>
               ))}
             </div>
           </div>
 
           {/* Idiomas */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <SectionHeader title="Idiomas" />
-            <div className="grid grid-cols-2 gap-3">
+          <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5">
+            <SectionHeader title="Idiomas Acreditados" />
+            <div className="space-y-2">
               {[
-                { flag: '🇪🇸', lang: 'Español', level: 'Nativo / Bilingüe', color: 'bg-red-50 border-red-100' },
-                { flag: '🇬🇧', lang: 'Inglés', level: 'Certificado C1 · Cambridge', color: 'bg-blue-50 border-blue-100' },
+                { flag: 'ES', lang: 'Español', level: 'Nativo / Competencia profesional bilingüe' },
+                { flag: 'EN', lang: 'Inglés', level: 'Nivel C1 Acreditado (Cambridge Advanced)' },
               ].map(l => (
-                <div key={l.lang} className={`flex items-center gap-2 p-3 rounded-xl border ${l.color}`}>
-                  <span className="text-xl">{l.flag}</span>
+                <div key={l.lang} className="flex items-center gap-3 p-2.5 rounded-lg border border-slate-100 bg-slate-50/50">
+                  <span className="w-7 h-7 rounded bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center">
+                    {l.flag}
+                  </span>
                   <div>
-                    <p className="text-xs font-bold text-gray-800">{l.lang}</p>
-                    <p className="text-[9px] text-gray-500">{l.level}</p>
+                    <p className="text-xs font-bold text-slate-800">{l.lang}</p>
+                    <p className="text-[11px] text-slate-500">{l.level}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Enlaces & Portfolio */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <SectionHeader title="Enlaces & Portfolio" />
-            <div className="space-y-2">
+          {/* Logout Button */}
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 rounded-xl font-bold text-xs transition-colors shadow-xs cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Cerrar sesión en este dispositivo</span>
+          </button>
+        </div>
+
+        {/* Right Column: Applications, Experience, Education & Settings */}
+        <div className="lg:col-span-8 space-y-5">
+          {/* Applications Pipeline */}
+          <MiCandidatura />
+
+          {/* Work Experience */}
+          <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5">
+            <SectionHeader title="Experiencia Laboral" />
+            <div className="space-y-5">
               {[
-                { icon: <Github className="w-4 h-4" />, label: 'github.com/elenamorales-dev', color: 'text-gray-700' },
-                { icon: <Linkedin className="w-4 h-4" />, label: 'linkedin.com/elena-morales-dev', color: 'text-blue-600' },
-                { icon: <Globe className="w-4 h-4" />, label: 'elenamorales/engineering', color: 'text-purple-600' },
-              ].map(l => (
-                <button key={l.label} className="w-full flex items-center gap-3 py-2 px-3 rounded-xl hover:bg-gray-50 transition-colors text-left">
-                  <span className={l.color}>{l.icon}</span>
-                  <span className="text-xs text-gray-700 flex-1 truncate">{l.label}</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
-                </button>
+                {
+                  title: 'Staff Cloud & Infrastructure Engineer',
+                  company: 'DICE Systems & Telecom',
+                  period: '2022 – Actualidad · 3 años',
+                  desc: 'Liderazgo técnico del equipo de arquitectura en la nube. Migración a microservicios distribuidos en AWS con reducción del 42% en latencia y 99.99% de SLA.',
+                  tags: ['AWS', 'Kubernetes', 'Terraform', 'Golang'],
+                  current: true,
+                },
+                {
+                  title: 'Senior Full Stack Developer',
+                  company: 'Fintech Solutions Madrid',
+                  period: '2019 – 2022 · 3 años',
+                  desc: 'Desarrollo de pasarela de pagos compatible con la directiva PSD2 bancaria europea. Arquitectura de frontend escalable en React, TypeScript y Node.js.',
+                  tags: ['React', 'TypeScript', 'Node.js', 'PostgreSQL'],
+                  current: false,
+                },
+              ].map((exp, i) => (
+                <div key={i} className={i > 0 ? 'pt-5 border-t border-slate-100' : ''}>
+                  <div className="flex items-start justify-between gap-3 mb-1.5">
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900">{exp.title}</h3>
+                      <p className="text-xs font-semibold text-slate-600">{exp.company}</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">{exp.period}</p>
+                    </div>
+                    {exp.current && (
+                      <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 px-2 py-0.5 rounded-md shrink-0">
+                        Puesto Actual
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-600 mt-2 leading-relaxed">{exp.desc}</p>
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {exp.tags.map(tag => (
+                      <span key={tag} className="text-[11px] bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md font-medium border border-slate-200/50">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
 
-          {/* Preferencias & Configuración */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <SectionHeader title="Preferencias & Configuración" action={<Settings className="w-4 h-4 text-gray-400" />} />
-            <div className="space-y-1">
-              <button className="w-full flex items-center gap-3 py-3 px-1 border-b border-gray-50 hover:bg-gray-50 rounded-xl transition-colors">
-                <Moon className="w-4 h-4 text-indigo-500 flex-shrink-0" />
-                <div className="flex-1 text-left">
-                  <p className="text-xs font-semibold text-gray-800">Tema de Interfaz</p>
-                  <p className="text-[10px] text-gray-400">Hipnótico oscuro</p>
+          {/* Education & Certifications */}
+          <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5">
+            <SectionHeader title="Educación & Certificaciones Oficiales" />
+            <div className="space-y-4">
+              {[
+                {
+                  icon: <Award className="w-4 h-4 text-blue-600" />,
+                  title: 'AWS Certified Solutions Architect – Professional',
+                  sub: 'Amazon Web Services · Certificación Oficial Vigente 2024–2027',
+                  badge: 'Verificado',
+                },
+                {
+                  icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
+                  title: 'Grado en Ingeniería del Software',
+                  sub: 'Universidad Politécnica de Madrid (UPM) · 2014 – 2018',
+                },
+              ].map((edu, i) => (
+                <div key={i} className="flex items-start gap-3.5 p-3 rounded-lg bg-slate-50/70 border border-slate-200/60">
+                  <div className="w-9 h-9 rounded-lg bg-white border border-slate-200 flex items-center justify-center shrink-0">
+                    {edu.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs font-bold text-slate-900">{edu.title}</p>
+                      {edu.badge && (
+                        <span className="text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/60 px-2 py-0.5 rounded">
+                          {edu.badge}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-0.5">{edu.sub}</p>
+                  </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
-              </button>
-
-              <div className="flex items-center gap-3 py-3 px-1 border-b border-gray-50">
-                <Bell className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="text-xs font-semibold text-gray-800">Notificaciones y alertas</p>
-                  <p className="text-[10px] text-gray-400">Históricamente cool y real</p>
-                </div>
-                <button
-                  onClick={() => setNotificaciones(!notificaciones)}
-                  className={`w-11 h-6 rounded-full transition-colors relative flex-shrink-0 ${notificaciones ? 'bg-blue-600' : 'bg-gray-200'}`}
-                >
-                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${notificaciones ? 'left-5' : 'left-0.5'}`} />
-                </button>
-              </div>
-
-              <button className="w-full flex items-center gap-3 py-3 px-1 hover:bg-gray-50 rounded-xl transition-colors">
-                <Eye className="w-4 h-4 text-green-500 flex-shrink-0" />
-                <div className="flex-1 text-left">
-                  <p className="text-xs font-semibold text-gray-800">Visibilidad ante reclutadores</p>
-                  <p className="text-[10px] text-gray-400">Perfil visible para empresas</p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
-              </button>
+              ))}
             </div>
           </div>
 
-          {/* Botón Cerrar Sesión */}
-          <div className="pt-2 pb-6">
-            <button
-              onClick={onLogout}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-2xl font-bold text-xs transition-all shadow-sm active:scale-[0.99] cursor-pointer"
-            >
-              <LogOut className="w-4 h-4 text-red-500" />
-              <span>Cerrar sesión</span>
-            </button>
+          {/* Account & Notification Preferences */}
+          <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5">
+            <SectionHeader title="Preferencias de Privacidad & Alertas" action={<Settings className="w-4 h-4 text-slate-400" />} />
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 border border-slate-200/70">
+                <div>
+                  <p className="text-xs font-bold text-slate-800">Alertas de nuevas ofertas y convocatorias</p>
+                  <p className="text-[11px] text-slate-500">Recibe notificaciones inmediatas por correo cuando surjan vacantes compatibles</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setNotificaciones(!notificaciones)}
+                  className={`w-11 h-6 rounded-full transition-colors relative shrink-0 cursor-pointer ${notificaciones ? 'bg-blue-600' : 'bg-slate-300'}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${notificaciones ? 'left-5.5' : 'left-0.5'}`} />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 border border-slate-200/70">
+                <div>
+                  <p className="text-xs font-bold text-slate-800">Visibilidad ante empresas y reclutadores</p>
+                  <p className="text-[11px] text-slate-500">Permite que empresas verificadas encuentren tu perfil para ofertas directas</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setVisibilidad(!visibilidad)}
+                  className={`w-11 h-6 rounded-full transition-colors relative shrink-0 cursor-pointer ${visibilidad ? 'bg-blue-600' : 'bg-slate-300'}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${visibilidad ? 'left-5.5' : 'left-0.5'}`} />
+                </button>
+              </div>
+            </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );
 }
+
