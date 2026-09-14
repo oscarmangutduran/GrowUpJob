@@ -57,6 +57,12 @@ class CompanyController extends Controller
                     'quote' => $comp->top_cultura_quote,
                 ] : null,
                 'insigniasObtenidas' => $comp->insignias_obtenidas ?? [],
+                'metricasCandidaturas' => [
+                    'tiempoRespuesta' => in_array('respuesta_rapida', $comp->insignias_obtenidas ?? []) ? '< 24 horas' : '< 48 horas',
+                    'tasaRespuesta' => '98%',
+                    'ghostingRate' => '0%',
+                    'satisfaccionEntrevistas' => round($comp->rating, 1) . ' / 5.0',
+                ],
                 'reseñas' => $comp->reviews->map(function ($rev) {
                     return [
                         'id' => (string) $rev->id,
@@ -105,7 +111,7 @@ class CompanyController extends Controller
             'texto' => 'required|string',
             'rating' => 'required|integer|min:1|max:5',
             'insignias_votadas' => 'nullable|array',
-            'insignias_votadas.*' => 'string|in:ambiente,flexible,liderazgo,salario,remoto,diversidad,formacion,sostenible,conciliacion,equity',
+            'insignias_votadas.*' => 'string|in:respuesta_rapida,feedback_garantizado,cero_ghosting,transparencia_salarial,entrevistas_top,proceso_agil,ambiente,flexible,liderazgo,salario,remoto,diversidad,formacion,sostenible,conciliacion,equity',
         ]);
 
         $review = CompanyReview::create([

@@ -5,7 +5,6 @@ export const navItems = [
   { icon: Landmark, label: 'Público', shortLabel: 'Público' },
   { icon: BookOpen, label: 'Cursos', shortLabel: 'Cursos' },
   { icon: Building2, label: 'Empresas', shortLabel: 'Empresas' },
-  { icon: Award, label: 'Insignias', shortLabel: 'Insignias' },
   { icon: User, label: 'Perfil', shortLabel: 'Perfil' },
 ];
 

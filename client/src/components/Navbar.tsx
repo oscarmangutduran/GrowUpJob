@@ -45,12 +45,12 @@ const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   },
   {
     id: 'n3',
-    title: 'Nueva prueba técnica disponible',
-    description: 'Evalúa tus conocimientos en OWASP para ascender a Nivel 5.',
+    title: 'Nueva empresa con insignia de Respuesta Rápida',
+    description: 'NexTech Solutions ha obtenido el distintivo de feedback en menos de 24h a candidatos.',
     time: 'Ayer',
     read: true,
     type: 'badge',
-    actionTab: 'Insignias',
+    actionTab: 'Empresas',
   },
   {
     id: 'n4',

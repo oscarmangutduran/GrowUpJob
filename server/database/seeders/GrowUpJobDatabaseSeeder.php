@@ -386,17 +386,17 @@ class GrowUpJobDatabaseSeeder extends Seeder
             'filter_tag' => 'Tecnología',
             'top_cultura_rank' => 1,
             'top_cultura_quote' => 'Autonomía real, sin microgestión y presupuesto ilimitado en...',
-            'insignias_obtenidas' => ['ambiente', 'flexible', 'liderazgo', 'formacion', 'diversidad'],
+            'insignias_obtenidas' => ['respuesta_rapida', 'cero_ghosting', 'feedback_garantizado', 'entrevistas_top', 'ambiente', 'flexible'],
         ]);
 
         CompanyReview::create([
             'company_id' => $c1->id,
             'autor' => 'Miguel R.',
             'cargo' => 'Senior Dev',
-            'texto' => 'El mejor sitio donde he trabajado. Total autonomía y un equipo increíble.',
+            'texto' => 'El mejor sitio donde he trabajado. Me respondieron a la candidatura en 12 horas con feedback claro y la entrevista técnica fue super transparente.',
             'rating' => 5,
             'fecha' => 'Hace 2 días',
-            'insignias_votadas' => ['ambiente', 'liderazgo', 'formacion'],
+            'insignias_votadas' => ['respuesta_rapida', 'cero_ghosting', 'feedback_garantizado'],
         ]);
         CompanyReview::create([
             'company_id' => $c1->id,
@@ -405,7 +405,7 @@ class GrowUpJobDatabaseSeeder extends Seeder
             'texto' => 'Excelente ambiente y presupuesto real para formación sin burocracia.',
             'rating' => 5,
             'fecha' => 'Hace 1 semana',
-            'insignias_votadas' => ['flexible', 'formacion', 'diversidad'],
+            'insignias_votadas' => ['flexible', 'entrevistas_top', 'feedback_garantizado'],
         ]);
 
         // Empresa 2: Iberia Green Energy
@@ -422,17 +422,17 @@ class GrowUpJobDatabaseSeeder extends Seeder
             'filter_tag' => 'Tecnología',
             'top_cultura_rank' => 2,
             'top_cultura_quote' => 'Jornada intensiva todo el año y propósito real en cada proyecto...',
-            'insignias_obtenidas' => ['sostenible', 'remoto', 'conciliacion', 'flexible'],
+            'insignias_obtenidas' => ['cero_ghosting', 'transparencia_salarial', 'remoto', 'conciliacion', 'sostenible'],
         ]);
 
         CompanyReview::create([
             'company_id' => $c2->id,
             'autor' => 'Ana P.',
             'cargo' => 'DevOps Engineer',
-            'texto' => 'Empresa con propósito real. Se nota que les importa el planeta y las personas.',
+            'texto' => 'Empresa con propósito real. Te explican el rango salarial desde el minuto 1 y te mantienen al tanto del proceso.',
             'rating' => 5,
             'fecha' => 'Hace 3 días',
-            'insignias_votadas' => ['sostenible', 'conciliacion'],
+            'insignias_votadas' => ['cero_ghosting', 'transparencia_salarial', 'sostenible'],
         ]);
         CompanyReview::create([
             'company_id' => $c2->id,
@@ -441,7 +441,7 @@ class GrowUpJobDatabaseSeeder extends Seeder
             'texto' => '100% remoto real, no como en otras empresas donde te piden volver a la oficina.',
             'rating' => 4,
             'fecha' => 'Hace 2 semanas',
-            'insignias_votadas' => ['remoto', 'flexible'],
+            'insignias_votadas' => ['remoto', 'conciliacion'],
         ]);
 
         // Empresa 3: BancNova Digital
@@ -456,17 +456,17 @@ class GrowUpJobDatabaseSeeder extends Seeder
             'logo_color' => 'bg-violet-100 text-violet-700',
             'logo_icon' => 'fintech',
             'filter_tag' => 'Fintech',
-            'insignias_obtenidas' => ['salario', 'equity', 'liderazgo'],
+            'insignias_obtenidas' => ['respuesta_rapida', 'transparencia_salarial', 'salario', 'equity', 'liderazgo'],
         ]);
 
         CompanyReview::create([
             'company_id' => $c3->id,
             'autor' => 'Javier T.',
             'cargo' => 'Product Manager',
-            'texto' => 'Los salarios son los mejores del sector. El equity plan es real y transparente.',
+            'texto' => 'Los salarios son los mejores del sector. Proceso de selección rápido y profesional.',
             'rating' => 4,
             'fecha' => 'Hace 5 días',
-            'insignias_votadas' => ['salario', 'equity'],
+            'insignias_votadas' => ['respuesta_rapida', 'salario', 'equity'],
         ]);
 
         // Empresa 4: BioHealth Pharma
@@ -481,7 +481,7 @@ class GrowUpJobDatabaseSeeder extends Seeder
             'logo_color' => 'bg-red-100 text-red-700',
             'logo_icon' => 'pharma',
             'filter_tag' => 'Salud',
-            'insignias_obtenidas' => ['conciliacion', 'ambiente'],
+            'insignias_obtenidas' => ['feedback_garantizado', 'proceso_agil', 'conciliacion', 'ambiente'],
         ]);
 
         CompanyReview::create([

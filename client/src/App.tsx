@@ -12,7 +12,6 @@ import RegisterScreen from './components/RegisterScreen';
 import EmpleoPublico from './components/EmpleoPublico';
 import Cursos from './components/Cursos';
 import Empresas from './components/Empresas';
-import Insignias from './components/Insignias';
 import Perfil from './components/Perfil';
 
 const filterPills = ['Todo', '100% Remoto', 'Híbrido', 'Presencial', 'Verificadas'];
@@ -140,8 +139,6 @@ export default function App() {
         return <Cursos />;
       case 'Empresas':
         return <Empresas />;
-      case 'Insignias':
-        return <Insignias />;
       case 'Perfil':
         return (
           <Perfil
