@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react';
-import { Search, Star, Clock, CheckCircle2, ChevronRight, Bookmark, ArrowUpRight, BookOpen, Shield, Globe, Brain, Sparkles, Award } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Search, Star, Clock, CheckCircle2, ChevronRight, Bookmark, ArrowUpRight, BookOpen, Shield, Globe, Brain, Sparkles, Award, Loader2 } from 'lucide-react';
+import { getCourses } from '../services/api';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type CursoBadgeType = 'gratis' | 'ocupados' | 'camara' | 'internacional';
@@ -203,9 +204,28 @@ function CursoCard({ c }: CursoCardProps) {
 export default function Cursos() {
   const [modalidadFilter, setModalidadFilter] = useState('Todos');
   const [searchQuery, setSearchQuery] = useState('');
+  const [cursos, setCursos] = useState<Curso[]>(CURSOS);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    getCourses()
+      .then(res => {
+        if (isMounted && res.cursos && res.cursos.length > 0) {
+          setCursos(res.cursos);
+        }
+      })
+      .catch(err => {
+        console.warn('Backend API /courses fallback:', err);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+    return () => { isMounted = false; };
+  }, []);
 
   const filtered = useMemo(() => {
-    return CURSOS.filter(c => {
+    return cursos.filter(c => {
       const q = searchQuery.toLowerCase();
       const matchSearch = !q || c.title.toLowerCase().includes(q) || (c.tags ?? []).some(t => t.toLowerCase().includes(q));
       const matchModalidad =
@@ -216,7 +236,7 @@ export default function Cursos() {
         (modalidadFilter === 'En Directo' && c.modalidad.toLowerCase().includes('directo'));
       return matchSearch && matchModalidad;
     });
-  }, [searchQuery, modalidadFilter]);
+  }, [cursos, searchQuery, modalidadFilter]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

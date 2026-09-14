@@ -1,10 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, SlidersHorizontal, ArrowRight, X, Check, Sparkles, Filter, RotateCcw } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowRight, X, Check, Sparkles, Filter, RotateCcw, Loader2 } from 'lucide-react';
 import JobCard from './components/JobCard';
 import Navigation from './components/Navigation';
 import Navbar from './components/Navbar';
 import { mockJobs } from './data/mockJobs';
+import { getJobListings } from './services/api';
+import { Job } from './types';
 import LoginScreen from './components/LoginScreen';
 import RegisterScreen from './components/RegisterScreen';
 import EmpleoPublico from './components/EmpleoPublico';
@@ -26,6 +28,25 @@ export default function App() {
   const [activeFilter, setActiveFilter] = useState('Todo');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [jobs, setJobs] = useState<Job[]>(mockJobs);
+  const [isLoadingJobs, setIsLoadingJobs] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    getJobListings()
+      .then(res => {
+        if (isMounted && res.listings && res.listings.length > 0) {
+          setJobs(res.listings);
+        }
+      })
+      .catch(err => {
+        console.warn('Backend API /job-listings fallback:', err);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoadingJobs(false);
+      });
+    return () => { isMounted = false; };
+  }, []);
 
   // Advanced filter state
   const [filterSalary, setFilterSalary] = useState('Cualquier salario');
@@ -50,7 +71,7 @@ export default function App() {
   };
 
   const filteredJobs = useMemo(() => {
-    return mockJobs.filter(job => {
+    return jobs.filter(job => {
       const q = searchQuery.toLowerCase();
       const matchesSearch =
         !q ||
@@ -394,7 +415,13 @@ export default function App() {
 
             {/* Job Cards Feed / Grid */}
             <div className="grid grid-cols-1 gap-3.5">
-              {filteredJobs.length > 0 ? (
+              {isLoadingJobs ? (
+                <div className="bg-white rounded-xl border border-slate-200/90 p-12 text-center shadow-xs">
+                  <Loader2 className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-3" />
+                  <p className="text-sm font-semibold text-slate-700">Cargando ofertas desde la base de datos...</p>
+                  <p className="text-xs text-slate-400 mt-1">Conectando con el servidor MySQL...</p>
+                </div>
+              ) : filteredJobs.length > 0 ? (
                 filteredJobs.map(job => (
                   <JobCard key={job.id} job={job} />
                 ))

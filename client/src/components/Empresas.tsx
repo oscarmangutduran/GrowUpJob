@@ -1,9 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Search, Star, ChevronRight, Bookmark, Award, Leaf, Cpu, HeartPulse,
   Banknote, ThumbsUp, MessageSquare, X, Clock, Trophy, Globe,
-  Users, BookOpen, Heart, TrendingUp, CheckCircle2, ArrowUpRight, Building2
+  Users, BookOpen, Heart, TrendingUp, CheckCircle2, ArrowUpRight, Building2,
+  Plus, Loader2, Send
 } from 'lucide-react';
+import { getCompanies, submitCompanyReview } from '../services/api';
 
 // ── Insignia types ─────────────────────────────────────────────────────────
 interface Insignia {
@@ -242,7 +244,43 @@ function EmpresaCard({ e, onShowReseñas }: EmpresaCardProps) {
 }
 
 // ── Modal de Reseñas ───────────────────────────────────────────────────────
-function ReseñaModal({ empresa, onClose }: { empresa: Empresa; onClose: () => void }) {
+interface ReseñaModalProps {
+  empresa: Empresa;
+  onClose: () => void;
+  onAddReview: (empresaId: string, review: { autor: string; cargo: string; texto: string; rating: number; insignias_votadas: string[] }) => Promise<void>;
+}
+
+function ReseñaModal({ empresa, onClose, onAddReview }: ReseñaModalProps) {
+  const [showForm, setShowForm] = useState(false);
+  const [autor, setAutor] = useState('');
+  const [cargo, setCargo] = useState('');
+  const [texto, setTexto] = useState('');
+  const [rating, setRating] = useState(5);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!autor || !texto) return;
+    try {
+      setIsSubmitting(true);
+      await onAddReview(empresa.id, {
+        autor,
+        cargo: cargo || 'Profesional verificado',
+        texto,
+        rating,
+        insignias_votadas: ['ambiente', 'flexible'],
+      });
+      setShowForm(false);
+      setAutor('');
+      setCargo('');
+      setTexto('');
+    } catch (err) {
+      console.error('Error enviando reseña:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-5">
@@ -266,27 +304,95 @@ function ReseñaModal({ empresa, onClose }: { empresa: Empresa; onClose: () => v
           </button>
         </div>
 
+        {/* Existing reviews */}
         <div className="space-y-3">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-            Opiniones de empleados en plantilla
-          </h3>
-          {empresa.reseñas.map(r => (
-            <div key={r.id} className="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-bold text-slate-900 block">{r.autor}</span>
-                  <span className="text-[11px] text-slate-500">{r.cargo} · {r.fecha}</span>
-                </div>
-                <div className="flex items-center gap-1 text-xs font-bold text-amber-900 bg-amber-100/70 px-2 py-0.5 rounded">
-                  <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                  <span>{r.rating}.0</span>
-                </div>
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              Opiniones de empleados en plantilla
+            </h3>
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>{showForm ? 'Cancelar' : 'Dejar valoración'}</span>
+            </button>
+          </div>
+
+          {/* New review form */}
+          {showForm && (
+            <form onSubmit={handleSubmit} className="p-4 rounded-xl bg-blue-50/50 border border-blue-200/80 space-y-3">
+              <h4 className="text-xs font-bold text-slate-900">Escribir opinión verificada</h4>
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  placeholder="Tu nombre"
+                  value={autor}
+                  onChange={e => setAutor(e.target.value)}
+                  required
+                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                />
+                <input
+                  type="text"
+                  placeholder="Cargo (ej. Software Engineer)"
+                  value={cargo}
+                  onChange={e => setCargo(e.target.value)}
+                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                />
               </div>
-              <p className="text-xs text-slate-600 italic leading-relaxed">
-                "{r.texto}"
-              </p>
-            </div>
-          ))}
+              <textarea
+                placeholder="¿Cómo es trabajar aquí? Cultura, flexibilidad, liderazgo..."
+                value={texto}
+                onChange={e => setTexto(e.target.value)}
+                required
+                rows={2}
+                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+              />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-slate-600">Puntuación:</span>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button
+                      type="button"
+                      key={star}
+                      onClick={() => setRating(star)}
+                      className="cursor-pointer"
+                    >
+                      <Star className={`w-4 h-4 ${star <= rating ? 'text-amber-500 fill-amber-500' : 'text-slate-300'}`} />
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                >
+                  {isSubmitting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                  <span>Publicar en BDD</span>
+                </button>
+              </div>
+            </form>
+          )}
+
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {empresa.reseñas.map(r => (
+              <div key={r.id} className="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">{r.autor}</span>
+                    <span className="text-[11px] text-slate-500">{r.cargo} · {r.fecha}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs font-bold text-amber-900 bg-amber-100/70 px-2 py-0.5 rounded">
+                    <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                    <span>{r.rating}.0</span>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 italic leading-relaxed">
+                  "{r.texto}"
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <button
@@ -305,9 +411,56 @@ export default function Empresas() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sectorFilter, setSectorFilter] = useState('Todas');
   const [selectedEmpresa, setSelectedEmpresa] = useState<Empresa | null>(null);
+  const [empresas, setEmpresas] = useState<Empresa[]>(EMPRESAS);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    getCompanies()
+      .then(res => {
+        if (isMounted && res.empresas && res.empresas.length > 0) {
+          setEmpresas(res.empresas);
+        }
+      })
+      .catch(err => {
+        console.warn('Backend API /companies fallback:', err);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+    return () => { isMounted = false; };
+  }, []);
+
+  const handleAddReview = async (empresaId: string, reviewData: { autor: string; cargo: string; texto: string; rating: number; insignias_votadas: string[] }) => {
+    try {
+      const res = await submitCompanyReview(empresaId, reviewData);
+      if (res.reseña) {
+        setEmpresas(prev => prev.map(emp => {
+          if (emp.id === empresaId) {
+            const updatedReviews = [res.reseña, ...emp.reseñas];
+            return {
+              ...emp,
+              reseñas: updatedReviews,
+              ratingCount: emp.ratingCount + 1,
+            };
+          }
+          return emp;
+        }));
+        if (selectedEmpresa && selectedEmpresa.id === empresaId) {
+          setSelectedEmpresa(prev => prev ? {
+            ...prev,
+            reseñas: [res.reseña, ...prev.reseñas],
+            ratingCount: prev.ratingCount + 1,
+          } : null);
+        }
+      }
+    } catch (err) {
+      console.error('Error submitting review to backend:', err);
+    }
+  };
 
   const filtered = useMemo(() => {
-    return EMPRESAS.filter(e => {
+    return empresas.filter(e => {
       const q = searchQuery.toLowerCase();
       const matchSearch = !q || e.name.toLowerCase().includes(q) || e.sector.toLowerCase().includes(q);
       const matchSector =
@@ -318,7 +471,7 @@ export default function Empresas() {
         (sectorFilter === '100% Remoto' && e.insigniasObtenidas.includes('remoto'));
       return matchSearch && matchSector;
     });
-  }, [searchQuery, sectorFilter]);
+  }, [empresas, searchQuery, sectorFilter]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -401,7 +554,11 @@ export default function Empresas() {
 
       {/* Modal */}
       {selectedEmpresa && (
-        <ReseñaModal empresa={selectedEmpresa} onClose={() => setSelectedEmpresa(null)} />
+        <ReseñaModal 
+          empresa={selectedEmpresa} 
+          onClose={() => setSelectedEmpresa(null)} 
+          onAddReview={handleAddReview}
+        />
       )}
     </div>
   );

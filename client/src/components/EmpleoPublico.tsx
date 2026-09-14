@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react';
-import { Search, ExternalLink, Bell as BellIcon, Info, Users, GraduationCap, Zap, Bookmark, Landmark, Clock, ArrowUpRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Search, ExternalLink, Bell as BellIcon, Info, Users, GraduationCap, Zap, Bookmark, Landmark, Clock, ArrowUpRight, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { getPublicJobs } from '../services/api';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type ConvocatoriaStatus = 'urgente' | 'abierto' | 'listas' | 'proximamente';
@@ -195,9 +196,28 @@ function ConvocatoriaCard({ c }: ConvocatoriaCardProps) {
 export default function EmpleoPublico() {
   const [ambitoFilter, setAmbitoFilter] = useState('Todos');
   const [searchQuery, setSearchQuery] = useState('');
+  const [convocatorias, setConvocatorias] = useState<Convocatoria[]>(CONVOCATORIAS);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    getPublicJobs()
+      .then(res => {
+        if (isMounted && res.convocatorias && res.convocatorias.length > 0) {
+          setConvocatorias(res.convocatorias);
+        }
+      })
+      .catch(err => {
+        console.warn('Backend API /public-jobs fallback:', err);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+    return () => { isMounted = false; };
+  }, []);
 
   const filtered = useMemo(() => {
-    return CONVOCATORIAS.filter(c => {
+    return convocatorias.filter(c => {
       const q = searchQuery.toLowerCase();
       const matchSearch = !q || c.title.toLowerCase().includes(q) || c.organismo.toLowerCase().includes(q);
       const matchAmbito =
@@ -208,7 +228,7 @@ export default function EmpleoPublico() {
         (ambitoFilter === 'Comunidades' && c.organismo.toLowerCase().includes('regional'));
       return matchSearch && matchAmbito;
     });
-  }, [searchQuery, ambitoFilter]);
+  }, [convocatorias, searchQuery, ambitoFilter]);
 
   const totalPlazas = useMemo(() => {
     return filtered.reduce((acc, curr) => acc + curr.plazas, 0);
