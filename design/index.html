@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrowUp Job — Catálogo de Diseño (Desktop, Tablet, Mobile)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 32px 24px;
+    }
+    header {
+      max-width: 1400px;
+      margin: 0 auto 40px auto;
+      text-align: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #334155;
+    }
+    .badge {
+      display: inline-block;
+      background: #2563eb;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    p.sub {
+      color: #94a3b8;
+      font-size: 15px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+    }
+    .screen-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+    }
+    .screen-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .screen-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .screen-title span {
+      background: #3b82f6;
+      color: white;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .device-preview {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .device-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      justify-content: space-between;
+    }
+    .device-title a {
+      color: #60a5fa;
+      text-decoration: none;
+    }
+    .device-title a:hover {
+      text-decoration: underline;
+    }
+    .device-img-wrapper {
+      background: #020617;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #1e293b;
+      cursor: pointer;
+    }
+    .device-img-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.2s ease;
+    }
+    .device-img-wrapper:hover img {
+      transform: scale(1.01);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge">UI / UX Design Showcase</div>
+    <h1>GrowUp Job — Galería de Pantallas</h1>
+    <p class="sub">Capturas en alta resolución para Desktop (1440×900), Tablet (768×1024) y Mobile (390×844)</p>
+  </header>
+
+  <div class="container">
+    
+      <section class="screen-card" id="01_login">
+        <div class="screen-header">
+          <h2 class="screen-title">
+            <span>01</span>
+            Inicio de Sesión
+          </h2>
+          <span style="font-size: 13px; color: #64748b;">Ruta: /?screen=login</span>
+        </div>
+        <div class="grid">
+          <div class="device-preview">
+            <div class="device-title">
+              <span>🖥️ Desktop (1440×900)</span>
+              <a href="desktop/01_login_login_desktop.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="desktop/01_login_login_desktop.png" target="_blank">
+                <img src="desktop/01_login_login_desktop.png" alt="Inicio de Sesión - Desktop" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📱 Tablet (768×1024)</span>
+              <a href="tablet/01_login_login_tablet.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="tablet/01_login_login_tablet.png" target="_blank">
+                <img src="tablet/01_login_login_tablet.png" alt="Inicio de Sesión - Tablet" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📲 Mobile (390×844)</span>
+              <a href="mobile/01_login_login_mobile.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="mobile/01_login_login_mobile.png" target="_blank">
+                <img src="mobile/01_login_login_mobile.png" alt="Inicio de Sesión - Mobile" loading="lazy">
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+
+      <section class="screen-card" id="02_registro">
+        <div class="screen-header">
+          <h2 class="screen-title">
+            <span>02</span>
+            Registro de Candidato
+          </h2>
+          <span style="font-size: 13px; color: #64748b;">Ruta: /?screen=register</span>
+        </div>
+        <div class="grid">
+          <div class="device-preview">
+            <div class="device-title">
+              <span>🖥️ Desktop (1440×900)</span>
+              <a href="desktop/02_registro_register_desktop.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="desktop/02_registro_register_desktop.png" target="_blank">
+                <img src="desktop/02_registro_register_desktop.png" alt="Registro de Candidato - Desktop" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📱 Tablet (768×1024)</span>
+              <a href="tablet/02_registro_register_tablet.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="tablet/02_registro_register_tablet.png" target="_blank">
+                <img src="tablet/02_registro_register_tablet.png" alt="Registro de Candidato - Tablet" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📲 Mobile (390×844)</span>
+              <a href="mobile/02_registro_register_mobile.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="mobile/02_registro_register_mobile.png" target="_blank">
+                <img src="mobile/02_registro_register_mobile.png" alt="Registro de Candidato - Mobile" loading="lazy">
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+
+      <section class="screen-card" id="03_empleo">
+        <div class="screen-header">
+          <h2 class="screen-title">
+            <span>03</span>
+            Ofertas de Empleo
+          </h2>
+          <span style="font-size: 13px; color: #64748b;">Ruta: /?screen=empleo</span>
+        </div>
+        <div class="grid">
+          <div class="device-preview">
+            <div class="device-title">
+              <span>🖥️ Desktop (1440×900)</span>
+              <a href="desktop/03_empleo_empleo_desktop.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="desktop/03_empleo_empleo_desktop.png" target="_blank">
+                <img src="desktop/03_empleo_empleo_desktop.png" alt="Ofertas de Empleo - Desktop" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📱 Tablet (768×1024)</span>
+              <a href="tablet/03_empleo_empleo_tablet.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="tablet/03_empleo_empleo_tablet.png" target="_blank">
+                <img src="tablet/03_empleo_empleo_tablet.png" alt="Ofertas de Empleo - Tablet" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📲 Mobile (390×844)</span>
+              <a href="mobile/03_empleo_empleo_mobile.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="mobile/03_empleo_empleo_mobile.png" target="_blank">
+                <img src="mobile/03_empleo_empleo_mobile.png" alt="Ofertas de Empleo - Mobile" loading="lazy">
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+
+      <section class="screen-card" id="04_empleo_publico">
+        <div class="screen-header">
+          <h2 class="screen-title">
+            <span>04</span>
+            Empleo Público y Oposiciones
+          </h2>
+          <span style="font-size: 13px; color: #64748b;">Ruta: /?screen=publico</span>
+        </div>
+        <div class="grid">
+          <div class="device-preview">
+            <div class="device-title">
+              <span>🖥️ Desktop (1440×900)</span>
+              <a href="desktop/04_empleo_publico_publico_desktop.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="desktop/04_empleo_publico_publico_desktop.png" target="_blank">
+                <img src="desktop/04_empleo_publico_publico_desktop.png" alt="Empleo Público y Oposiciones - Desktop" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📱 Tablet (768×1024)</span>
+              <a href="tablet/04_empleo_publico_publico_tablet.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="tablet/04_empleo_publico_publico_tablet.png" target="_blank">
+                <img src="tablet/04_empleo_publico_publico_tablet.png" alt="Empleo Público y Oposiciones - Tablet" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📲 Mobile (390×844)</span>
+              <a href="mobile/04_empleo_publico_publico_mobile.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="mobile/04_empleo_publico_publico_mobile.png" target="_blank">
+                <img src="mobile/04_empleo_publico_publico_mobile.png" alt="Empleo Público y Oposiciones - Mobile" loading="lazy">
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+
+      <section class="screen-card" id="05_cursos">
+        <div class="screen-header">
+          <h2 class="screen-title">
+            <span>05</span>
+            Cursos y Formación
+          </h2>
+          <span style="font-size: 13px; color: #64748b;">Ruta: /?screen=cursos</span>
+        </div>
+        <div class="grid">
+          <div class="device-preview">
+            <div class="device-title">
+              <span>🖥️ Desktop (1440×900)</span>
+              <a href="desktop/05_cursos_cursos_desktop.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="desktop/05_cursos_cursos_desktop.png" target="_blank">
+                <img src="desktop/05_cursos_cursos_desktop.png" alt="Cursos y Formación - Desktop" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📱 Tablet (768×1024)</span>
+              <a href="tablet/05_cursos_cursos_tablet.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="tablet/05_cursos_cursos_tablet.png" target="_blank">
+                <img src="tablet/05_cursos_cursos_tablet.png" alt="Cursos y Formación - Tablet" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📲 Mobile (390×844)</span>
+              <a href="mobile/05_cursos_cursos_mobile.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="mobile/05_cursos_cursos_mobile.png" target="_blank">
+                <img src="mobile/05_cursos_cursos_mobile.png" alt="Cursos y Formación - Mobile" loading="lazy">
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+
+      <section class="screen-card" id="06_empresas">
+        <div class="screen-header">
+          <h2 class="screen-title">
+            <span>06</span>
+            Directorio de Empresas e Insignias
+          </h2>
+          <span style="font-size: 13px; color: #64748b;">Ruta: /?screen=empresas</span>
+        </div>
+        <div class="grid">
+          <div class="device-preview">
+            <div class="device-title">
+              <span>🖥️ Desktop (1440×900)</span>
+              <a href="desktop/06_empresas_empresas_desktop.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="desktop/06_empresas_empresas_desktop.png" target="_blank">
+                <img src="desktop/06_empresas_empresas_desktop.png" alt="Directorio de Empresas e Insignias - Desktop" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📱 Tablet (768×1024)</span>
+              <a href="tablet/06_empresas_empresas_tablet.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="tablet/06_empresas_empresas_tablet.png" target="_blank">
+                <img src="tablet/06_empresas_empresas_tablet.png" alt="Directorio de Empresas e Insignias - Tablet" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📲 Mobile (390×844)</span>
+              <a href="mobile/06_empresas_empresas_mobile.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="mobile/06_empresas_empresas_mobile.png" target="_blank">
+                <img src="mobile/06_empresas_empresas_mobile.png" alt="Directorio de Empresas e Insignias - Mobile" loading="lazy">
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+
+      <section class="screen-card" id="07_perfil">
+        <div class="screen-header">
+          <h2 class="screen-title">
+            <span>07</span>
+            Perfil Profesional del Candidato
+          </h2>
+          <span style="font-size: 13px; color: #64748b;">Ruta: /?screen=perfil</span>
+        </div>
+        <div class="grid">
+          <div class="device-preview">
+            <div class="device-title">
+              <span>🖥️ Desktop (1440×900)</span>
+              <a href="desktop/07_perfil_perfil_desktop.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="desktop/07_perfil_perfil_desktop.png" target="_blank">
+                <img src="desktop/07_perfil_perfil_desktop.png" alt="Perfil Profesional del Candidato - Desktop" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📱 Tablet (768×1024)</span>
+              <a href="tablet/07_perfil_perfil_tablet.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="tablet/07_perfil_perfil_tablet.png" target="_blank">
+                <img src="tablet/07_perfil_perfil_tablet.png" alt="Perfil Profesional del Candidato - Tablet" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📲 Mobile (390×844)</span>
+              <a href="mobile/07_perfil_perfil_mobile.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="mobile/07_perfil_perfil_mobile.png" target="_blank">
+                <img src="mobile/07_perfil_perfil_mobile.png" alt="Perfil Profesional del Candidato - Mobile" loading="lazy">
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+
+      <section class="screen-card" id="08_insignias">
+        <div class="screen-header">
+          <h2 class="screen-title">
+            <span>08</span>
+            Catálogo de Insignias Técnicas
+          </h2>
+          <span style="font-size: 13px; color: #64748b;">Ruta: /?screen=insignias</span>
+        </div>
+        <div class="grid">
+          <div class="device-preview">
+            <div class="device-title">
+              <span>🖥️ Desktop (1440×900)</span>
+              <a href="desktop/08_insignias_insignias_desktop.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="desktop/08_insignias_insignias_desktop.png" target="_blank">
+                <img src="desktop/08_insignias_insignias_desktop.png" alt="Catálogo de Insignias Técnicas - Desktop" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📱 Tablet (768×1024)</span>
+              <a href="tablet/08_insignias_insignias_tablet.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="tablet/08_insignias_insignias_tablet.png" target="_blank">
+                <img src="tablet/08_insignias_insignias_tablet.png" alt="Catálogo de Insignias Técnicas - Tablet" loading="lazy">
+              </a>
+            </div>
+          </div>
+
+          <div class="device-preview">
+            <div class="device-title">
+              <span>📲 Mobile (390×844)</span>
+              <a href="mobile/08_insignias_insignias_mobile.png" target="_blank">Ver original ↗</a>
+            </div>
+            <div class="device-img-wrapper">
+              <a href="mobile/08_insignias_insignias_mobile.png" target="_blank">
+                <img src="mobile/08_insignias_insignias_mobile.png" alt="Catálogo de Insignias Técnicas - Mobile" loading="lazy">
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+  </div>
+</body>
+</html>

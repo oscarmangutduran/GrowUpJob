@@ -13,6 +13,7 @@ import EmpleoPublico from './components/EmpleoPublico';
 import Cursos from './components/Cursos';
 import Empresas from './components/Empresas';
 import Perfil from './components/Perfil';
+import Insignias from './components/Insignias';
 
 const filterPills = ['Todo', '100% Remoto', 'Híbrido', 'Presencial', 'Verificadas'];
 
@@ -21,9 +22,27 @@ const MODALITY_OPTIONS = ['Cualquiera', '100% Remoto', 'Híbrido', 'Presencial']
 const JORNADA_OPTIONS = ['Cualquiera', 'Completa', 'Parcial'];
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authView, setAuthView] = useState<'login' | 'register'>('login');
-  const [activeTab, setActiveTab] = useState('Empleo');
+  const queryParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const initialScreen = queryParams?.get('screen');
+
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    if (initialScreen === 'login' || initialScreen === 'register') return false;
+    if (initialScreen) return true;
+    return !!localStorage.getItem('auth_token');
+  });
+
+  const [authView, setAuthView] = useState<'login' | 'register'>(() => {
+    return initialScreen === 'register' ? 'register' : 'login';
+  });
+
+  const [activeTab, setActiveTab] = useState(() => {
+    if (initialScreen === 'publico') return 'Público';
+    if (initialScreen === 'cursos') return 'Cursos';
+    if (initialScreen === 'empresas') return 'Empresas';
+    if (initialScreen === 'perfil') return 'Perfil';
+    if (initialScreen === 'insignias') return 'Insignias';
+    return 'Empleo';
+  });
   const [activeFilter, setActiveFilter] = useState('Todo');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -139,6 +158,8 @@ export default function App() {
         return <Cursos />;
       case 'Empresas':
         return <Empresas />;
+      case 'Insignias':
+        return <Insignias />;
       case 'Perfil':
         return (
           <Perfil
