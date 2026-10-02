@@ -1,44 +1,35 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Svg, { Rect, Defs, LinearGradient, Stop } from 'react-native-svg';
+import Svg, { Rect, Circle } from 'react-native-svg';
 
-export function BrandLogo({ size = 32 }: { size?: number }) {
+export function BrandLogo({ size = 36 }: { size?: number }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 40 40" fill="none">
-      <Defs>
-        <LinearGradient id="g1" x1="0" y1="0" x2="0" y2="40" gradientUnits="userSpaceOnUse">
-          <Stop stopColor="#0284c7" />
-          <Stop offset="1" stopColor="#0369a1" />
-        </LinearGradient>
-        <LinearGradient id="g2" x1="0" y1="0" x2="0" y2="40" gradientUnits="userSpaceOnUse">
-          <Stop stopColor="#2563eb" />
-          <Stop offset="1" stopColor="#1d4ed8" />
-        </LinearGradient>
-        <LinearGradient id="g3" x1="0" y1="0" x2="0" y2="40" gradientUnits="userSpaceOnUse">
-          <Stop stopColor="#10b981" />
-          <Stop offset="1" stopColor="#059669" />
-        </LinearGradient>
-      </Defs>
-      <Rect width="40" height="40" rx="10" fill="#0f172a" />
-      <Rect x="8" y="20" width="5" height="12" rx="2.5" fill="url(#g1)" />
-      <Rect x="17.5" y="13" width="5" height="19" rx="2.5" fill="url(#g2)" />
-      <Rect x="27" y="8" width="5" height="24" rx="2.5" fill="url(#g3)" />
+      {/* Background shape */}
+      <Rect width="40" height="40" rx="10" fill="#1E293B" />
+      {/* Growth bars */}
+      <Rect x="9" y="23" width="5" height="9" rx="2.5" fill="#64748B" />
+      <Rect x="17.5" y="16" width="5" height="16" rx="2.5" fill="#3B82F6" />
+      <Rect x="26" y="9" width="5" height="23" rx="2.5" fill="#10B981" />
+      {/* Dynamic trajectory dot */}
+      <Circle cx="28.5" cy="6" r="2" fill="#34D399" />
     </Svg>
   );
 }
 
-export function BrandText({ isDark = false }: { isDark?: boolean }) {
+export function BrandText({ isDark = false, size = 'md' }: { isDark?: boolean; size?: 'sm' | 'md' | 'lg' }) {
+  const isLg = size === 'lg';
   return (
     <View style={styles.textContainer}>
       <View style={styles.row}>
-        <Text style={[styles.mainText, { color: isDark ? '#ffffff' : '#0f172a' }]}>
-          Grow<Text style={{ color: '#2563eb' }}>Up</Text>Job
+        <Text style={[styles.mainText, isLg && styles.mainTextLg, { color: isDark ? '#ffffff' : '#0f172a' }]}>
+          Grow<Text style={{ color: '#2563eb' }}>Up</Text><Text style={{ color: '#059669' }}>Job</Text>
         </Text>
         <View style={styles.proBadge}>
           <Text style={styles.proText}>PRO</Text>
         </View>
       </View>
-      <Text style={[styles.subText, { color: isDark ? '#94a3b8' : '#64748b' }]}>
+      <Text style={[styles.subText, isLg && styles.subTextLg, { color: isDark ? '#94a3b8' : '#64748b' }]}>
         EMPLEO & CARRERA PROFESIONAL
       </Text>
     </View>
@@ -59,24 +50,31 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: -0.5,
   },
+  mainTextLg: {
+    fontSize: 22,
+  },
   proBadge: {
     backgroundColor: '#eff6ff',
     borderWidth: 1,
     borderColor: '#bfdbfe',
     borderRadius: 4,
-    paddingHorizontal: 4,
+    paddingHorizontal: 5,
     paddingVertical: 1,
     marginLeft: 6,
   },
   proText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#2563eb',
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#1d4ed8',
+    letterSpacing: 0.5,
   },
   subText: {
-    fontSize: 7.5,
+    fontSize: 8.5,
     fontWeight: '700',
-    letterSpacing: 0.8,
-    marginTop: 1,
+    letterSpacing: 1.4,
+    marginTop: 2,
+  },
+  subTextLg: {
+    fontSize: 9.5,
   },
 });

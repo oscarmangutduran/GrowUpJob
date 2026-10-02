@@ -12,104 +12,89 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import Svg, { Defs, Pattern, Rect, Circle, RadialGradient, Stop } from 'react-native-svg';
-import { Mail, Lock, Eye, EyeOff, Sparkles, ArrowRight, ShieldAlert, Check } from 'lucide-react-native';
+import {
+  Mail,
+  Lock,
+  User,
+  Briefcase,
+  Eye,
+  EyeOff,
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
+  ShieldAlert,
+  Check,
+} from 'lucide-react-native';
 import { BrandLogo, BrandText } from '../../components/common/BrandLogo';
-import { GoogleIcon } from '../../components/common/GoogleIcon';
-import { LinkedinIcon } from '../../components/common/LinkedinIcon';
-import { signInWithLinkedIn, signInWithGoogle, signInWithEmail } from '../../services/auth';
+import { signUpWithEmail } from '../../services/auth';
 
-interface LoginScreenProps {
-  onLoginSuccess: () => void;
-  onNavigateToRegister: () => void;
+interface RegisterScreenProps {
+  onRegisterSuccess: () => void;
+  onNavigateToLogin: () => void;
 }
 
-export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: LoginScreenProps) {
+export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }: RegisterScreenProps) {
   const { width } = useWindowDimensions();
   const isDesktop = width >= 1024;
 
-  const [email, setEmail] = useState(() => {
-    if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
-      return localStorage.getItem('remembered_email') || '';
-    }
-    return '';
-  });
+  const [role, setRole] = useState<'candidato' | 'empresa'>('candidato');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(() => {
-    if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
-      return localStorage.getItem('remember_me') === 'true';
-    }
-    return false;
-  });
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+
+  const [nameFocused, setNameFocused] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmFocused, setConfirmFocused] = useState(false);
+
   const [loading, setLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<'google' | 'linkedin' | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleEmailLogin = async () => {
+  const handleRegister = async () => {
     setError(null);
-    if (!email.trim() || !password.trim()) {
-      setError('Por favor, ingresa tu correo y contraseña.');
+    if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+      setError('Por favor, completa todos los campos del formulario.');
+      return;
+    }
+
+    if (password.length < 8) {
+      setError('La contraseña debe tener un mínimo de 8 caracteres.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden.');
+      return;
+    }
+
+    if (!acceptTerms) {
+      setError('Debes aceptar los Términos de Uso y la Política de Privacidad.');
       return;
     }
 
     try {
       setLoading(true);
-      const { data, error: authError } = await signInWithEmail(email.trim(), password);
-      
+      const { data, error: authError } = await signUpWithEmail(
+        email.trim(),
+        password,
+        name.trim(),
+        role
+      );
+
       if (authError) {
-        setError(authError.message || 'Credenciales incorrectas. Verifica tus datos.');
+        setError(authError.message || 'No se pudo crear la cuenta.');
         return;
       }
 
-      if (rememberMe && Platform.OS === 'web' && typeof localStorage !== 'undefined') {
-        localStorage.setItem('remember_me', 'true');
-        localStorage.setItem('remembered_email', email);
-      } else if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
-        localStorage.removeItem('remember_me');
-        localStorage.removeItem('remembered_email');
-      }
-
-      onLoginSuccess();
+      onRegisterSuccess();
     } catch (err: any) {
-      setError(err.message || 'Error al intentar iniciar sesión.');
+      setError(err.message || 'Error inesperado al registrar.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    setError(null);
-    try {
-      setSocialLoading('google');
-      const session = await signInWithGoogle();
-      if (session) onLoginSuccess();
-    } catch (err: any) {
-      if (err.message?.includes('Failed to fetch') || err.message?.includes('Network request failed')) {
-        setError('No se pudo conectar con Supabase. Verifica tu EXPO_PUBLIC_SUPABASE_URL en client/.env.');
-      } else {
-        setError(err.message || 'Error en autenticación con Google.');
-      }
-    } finally {
-      setSocialLoading(null);
-    }
-  };
-
-  const handleLinkedInLogin = async () => {
-    setError(null);
-    try {
-      setSocialLoading('linkedin');
-      const session = await signInWithLinkedIn();
-      if (session) onLoginSuccess();
-    } catch (err: any) {
-      if (err.message?.includes('Failed to fetch') || err.message?.includes('Network request failed')) {
-        setError('No se pudo conectar con Supabase. Configura tu URL real de proyecto en client/.env y activa LinkedIn (OIDC).');
-      } else {
-        setError(err.message || 'Error en autenticación con LinkedIn.');
-      }
-    } finally {
-      setSocialLoading(null);
     }
   };
 
@@ -125,9 +110,9 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
 
       {/* Header */}
       <View style={styles.cardHeader}>
-        <Text style={styles.cardTitle}>Iniciar sesión</Text>
+        <Text style={styles.cardTitle}>Crear cuenta</Text>
         <Text style={styles.cardSubtitle}>
-          Ingresa tus credenciales para acceder a tu panel.
+          Completa tus datos para empezar en minutos.
         </Text>
       </View>
 
@@ -139,50 +124,72 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
         </View>
       )}
 
-      {/* Social SSO Buttons */}
-      <View style={styles.socialButtonsGroup}>
-        <TouchableOpacity
-          style={styles.googleBtn}
-          onPress={handleGoogleLogin}
-          disabled={!!socialLoading || loading}
-          activeOpacity={0.85}
-        >
-          {socialLoading === 'google' ? (
-            <ActivityIndicator size="small" color="#2563eb" />
-          ) : (
-            <View style={styles.btnInnerRow}>
-              <GoogleIcon size={18} />
-              <Text style={styles.googleBtnText}>Continuar con Google</Text>
-            </View>
-          )}
-        </TouchableOpacity>
+      {/* Role Segmented Switch */}
+      <View style={styles.roleGroup}>
+        <Text style={styles.fieldLabel}>TIPO DE PERFIL</Text>
+        <View style={styles.roleSegmentedContainer}>
+          <TouchableOpacity
+            style={[styles.roleTab, role === 'candidato' && styles.roleTabActive]}
+            onPress={() => setRole('candidato')}
+            activeOpacity={0.8}
+          >
+            <User
+              size={14}
+              color={role === 'candidato' ? '#0f172a' : '#64748b'}
+              style={{ marginRight: 6 }}
+            />
+            <Text
+              style={[
+                styles.roleTabText,
+                role === 'candidato' && styles.roleTabTextActive,
+              ]}
+            >
+              Candidato / Profesional
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.linkedinBtn}
-          onPress={handleLinkedInLogin}
-          disabled={!!socialLoading || loading}
-          activeOpacity={0.85}
-        >
-          {socialLoading === 'linkedin' ? (
-            <ActivityIndicator size="small" color="#0A66C2" />
-          ) : (
-            <View style={styles.btnInnerRow}>
-              <LinkedinIcon size={18} color="#0A66C2" />
-              <Text style={styles.linkedinBtnText}>Continuar con LinkedIn</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-      </View>
-
-      {/* Divider */}
-      <View style={styles.dividerRow}>
-        <View style={styles.dividerLine} />
-        <Text style={styles.dividerLabel}>O CON EMAIL</Text>
-        <View style={styles.dividerLine} />
+          <TouchableOpacity
+            style={[styles.roleTab, role === 'empresa' && styles.roleTabActive]}
+            onPress={() => setRole('empresa')}
+            activeOpacity={0.8}
+          >
+            <Briefcase
+              size={14}
+              color={role === 'empresa' ? '#0f172a' : '#64748b'}
+              style={{ marginRight: 6 }}
+            />
+            <Text
+              style={[
+                styles.roleTabText,
+                role === 'empresa' && styles.roleTabTextActive,
+              ]}
+            >
+              Empresa / Empleador
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Form Fields */}
       <View style={styles.formContainer}>
+        {/* Full Name */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.fieldLabel}>NOMBRE COMPLETO</Text>
+          <View style={[styles.inputWrapper, nameFocused && styles.inputWrapperFocused]}>
+            <User size={16} color={nameFocused ? '#2563eb' : '#94a3b8'} style={styles.fieldIconLeft} />
+            <TextInput
+              style={styles.input}
+              placeholder="Ej. Ana Fernández Romero"
+              placeholderTextColor="#94a3b8"
+              value={name}
+              onChangeText={setName}
+              onFocus={() => setNameFocused(true)}
+              onBlur={() => setNameFocused(false)}
+              autoCapitalize="words"
+            />
+          </View>
+        </View>
+
         {/* Email */}
         <View style={styles.fieldGroup}>
           <Text style={styles.fieldLabel}>CORREO ELECTRÓNICO</Text>
@@ -205,17 +212,12 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
 
         {/* Password */}
         <View style={styles.fieldGroup}>
-          <View style={styles.passwordLabelRow}>
-            <Text style={styles.fieldLabel}>CONTRASEÑA</Text>
-            <TouchableOpacity activeOpacity={0.7}>
-              <Text style={styles.forgotPasswordLink}>¿Olvidaste tu contraseña?</Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.fieldLabel}>CONTRASEÑA</Text>
           <View style={[styles.inputWrapper, passwordFocused && styles.inputWrapperFocused]}>
             <Lock size={16} color={passwordFocused ? '#2563eb' : '#94a3b8'} style={styles.fieldIconLeft} />
             <TextInput
               style={styles.input}
-              placeholder="Tu contraseña"
+              placeholder="Mínimo 8 caracteres"
               placeholderTextColor="#94a3b8"
               value={password}
               onChangeText={setPassword}
@@ -238,22 +240,55 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
           </View>
         </View>
 
-        {/* Remember me */}
+        {/* Confirm Password */}
+        <View style={styles.fieldGroup}>
+          <Text style={styles.fieldLabel}>CONFIRMAR CONTRASEÑA</Text>
+          <View style={[styles.inputWrapper, confirmFocused && styles.inputWrapperFocused]}>
+            <Lock size={16} color={confirmFocused ? '#2563eb' : '#94a3b8'} style={styles.fieldIconLeft} />
+            <TextInput
+              style={styles.input}
+              placeholder="Repite tu contraseña"
+              placeholderTextColor="#94a3b8"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              onFocus={() => setConfirmFocused(true)}
+              onBlur={() => setConfirmFocused(false)}
+              secureTextEntry={!showConfirmPassword}
+              autoCapitalize="none"
+            />
+            <TouchableOpacity
+              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              style={styles.fieldIconRight}
+              activeOpacity={0.7}
+            >
+              {showConfirmPassword ? (
+                <EyeOff size={16} color="#94a3b8" />
+              ) : (
+                <Eye size={16} color="#94a3b8" />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Terms Checkbox */}
         <TouchableOpacity
-          style={styles.rememberRow}
-          onPress={() => setRememberMe(!rememberMe)}
+          style={styles.termsRow}
+          onPress={() => setAcceptTerms(!acceptTerms)}
           activeOpacity={0.8}
         >
-          <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
-            {rememberMe && <Check size={11} color="#ffffff" strokeWidth={3} />}
+          <View style={[styles.checkbox, acceptTerms && styles.checkboxChecked]}>
+            {acceptTerms && <Check size={11} color="#ffffff" strokeWidth={3} />}
           </View>
-          <Text style={styles.rememberText}>Recordar mis datos</Text>
+          <Text style={styles.termsText}>
+            Acepto los <Text style={styles.linkUnderline}>Términos de Uso</Text> y la{' '}
+            <Text style={styles.linkUnderline}>Política de Privacidad</Text>.
+          </Text>
         </TouchableOpacity>
 
         {/* Submit Button */}
         <TouchableOpacity
           style={styles.submitBtn}
-          onPress={handleEmailLogin}
+          onPress={handleRegister}
           disabled={loading}
           activeOpacity={0.85}
         >
@@ -261,19 +296,21 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
             <ActivityIndicator color="#ffffff" size="small" />
           ) : (
             <View style={styles.submitBtnContent}>
-              <Text style={styles.submitBtnText}>Acceder al portal</Text>
+              <Text style={styles.submitBtnText}>
+                {role === 'candidato' ? 'Crear cuenta profesional' : 'Crear cuenta de empresa'}
+              </Text>
               <ArrowRight size={16} color="#ffffff" />
             </View>
           )}
         </TouchableOpacity>
       </View>
 
-      {/* Footer Register Link */}
+      {/* Footer Login Link */}
       <View style={styles.cardFooter}>
         <Text style={styles.footerPrompt}>
-          ¿Aún no tienes cuenta?{' '}
-          <Text style={styles.footerLink} onPress={onNavigateToRegister}>
-            Crear cuenta gratuita
+          ¿Ya tienes cuenta?{' '}
+          <Text style={styles.footerLink} onPress={onNavigateToLogin}>
+            Inicia sesión aquí
           </Text>
         </Text>
       </View>
@@ -283,26 +320,26 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
   if (isDesktop) {
     return (
       <View style={styles.desktopRoot}>
-        {/* Left Column: Brand Story & Social Proof */}
+        {/* Left Column: Brand Story & Values */}
         <View style={styles.leftColumn}>
-          {/* Subtle starry dot pattern background */}
+          {/* Starry dot pattern background */}
           <Svg style={StyleSheet.absoluteFill} width="100%" height="100%">
             <Defs>
-              <Pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+              <Pattern id="reg-dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
                 <Circle cx="12" cy="12" r="1" fill="#94a3b8" fillOpacity="0.12" />
               </Pattern>
-              <RadialGradient id="topGlow" cx="20%" cy="15%" rx="50%" ry="50%">
+              <RadialGradient id="regTopGlow" cx="20%" cy="15%" rx="50%" ry="50%">
                 <Stop offset="0" stopColor="#2563eb" stopOpacity="0.22" />
                 <Stop offset="1" stopColor="#0f172a" stopOpacity="0" />
               </RadialGradient>
-              <RadialGradient id="botGlow" cx="80%" cy="85%" rx="50%" ry="50%">
+              <RadialGradient id="regBotGlow" cx="80%" cy="85%" rx="50%" ry="50%">
                 <Stop offset="0" stopColor="#10b981" stopOpacity="0.16" />
                 <Stop offset="1" stopColor="#0f172a" stopOpacity="0" />
               </RadialGradient>
             </Defs>
-            <Rect width="100%" height="100%" fill="url(#dot-grid)" />
-            <Rect width="100%" height="100%" fill="url(#topGlow)" />
-            <Rect width="100%" height="100%" fill="url(#botGlow)" />
+            <Rect width="100%" height="100%" fill="url(#reg-dot-grid)" />
+            <Rect width="100%" height="100%" fill="url(#regTopGlow)" />
+            <Rect width="100%" height="100%" fill="url(#regBotGlow)" />
           </Svg>
 
           {/* Top Brand Header */}
@@ -311,55 +348,44 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
             <BrandText isDark={true} size="lg" />
           </View>
 
-          {/* Hero Narrative */}
+          {/* Narrative & Benefits */}
           <View style={styles.heroNarrative}>
             {/* Pill */}
             <View style={styles.officialPill}>
-              <Sparkles size={14} color="#60a5fa" />
-              <Text style={styles.officialPillText}>Plataforma Oficial de Empleo Profesional</Text>
+              <Sparkles size={14} color="#34d399" />
+              <Text style={styles.officialPillText}>Únete a más de 50.000 profesionales</Text>
             </View>
 
             {/* Title */}
             <Text style={styles.heroTitle}>
-              Impulsa tu carrera{'\n'}hacia el siguiente nivel.
+              Crea tu perfil y{'\n'}potencia tus{'\n'}oportunidades.
             </Text>
 
-            {/* Description */}
-            <Text style={styles.heroDescription}>
-              Accede a oportunidades verificadas en el sector privado, convocatorias de empleo público del BOE y cursos de especialización acreditados.
-            </Text>
-
-            {/* Social Proof Metrics */}
-            <View style={styles.metricsGrid}>
-              <View style={styles.metricItem}>
-                <Text style={styles.metricNumber}>+14.200</Text>
-                <Text style={styles.metricLabel}>Ofertas activas verificadas</Text>
-              </View>
-              <View style={styles.metricItem}>
-                <Text style={[styles.metricNumber, { color: '#34d399' }]}>98.4%</Text>
-                <Text style={styles.metricLabel}>Tasa de respuesta de reclutadores</Text>
-              </View>
+            {/* Checklist */}
+            <View style={styles.benefitsList}>
+              {[
+                'Alertas instantáneas de convocatorias de empleo público y oposiciones',
+                'Ofertas privadas con salarios 100% transparentes',
+                'Insignias técnicas validadas para destacar en el Top 5% de candidatos',
+                'Proceso de inscripción ágil en 1 solo clic',
+              ].map((benefit, i) => (
+                <View key={i} style={styles.benefitRow}>
+                  <CheckCircle2 size={16} color="#34d399" style={styles.checkIcon} />
+                  <Text style={styles.benefitText}>{benefit}</Text>
+                </View>
+              ))}
             </View>
           </View>
 
-          {/* Testimonial Quote */}
-          <View style={styles.testimonialBox}>
-            <Text style={styles.testimonialQuote}>
-              "GrowUpJob es la primera plataforma que une empleo tecnológico con empleo público con un nivel de rigor y claridad excepcional."
+          {/* Footer note */}
+          <View style={styles.footerNote}>
+            <Text style={styles.footerNoteText}>
+              GrowUpJob cumple con los estándares europeos de protección de datos (RGPD) y verificación de identidad.
             </Text>
-            <View style={styles.testimonialAuthorRow}>
-              <View style={styles.authorAvatar}>
-                <Text style={styles.authorAvatarLetters}>MC</Text>
-              </View>
-              <View>
-                <Text style={styles.authorName}>Marcos Calvo</Text>
-                <Text style={styles.authorTitle}>Tech Lead & Opositor A1 TIC</Text>
-              </View>
-            </View>
           </View>
         </View>
 
-        {/* Right Column: Clean Authentication Form */}
+        {/* Right Column: Registration Form */}
         <View style={styles.rightColumn}>
           <ScrollView
             contentContainerStyle={styles.rightScrollContent}
@@ -439,78 +465,35 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     lineHeight: 52,
     letterSpacing: -0.5,
-    marginBottom: 16,
+    marginBottom: 24,
   },
-  heroDescription: {
-    fontSize: 15,
-    lineHeight: 25,
-    color: '#cbd5e1',
-    marginBottom: 28,
+  benefitsList: {
+    gap: 14,
+    paddingTop: 4,
   },
-  metricsGrid: {
+  benefitRow: {
     flexDirection: 'row',
-    gap: 40,
-    paddingTop: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#1e293b',
+    alignItems: 'flex-start',
+    gap: 10,
   },
-  metricItem: {
-    gap: 2,
+  checkIcon: {
+    marginTop: 2,
+    flexShrink: 0,
   },
-  metricNumber: {
-    fontSize: 28,
-    fontWeight: '900',
-    color: '#ffffff',
-    letterSpacing: -0.5,
+  benefitText: {
+    fontSize: 14,
+    color: '#cbd5e1',
+    lineHeight: 20,
+    flex: 1,
   },
-  metricLabel: {
-    fontSize: 12,
-    color: '#94a3b8',
-    fontWeight: '500',
-  },
-  testimonialBox: {
+  footerNote: {
     zIndex: 10,
-    backgroundColor: 'rgba(30, 41, 59, 0.65)',
-    borderWidth: 1,
-    borderColor: 'rgba(51, 65, 85, 0.6)',
-    borderRadius: 16,
-    padding: 20,
     maxWidth: 520,
   },
-  testimonialQuote: {
-    fontSize: 13.5,
-    fontStyle: 'italic',
-    color: '#e2e8f0',
-    lineHeight: 21,
-    marginBottom: 14,
-  },
-  testimonialAuthorRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  authorAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#2563eb',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  authorAvatarLetters: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  authorName: {
-    color: '#ffffff',
-    fontSize: 12.5,
-    fontWeight: '700',
-  },
-  authorTitle: {
+  footerNoteText: {
+    fontSize: 11.5,
     color: '#94a3b8',
-    fontSize: 11,
-    fontWeight: '500',
+    lineHeight: 18,
   },
   rightColumn: {
     width: '50%',
@@ -568,7 +551,7 @@ const styles = StyleSheet.create({
     }),
   },
   cardHeader: {
-    marginBottom: 20,
+    marginBottom: 18,
   },
   cardTitle: {
     fontSize: 24,
@@ -605,86 +588,60 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
-  // Social SSO
-  socialButtonsGroup: {
-    gap: 10,
-    marginBottom: 20,
+  // Role Segmented Switch
+  roleGroup: {
+    marginBottom: 16,
   },
-  googleBtn: {
-    backgroundColor: '#ffffff',
+  roleSegmentedContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#f1f5f9',
+    borderRadius: 12,
+    padding: 4,
     borderWidth: 1,
     borderColor: '#e2e8f0',
-    borderRadius: 12,
-    height: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 6,
   },
-  linkedinBtn: {
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 12,
-    height: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  btnInnerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  googleBtnText: {
-    fontSize: 13.5,
-    fontWeight: '600',
-    color: '#334155',
-  },
-  linkedinBtnText: {
-    fontSize: 13.5,
-    fontWeight: '600',
-    color: '#0A66C2',
-  },
-
-  // Divider
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  dividerLine: {
+  roleTab: {
     flex: 1,
-    height: 1,
-    backgroundColor: '#e2e8f0',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    borderRadius: 9,
   },
-  dividerLabel: {
-    marginHorizontal: 12,
-    fontSize: 11,
+  roleTabActive: {
+    backgroundColor: '#ffffff',
+    ...Platform.select({
+      web: {
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+      } as any,
+      default: {
+        elevation: 1,
+      },
+    }),
+  },
+  roleTabText: {
+    fontSize: 11.5,
+    fontWeight: '600',
+    color: '#64748b',
+  },
+  roleTabTextActive: {
+    color: '#0f172a',
     fontWeight: '700',
-    color: '#94a3b8',
-    letterSpacing: 0.8,
   },
 
   // Form Fields
   formContainer: {
-    gap: 14,
+    gap: 13,
   },
   fieldGroup: {
-    gap: 6,
+    gap: 5,
   },
   fieldLabel: {
     fontSize: 11,
     fontWeight: '700',
     color: '#334155',
     letterSpacing: 0.5,
-  },
-  passwordLabelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  forgotPasswordLink: {
-    fontSize: 12,
-    color: '#2563eb',
-    fontWeight: '500',
   },
   inputWrapper: {
     flexDirection: 'row',
@@ -715,8 +672,8 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
 
-  // Remember me
-  rememberRow: {
+  // Terms checkbox
+  termsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
@@ -732,15 +689,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 1,
   },
   checkboxChecked: {
     backgroundColor: '#2563eb',
     borderColor: '#2563eb',
   },
-  rememberText: {
-    fontSize: 12.5,
+  termsText: {
+    fontSize: 12,
     color: '#475569',
-    fontWeight: '500',
+    lineHeight: 17,
+    flex: 1,
+  },
+  linkUnderline: {
+    color: '#2563eb',
+    textDecorationLine: 'underline',
   },
 
   // Submit button

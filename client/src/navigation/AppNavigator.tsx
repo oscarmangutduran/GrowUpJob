@@ -5,69 +5,32 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Briefcase, Landmark, BookOpen, Building2, User } from 'lucide-react-native';
 import { supabase } from '../services/supabase';
 
-// Screens
+// Real Screens
 import LoginScreen from '../screens/auth/LoginScreen';
+import RegisterScreen from '../screens/auth/RegisterScreen';
 import EmpleoScreen from '../screens/main/EmpleoScreen';
+import EmpleoPublicoScreen from '../screens/main/EmpleoPublicoScreen';
+import CursosScreen from '../screens/main/CursosScreen';
+import EmpresasScreen from '../screens/main/EmpresasScreen';
+import PerfilScreen from '../screens/main/PerfilScreen';
+import InsigniasScreen from '../screens/main/InsigniasScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// Temporary placeholders for other tabs
-import { Text, StyleSheet } from 'react-native';
-
-function EmpleoPublicoPlaceholder() {
-  return (
-    <View style={styles.center}>
-      <Landmark size={48} color="#2563eb" />
-      <Text style={styles.title}>Empleo Público & Oposiciones</Text>
-      <Text style={styles.subtitle}>Convocatorias oficiales del BOE actualizadas en tiempo real.</Text>
-    </View>
-  );
-}
-
-function CursosPlaceholder() {
-  return (
-    <View style={styles.center}>
-      <BookOpen size={48} color="#2563eb" />
-      <Text style={styles.title}>Cursos & Especializaciones</Text>
-      <Text style={styles.subtitle}>Formación técnica certificada y bootcamps becados.</Text>
-    </View>
-  );
-}
-
-function EmpresasPlaceholder() {
-  return (
-    <View style={styles.center}>
-      <Building2 size={48} color="#2563eb" />
-      <Text style={styles.title}>Directorio Antighosting</Text>
-      <Text style={styles.subtitle}>Empresas con métricas de trato y tiempo de respuesta garantizado.</Text>
-    </View>
-  );
-}
-
-function PerfilPlaceholder() {
-  return (
-    <View style={styles.center}>
-      <User size={48} color="#2563eb" />
-      <Text style={styles.title}>Mi Perfil & CV ATS</Text>
-      <Text style={styles.subtitle}>Seguimiento de candidaturas y portfolio sincronizado.</Text>
-    </View>
-  );
-}
-
-function MainTabNavigator() {
+function MainTabNavigator({ navigation }: any) {
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: true,
-        headerStyle: { backgroundColor: '#ffffff' },
-        headerTitleStyle: { fontWeight: '800', color: '#0f172a' },
+        headerStyle: { backgroundColor: '#ffffff', elevation: 1 },
+        headerTitleStyle: { fontWeight: '800', color: '#0f172a', fontSize: 17 },
         tabBarActiveTintColor: '#2563eb',
         tabBarInactiveTintColor: '#64748b',
         tabBarStyle: {
           backgroundColor: '#ffffff',
           borderTopColor: '#e2e8f0',
-          height: 60,
+          height: 62,
           paddingBottom: 8,
           paddingTop: 6,
         },
@@ -83,34 +46,40 @@ function MainTabNavigator() {
       />
       <Tab.Screen
         name="Público"
-        component={EmpleoPublicoPlaceholder}
+        component={EmpleoPublicoScreen}
         options={{
           tabBarIcon: ({ color, size }) => <Landmark size={size} color={color} />,
-          headerTitle: 'Empleo Público',
+          headerTitle: 'Empleo Público & BOE',
         }}
       />
       <Tab.Screen
         name="Cursos"
-        component={CursosPlaceholder}
+        component={CursosScreen}
         options={{
           tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
-          headerTitle: 'Formación y Cursos',
+          headerTitle: 'Cursos & Certificaciones',
         }}
       />
       <Tab.Screen
         name="Empresas"
-        component={EmpresasPlaceholder}
+        component={EmpresasScreen}
         options={{
           tabBarIcon: ({ color, size }) => <Building2 size={size} color={color} />,
-          headerTitle: 'Empresas Verificadas',
+          headerTitle: 'Directorio Antighosting',
         }}
       />
       <Tab.Screen
         name="Perfil"
-        component={PerfilPlaceholder}
+        children={() => (
+          <PerfilScreen
+            onLogout={() => {
+              supabase.auth.signOut();
+            }}
+          />
+        )}
         options={{
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
-          headerTitle: 'Mi Perfil',
+          headerTitle: 'Mi Perfil & CV',
         }}
       />
     </Tab.Navigator>
@@ -120,6 +89,7 @@ function MainTabNavigator() {
 export default function AppNavigator() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [authView, setAuthView] = useState<'login' | 'register'>('login');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -136,7 +106,7 @@ export default function AppNavigator() {
 
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
         <ActivityIndicator size="large" color="#2563eb" />
       </View>
     );
@@ -145,41 +115,39 @@ export default function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {session ? (
-        <Stack.Screen name="Main" component={MainTabNavigator} />
+        <>
+          <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+          <Stack.Screen
+            name="Insignias"
+            component={InsigniasScreen}
+            options={{ headerShown: true, title: 'Insignias y Verificaciones' }}
+          />
+        </>
       ) : (
-        <Stack.Screen name="Auth">
-          {(props) => (
-            <LoginScreen
-              {...props}
-              onLoginSuccess={() => setSession({ user: { email: 'demo@growupjob.com' } })}
-              onNavigateToRegister={() => {}}
-            />
+        <>
+          {authView === 'login' ? (
+            <Stack.Screen name="Login">
+              {(props) => (
+                <LoginScreen
+                  {...props}
+                  onLoginSuccess={() => setSession({ user: { email: 'demo@growupjob.com' } })}
+                  onNavigateToRegister={() => setAuthView('register')}
+                />
+              )}
+            </Stack.Screen>
+          ) : (
+            <Stack.Screen name="Register">
+              {(props) => (
+                <RegisterScreen
+                  {...props}
+                  onRegisterSuccess={() => setSession({ user: { email: 'demo@growupjob.com' } })}
+                  onNavigateToLogin={() => setAuthView('login')}
+                />
+              )}
+            </Stack.Screen>
           )}
-        </Stack.Screen>
+        </>
       )}
     </Stack.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: '#ffffff',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#0f172a',
-    marginTop: 16,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#64748b',
-    textAlign: 'center',
-  },
-});
