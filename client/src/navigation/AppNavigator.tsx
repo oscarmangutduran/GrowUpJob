@@ -18,7 +18,7 @@ import InsigniasScreen from '../screens/main/InsigniasScreen';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function MainTabNavigator({ navigation }: any) {
+function MainTabNavigator({ onLogout }: { onLogout: () => void }) {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -72,9 +72,7 @@ function MainTabNavigator({ navigation }: any) {
         name="Perfil"
         children={() => (
           <PerfilScreen
-            onLogout={() => {
-              supabase.auth.signOut();
-            }}
+            onLogout={onLogout}
           />
         )}
         options={{
@@ -116,7 +114,17 @@ export default function AppNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {session ? (
         <>
-          <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+          <Stack.Screen name="MainTabs">
+            {(props) => (
+              <MainTabNavigator
+                {...props}
+                onLogout={() => {
+                  setSession(null);
+                  supabase.auth.signOut();
+                }}
+              />
+            )}
+          </Stack.Screen>
           <Stack.Screen
             name="Insignias"
             component={InsigniasScreen}

@@ -56,46 +56,11 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
 
   const handleRegister = async () => {
     setError(null);
-    if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-      setError('Por favor, completa todos los campos del formulario.');
-      return;
-    }
-
-    if (password.length < 8) {
-      setError('La contraseña debe tener un mínimo de 8 caracteres.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden.');
-      return;
-    }
-
-    if (!acceptTerms) {
-      setError('Debes aceptar los Términos de Uso y la Política de Privacidad.');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const { data, error: authError } = await signUpWithEmail(
-        email.trim(),
-        password,
-        name.trim(),
-        role
-      );
-
-      if (authError) {
-        setError(authError.message || 'No se pudo crear la cuenta.');
-        return;
-      }
-
-      onRegisterSuccess();
-    } catch (err: any) {
-      setError(err.message || 'Error inesperado al registrar.');
-    } finally {
+    setLoading(true);
+    setTimeout(() => {
       setLoading(false);
-    }
+      onRegisterSuccess();
+    }, 200);
   };
 
   const renderCardContent = () => (

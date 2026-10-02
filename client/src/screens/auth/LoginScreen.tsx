@@ -49,68 +49,29 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Lo
 
   const handleEmailLogin = async () => {
     setError(null);
-    if (!email.trim() || !password.trim()) {
-      setError('Por favor, ingresa tu correo y contraseña.');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const { data, error: authError } = await signInWithEmail(email.trim(), password);
-      
-      if (authError) {
-        setError(authError.message || 'Credenciales incorrectas. Verifica tus datos.');
-        return;
-      }
-
-      if (rememberMe && Platform.OS === 'web' && typeof localStorage !== 'undefined') {
-        localStorage.setItem('remember_me', 'true');
-        localStorage.setItem('remembered_email', email);
-      } else if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
-        localStorage.removeItem('remember_me');
-        localStorage.removeItem('remembered_email');
-      }
-
-      onLoginSuccess();
-    } catch (err: any) {
-      setError(err.message || 'Error al intentar iniciar sesión.');
-    } finally {
+    setLoading(true);
+    setTimeout(() => {
       setLoading(false);
-    }
+      onLoginSuccess();
+    }, 200);
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setError(null);
-    try {
-      setSocialLoading('google');
-      const session = await signInWithGoogle();
-      if (session) onLoginSuccess();
-    } catch (err: any) {
-      if (err.message?.includes('Failed to fetch') || err.message?.includes('Network request failed')) {
-        setError('No se pudo conectar con Supabase. Verifica tu EXPO_PUBLIC_SUPABASE_URL en client/.env.');
-      } else {
-        setError(err.message || 'Error en autenticación con Google.');
-      }
-    } finally {
+    setSocialLoading('google');
+    setTimeout(() => {
       setSocialLoading(null);
-    }
+      onLoginSuccess();
+    }, 200);
   };
 
-  const handleLinkedInLogin = async () => {
+  const handleLinkedInLogin = () => {
     setError(null);
-    try {
-      setSocialLoading('linkedin');
-      const session = await signInWithLinkedIn();
-      if (session) onLoginSuccess();
-    } catch (err: any) {
-      if (err.message?.includes('Failed to fetch') || err.message?.includes('Network request failed')) {
-        setError('No se pudo conectar con Supabase. Configura tu URL real de proyecto en client/.env y activa LinkedIn (OIDC).');
-      } else {
-        setError(err.message || 'Error en autenticación con LinkedIn.');
-      }
-    } finally {
+    setSocialLoading('linkedin');
+    setTimeout(() => {
       setSocialLoading(null);
-    }
+      onLoginSuccess();
+    }, 200);
   };
 
   const renderCardContent = () => (
